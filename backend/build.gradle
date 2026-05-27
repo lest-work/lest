@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/spring-plugin' }
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+ext {
+    set('resilience4jVersion', '2.4.0')
+    set('nacosVersion', '2025.1.0.0')
+    set('mybatisPlusVersion', '3.5.16')
+    set('redissonVersion', '4.4.0')
+}
+
+allprojects {
+    group = 'com.lest'
+    version = '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(Integer.parseInt(
+                rootProject.findProperty('javaVersion') ?: '25'))
+        }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/spring-plugin' }
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Test) {
+        useJUnitPlatform()
+    }
+}
+
+tasks.named('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

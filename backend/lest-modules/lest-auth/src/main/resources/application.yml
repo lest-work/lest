@@ -1,0 +1,87 @@
+# lest-auth 服务配置
+server:
+  port: ${SERVER_PORT:8096}
+
+spring:
+  application:
+    name: lest-auth
+  config: {}
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${NACOS_ENABLED:false}
+        server-addr: ${NACOS_HOST:localhost}:${NACOS_PORT:8848}
+        namespace: ${NACOS_NAMESPACE:lest-platform}
+        group: ${NACOS_APP_GROUP:APP_GROUP}
+        cluster-name: DEFAULT
+        ephemeral: false
+      config:
+        enabled: ${NACOS_ENABLED:false}
+        server-addr: ${NACOS_HOST:localhost}:${NACOS_PORT:8848}
+        namespace: ${NACOS_NAMESPACE:lest-platform}
+        group: ${NACOS_APP_GROUP:APP_GROUP}
+        file-extension: yaml
+        refresh-enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/${MYSQL_DB:auth_db}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:12345678}
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 5000ms
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:lest-platform-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm}
+  access-token-expiration: 900000       # 15分钟（毫秒）
+  refresh-token-expiration: 604800000  # 7天（毫秒）
+  issuer: lest-platform
+
+# 验证码配置
+captcha:
+  width: 120
+  height: 40
+
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.lest.modules.auth.entity.domain
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: ${MYBATIS_LOG_IMPL:org.apache.ibatis.logging.stdout.StdOutImpl}
+
+# 日志配置
+logging:
+  level:
+    com.lest.modules.auth: debug
+    org.springframework.security: info
+    com.alibaba.nacos: warn
+
+# Swagger / OpenAPI
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  group-configs:
+    - group: 'auth'
+      paths-to-match: '/auth/**'
+      packages-to-scan: com.lest.modules.auth.controller

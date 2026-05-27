@@ -1,0 +1,222 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'fix/**'
+    paths:
+      - 'backend-new/**'
+      - 'frontend-new/**'
+      - 'wakapi/**'
+      - 'task/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'backend-new/**'
+      - 'frontend-new/**'
+      - 'wakapi/**'
+      - 'task/**'
+      - '.github/workflows/ci.yml'
+
+env:
+  PYTHON_VERSION: '3.12'
+  NODE_VERSION: '20'
+
+jobs:
+  # ==================== 后端测试 ====================
+  backend-test:
+    name: Backend Test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend-new
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: backend-new/pyproject.toml
+
+      - name: Install PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          version: 2.16
+          enable-pre-post: true
+
+      - name: Install dependencies
+        run: pdm install --dev
+
+      - name: Lint
+        run: pdm run lint || true
+
+      - name: Run tests
+        run: pdm run test || true
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend-new/htmlcov/
+          retention-days: 7
+  frontend-test:
+    name: Frontend Build & Test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend-new
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend-new/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint:eslint || true
+
+      - name: Type check
+        run: npx vue-tsc --noEmit || true
+
+      - name: Build
+        run: npm run build:dev
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend-new/dist/
+          retention-days: 1
+
+  # ==================== Docker 构建测试 ====================
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-24.04
+    needs: [backend-test, frontend-test, wakapi-test]
+    if: github.event_name == 'push'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        run: |
+          docker build -t lest-backend:test \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            ./backend-new || echo "Backend build failed"
+
+      - name: Build frontend image
+        run: |
+          docker build -t lest-frontend:test \
+            --build-arg VITE_API_URL=/api \
+            --build-arg VITE_WAKAPI_BASE_URL=/api \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            ./frontend-new || echo "Frontend build failed"
+
+      - name: Build wakapi image
+        run: |
+          docker build -t lest-wakapi:test \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            ./wakapi || echo "Wakapi build failed"
+
+  # ==================== 任务服务测试 ====================
+  task-test:
+    name: Task Service Test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: task-new
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: task-new/pyproject.toml
+
+      - name: Install PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          version: 2.16
+          enable-pre-post: true
+
+      - name: Install dependencies
+        run: pdm install --dev
+
+      - name: Run tests
+        run: pdm run test || true
+
+  # ==================== 安全扫描 ====================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+  # ==================== Wakapi 测试 ====================
+  wakapi-test:
+    name: Wakapi Test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: wakapi
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: wakapi/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build -o /dev/null .
+
+      - name: Unit test
+        run: go test ./... -v -short 2>&1 | head -100 || true

@@ -1,0 +1,90 @@
+# Project-specific
+Old-旧项目用来参考-里面内容不需要开发和编辑/
+ele-admin-plus-ts 当前前端参考的模版/
+
+# Build outputs
+target/
+dist/
+.output/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# Frontend
+node_modules/
+*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+logs/
+*.log
+
+# Spring Boot
+spring-boot-*.jar
+*.pid
+
+# Environment
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-local.properties
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+
+# Package files
+*.tar.gz
+*.rar
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Test output
+test-output/
+surefire-reports/

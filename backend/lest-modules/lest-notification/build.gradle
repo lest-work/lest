@@ -1,0 +1,49 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+
+    implementation project(':lest-common:lest-common-base')
+    implementation project(':lest-common:lest-common-security')
+    implementation project(':lest-common:lest-common-redis')
+    implementation project(':lest-common:lest-common-log')
+
+    // Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation "com.baomidou:mybatis-plus-spring-boot4-starter:${rootProject.ext.mybatisPlusVersion}"
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    // RestTemplate support for LoadBalancer (moved to restclient module in Spring Boot 4)
+    implementation 'org.springframework.boot:spring-boot-starter-restclient'
+
+    // Resilience4j
+    implementation "io.github.resilience4j:resilience4j-spring-boot4:${rootProject.ext.resilience4jVersion}"
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker'
+    implementation 'io.github.resilience4j:resilience4j-timelimiter'
+
+    // Email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}

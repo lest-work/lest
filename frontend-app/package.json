@@ -1,0 +1,35 @@
+{
+  "name": "lest-platform-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LEST Platform Native APP",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "build:android": "cd android && ./gradlew assembleRelease",
+    "build:ios": "cd ios && xcodebuild -workspace LestApp.xcworkspace -scheme LestApp -configuration Release -destination 'generic/platform=iOS' build"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-native": "^0.79.0",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "@react-navigation/bottom-tabs": "^7.0.0",
+    "react-native-screens": "^4.0.0",
+    "react-native-safe-area-context": "^5.0.0",
+    "zustand": "^5.0.0",
+    "axios": "^1.9.0",
+    "react-native-vector-icons": "^10.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/runtime": "^7.26.0",
+    "@react-native/babel-preset": "^0.79.0",
+    "@react-native/metro-config": "^0.79.0",
+    "@react-native/typescript-config": "^0.79.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.8.0"
+  }
+}
