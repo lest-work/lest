@@ -138,6 +138,11 @@
             <el-option v-for="p in projectOptions" :key="p.id" :label="p.name" :value="p.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="所属迭代">
+          <el-select v-model="formData.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%" :disabled="!formData.projectId">
+            <el-option v-for="it in iterationOptions" :key="it.id" :label="it.name" :value="it.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="任务类型" prop="taskType">
           <el-select v-model="formData.taskType" style="width: 100%">
             <el-option label="用户故事" value="story" />
@@ -215,13 +220,13 @@
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessageBox } from 'element-plus';
   import { EleMessage } from 'ele-admin-plus';
   import { SearchOutlined, PlusOutlined, ReloadOutlined, PictureOutlined as KanbanIcon } from '@/components/icons';
   import { pageTasks, addTask, updateTask, removeTask, updateTaskStatus } from '@/api/task';
-  import { pageProjects } from '@/api/project';
+  import { pageProjects, listIterations } from '@/api/project';
 
   const router = useRouter();
 
@@ -236,6 +241,7 @@
   const list = ref([]);
   const total = ref(0);
   const projectOptions = ref([]);
+  const iterationOptions = ref([]);
   const dialogVisible = ref(false);
   const drawerVisible = ref(false);
   const statusDialogVisible = ref(false);
@@ -256,6 +262,7 @@
     id: undefined,
     title: '',
     projectId: undefined,
+    iterationId: undefined,
     taskType: 'task',
     priority: 'p2',
     status: 'todo',
@@ -289,6 +296,16 @@
     }).catch(() => {});
   }
 
+  watch(() => formData.projectId, (val) => {
+    iterationOptions.value = [];
+    formData.iterationId = undefined;
+    if (val) {
+      listIterations(val, { pageSize: 100 }).then((res) => {
+        iterationOptions.value = res.rows ?? [];
+      }).catch(() => {});
+    }
+  });
+
   function handleSearch() {
     query.pageNum = 1;
     fetchList();
@@ -308,6 +325,7 @@
       id: undefined,
       title: '',
       projectId: undefined,
+      iterationId: undefined,
       taskType: 'task',
       priority: 'p2',
       status: 'todo',
@@ -315,6 +333,7 @@
       estimatedHours: undefined,
       description: ''
     });
+    iterationOptions.value = [];
     dialogVisible.value = true;
   }
 

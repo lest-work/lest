@@ -20,7 +20,7 @@ public interface TaskMapper
 
     List<Task> selectTaskList(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId,
                               @Param("assigneeId") Long assigneeId, @Param("status") String status,
-                              @Param("priority") String priority, @Param("keyword") String keyword);
+                              @Param("priority") String priority, @Param("title") String title);
 
     List<Task> selectBoardTasks(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId);
 

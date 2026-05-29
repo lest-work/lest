@@ -24,6 +24,14 @@
         </el-select>
         <el-button :icon="ReloadOutlined" @click="loadBoard">刷新</el-button>
         <el-button :icon="ListIcon" @click="$router.push('/task/index')">列表视图</el-button>
+        <el-button
+          v-if="projectId"
+          type="primary"
+          :icon="PlusOutlined"
+          @click="openNewTaskDialog"
+        >
+          新建任务
+        </el-button>
       </div>
     </ele-card>
 
@@ -134,6 +142,46 @@
       </div>
     </ele-loading>
 
+    <!-- 新建任务弹窗 / New task dialog -->
+    <el-dialog v-model="newTaskVisible" title="新建任务" width="500px" destroy-on-close>
+      <el-form ref="newTaskFormRef" :model="newTaskForm" :rules="newTaskRules" label-width="90px">
+        <el-form-item label="任务标题" prop="title">
+          <el-input v-model="newTaskForm.title" maxlength="200" show-word-limit />
+        </el-form-item>
+        <el-form-item label="所属迭代">
+          <el-select v-model="newTaskForm.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%">
+            <el-option v-for="it in iterationOptions" :key="it.id" :label="it.name" :value="it.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="任务类型">
+          <el-select v-model="newTaskForm.taskType" style="width: 100%">
+            <el-option label="用户故事" value="story" />
+            <el-option label="开发任务" value="task" />
+            <el-option label="Bug" value="bug" />
+            <el-option label="改进" value="improvement" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="优先级">
+          <el-select v-model="newTaskForm.priority" style="width: 100%">
+            <el-option label="P0 - 紧急" value="p0" />
+            <el-option label="P1 - 高" value="p1" />
+            <el-option label="P2 - 中" value="p2" />
+            <el-option label="P3 - 低" value="p3" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="截止日期">
+          <el-date-picker v-model="newTaskForm.dueDate" type="date" value-format="YYYY-MM-DD" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="newTaskForm.description" type="textarea" :rows="3" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="newTaskVisible = false">取消</el-button>
+        <el-button type="primary" :loading="newTaskLoading" @click="handleCreateTask">确定</el-button>
+      </template>
+    </el-dialog>
+
     <!-- 任务详情弹窗 / Task detail dialog -->
     <el-drawer
       v-model="drawerVisible"
@@ -163,10 +211,13 @@
 
 <script setup>
   import { ref, reactive, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
   import { EleMessage } from 'ele-admin-plus';
-  import { ReloadOutlined, UnorderedListOutlined as ListIcon } from '@/components/icons';
-  import { getBoard, updateTaskStatus } from '@/api/task';
+  import { ReloadOutlined, UnorderedListOutlined as ListIcon, PlusOutlined } from '@/components/icons';
+  import { getBoard, updateTaskStatus, addTask } from '@/api/task';
   import { pageProjects, listIterations } from '@/api/project';
+
+  const route = useRoute();
 
   const TYPE_LABEL = { story: '故事', task: '任务', bug: 'Bug', improvement: '改进' };
   const TYPE_TAG = { story: 'primary', task: '', bug: 'danger', improvement: 'warning' };
@@ -182,6 +233,23 @@
   const iterationOptions = ref([]);
   const drawerVisible = ref(false);
   const currentTask = ref({});
+
+  const newTaskVisible = ref(false);
+  const newTaskLoading = ref(false);
+  const newTaskFormRef = ref(null);
+  const newTaskForm = reactive({
+    projectId: undefined,
+    iterationId: undefined,
+    title: '',
+    taskType: 'task',
+    priority: 'p2',
+    status: 'todo',
+    dueDate: undefined,
+    description: ''
+  });
+  const newTaskRules = {
+    title: [{ required: true, message: '请输入任务标题', trigger: 'blur' }]
+  };
 
   const DEFAULT_COLUMNS = [
     { status: 'todo', title: '待办', tasks: [] },
@@ -246,5 +314,44 @@
     drawerVisible.value = true;
   }
 
-  onMounted(loadProjectOptions);
+  function openNewTaskDialog() {
+    Object.assign(newTaskForm, {
+      projectId: projectId.value,
+      iterationId: iterationId.value || undefined,
+      title: '',
+      taskType: 'task',
+      priority: 'p2',
+      status: 'todo',
+      dueDate: undefined,
+      description: ''
+    });
+    newTaskVisible.value = true;
+  }
+
+  function handleCreateTask() {
+    newTaskFormRef.value?.validate().then(() => {
+      newTaskLoading.value = true;
+      addTask(newTaskForm)
+        .then(() => {
+          EleMessage.success({ message: '新建成功', plain: true });
+          newTaskVisible.value = false;
+          loadBoard();
+        })
+        .catch((e) => {
+          EleMessage.error({ message: e.message, plain: true });
+        })
+        .finally(() => {
+          newTaskLoading.value = false;
+        });
+    });
+  }
+
+  onMounted(() => {
+    loadProjectOptions();
+    const qid = route.query.projectId;
+    if (qid) {
+      projectId.value = Number(qid);
+      handleProjectChange(projectId.value);
+    }
+  });
 </script>

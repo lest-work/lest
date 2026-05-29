@@ -45,7 +45,7 @@ public class TaskServiceImpl implements ITaskService
     {
         List<Task> list = taskMapper.selectTaskList(
                 task.getProjectId(), task.getIterationId(), task.getAssigneeId(),
-                task.getStatus(), task.getPriority(), null);
+                task.getStatus(), task.getPriority(), task.getTitle());
         list.forEach(this::enrichTask);
         return list;
     }
