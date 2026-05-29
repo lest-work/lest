@@ -1,6 +1,6 @@
 # 📂 项目管理服务微观开发任务清单 (项目管理_tasks.md)
 
-> **最后更新**：2026-05-30 | **整体状态**：� 后端完成，前端核心页面已完成
+> **最后更新**：2026-06-01 | **整体状态**：� 后端完成，前端核心页面已完成
 
 ## 📌 模块技术上下文
 
@@ -45,7 +45,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **TSK-PROJ-API-221** | `GET /iteration/list` | 查询迭代列表 | P1 | � 已完成 |
 | **TSK-PROJ-API-222** | `POST /iteration` | 新增迭代 | P1 | � 已完成 |
-| **TSK-PROJ-API-223** | `PUT /iteration/{id}` | 更新迭代状态 | P1 | 🟢 已完成 |
+| **TSK-PROJ-API-223** | `PUT /iteration/{id}` | 更新迭代 | P1 | 🟢 已完成 |
 | **TSK-PROJ-API-231** | `GET /milestone/list` | 查询里程碑 | P2 | � 已完成 |
 | **TSK-PROJ-API-232** | `POST /milestone` | 新增里程碑 | P2 | � 已完成 |
 
