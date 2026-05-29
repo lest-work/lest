@@ -47,7 +47,7 @@
           <el-button type="primary" :icon="SearchOutlined" @click="handleSearch">查询</el-button>
           <el-button :icon="ReloadOutlined" @click="handleReset">重置</el-button>
           <el-button
-            v-permission="['task:add']"
+            v-permission="['task:task:add']"
             type="primary"
             :icon="PlusOutlined"
             @click="openAddDialog"
@@ -98,7 +98,7 @@
             <el-link type="primary" underline="never" @click="handleChangeStatus(row)">改状态</el-link>
             <el-divider direction="vertical" />
             <el-link
-              v-permission="['task:remove']"
+              v-permission="['task:task:remove']"
               type="danger"
               underline="never"
               @click="handleDelete(row)"

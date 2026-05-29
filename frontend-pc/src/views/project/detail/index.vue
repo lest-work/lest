@@ -19,7 +19,7 @@
         <div style="display: flex; gap: 8px">
           <el-button :icon="KanbanIcon" @click="goBoard">任务看板</el-button>
           <el-button
-            v-permission="['task:add']"
+            v-permission="['task:task:add']"
             type="primary"
             :icon="PlusOutlined"
             @click="openTaskDialog"
@@ -56,7 +56,7 @@
         <el-tab-pane label="成员" name="member">
           <div style="margin-bottom: 12px">
             <el-button
-              v-permission="['project:edit']"
+              v-permission="['project:project:edit']"
               type="primary"
               :icon="PlusOutlined"
               size="small"
@@ -79,7 +79,7 @@
             <el-table-column label="操作" width="80">
               <template #default="{ row }">
                 <el-link
-                  v-permission="['project:edit']"
+                  v-permission="['project:project:edit']"
                   type="danger"
                   underline="never"
                   @click="handleRemoveMember(row)"
@@ -95,7 +95,7 @@
         <el-tab-pane label="迭代" name="iteration">
           <div style="margin-bottom: 12px">
             <el-button
-              v-permission="['project:edit']"
+              v-permission="['project:project:edit']"
               type="primary"
               :icon="PlusOutlined"
               size="small"
@@ -170,7 +170,7 @@
             <el-table-column label="操作" width="80" fixed="right">
               <template #default="{ row }">
                 <el-link
-                  v-permission="['task:remove']"
+                  v-permission="['task:task:remove']"
                   type="danger"
                   underline="never"
                   @click="handleDeleteTask(row)"
@@ -196,7 +196,7 @@
         <el-tab-pane label="里程碑" name="milestone">
           <div style="margin-bottom: 12px">
             <el-button
-              v-permission="['project:edit']"
+              v-permission="['project:project:edit']"
               type="primary"
               :icon="PlusOutlined"
               size="small"
@@ -219,7 +219,7 @@
                     <div style="color: #666; font-size: 13px; margin-top: 4px">{{ m.description }}</div>
                   </div>
                   <el-link
-                    v-permission="['project:remove']"
+                    v-permission="['project:project:remove']"
                     type="danger"
                     underline="never"
                     @click="handleDeleteMilestone(m)"

@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.lest.common.core.web.controller.BaseController;
 import com.lest.common.core.web.domain.AjaxResult;
 import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.common.log.annotation.Log;
+import com.lest.common.log.enums.BusinessType;
+import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.project.domain.Iteration;
 import com.lest.modules.project.service.IIterationService;
 
@@ -21,6 +25,7 @@ import com.lest.modules.project.service.IIterationService;
  * @author yshan2028
  */
 @RestController
+@RequestMapping("")
 public class IterationController extends BaseController
 {
     @Autowired
@@ -29,6 +34,7 @@ public class IterationController extends BaseController
     /**
      * 查询迭代列表
      */
+    @RequiresPermissions("project:iteration:list")
     @GetMapping("/{projectId}/iteration/list")
     public TableDataInfo list(@PathVariable Long projectId, Iteration iteration)
     {
@@ -40,6 +46,7 @@ public class IterationController extends BaseController
     /**
      * 获取迭代详情
      */
+    @RequiresPermissions("project:iteration:query")
     @GetMapping("/iteration/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
     {
@@ -49,6 +56,8 @@ public class IterationController extends BaseController
     /**
      * 新增迭代
      */
+    @RequiresPermissions("project:iteration:add")
+    @Log(title = "迭代管理", businessType = BusinessType.INSERT)
     @PostMapping("/{projectId}/iteration")
     public AjaxResult add(@PathVariable Long projectId, @RequestBody Iteration iteration)
     {
@@ -59,6 +68,8 @@ public class IterationController extends BaseController
     /**
      * 修改迭代
      */
+    @RequiresPermissions("project:iteration:edit")
+    @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}")
     public AjaxResult edit(@PathVariable Long id, @RequestBody Iteration iteration)
     {
@@ -69,6 +80,8 @@ public class IterationController extends BaseController
     /**
      * 删除迭代
      */
+    @RequiresPermissions("project:iteration:remove")
+    @Log(title = "迭代管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/iteration/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {
@@ -78,6 +91,8 @@ public class IterationController extends BaseController
     /**
      * 启动迭代
      */
+    @RequiresPermissions("project:iteration:edit")
+    @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}/start")
     public AjaxResult start(@PathVariable Long id)
     {
@@ -87,6 +102,8 @@ public class IterationController extends BaseController
     /**
      * 完成迭代
      */
+    @RequiresPermissions("project:iteration:edit")
+    @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}/complete")
     public AjaxResult complete(@PathVariable Long id)
     {

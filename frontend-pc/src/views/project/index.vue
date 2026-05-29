@@ -22,7 +22,7 @@
           <el-button type="primary" :icon="SearchOutlined" @click="handleSearch">查询</el-button>
           <el-button :icon="ReloadOutlined" @click="handleReset">重置</el-button>
           <el-button
-            v-permission="['project:add']"
+            v-permission="['project:project:add']"
             type="primary"
             :icon="PlusOutlined"
             @click="openAddDialog"
@@ -75,7 +75,7 @@
                       归档
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-permission="['project:remove']"
+                      v-permission="['project:project:remove']"
                       style="color: #f56c6c"
                       @click.stop="handleDelete(item)"
                     >

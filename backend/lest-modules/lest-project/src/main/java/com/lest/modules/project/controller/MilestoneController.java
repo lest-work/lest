@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.lest.common.core.web.controller.BaseController;
 import com.lest.common.core.web.domain.AjaxResult;
 import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.common.log.annotation.Log;
+import com.lest.common.log.enums.BusinessType;
+import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.project.domain.Milestone;
 import com.lest.modules.project.domain.MilestoneIteration;
 import com.lest.modules.project.service.IMilestoneService;
@@ -22,6 +26,7 @@ import com.lest.modules.project.service.IMilestoneService;
  * @author yshan2028
  */
 @RestController
+@RequestMapping("")
 public class MilestoneController extends BaseController
 {
     @Autowired
@@ -30,6 +35,7 @@ public class MilestoneController extends BaseController
     /**
      * 查询里程碑列表
      */
+    @RequiresPermissions("project:milestone:list")
     @GetMapping("/{projectId}/milestone/list")
     public TableDataInfo list(@PathVariable Long projectId)
     {
@@ -41,6 +47,7 @@ public class MilestoneController extends BaseController
     /**
      * 获取里程碑详情
      */
+    @RequiresPermissions("project:milestone:query")
     @GetMapping("/milestone/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
     {
@@ -50,6 +57,8 @@ public class MilestoneController extends BaseController
     /**
      * 新增里程碑
      */
+    @RequiresPermissions("project:milestone:add")
+    @Log(title = "里程碑管理", businessType = BusinessType.INSERT)
     @PostMapping("/{projectId}/milestone")
     public AjaxResult add(@PathVariable Long projectId, @RequestBody Milestone milestone)
     {
@@ -60,6 +69,8 @@ public class MilestoneController extends BaseController
     /**
      * 修改里程碑
      */
+    @RequiresPermissions("project:milestone:edit")
+    @Log(title = "里程碑管理", businessType = BusinessType.UPDATE)
     @PutMapping("/milestone/{id}")
     public AjaxResult edit(@PathVariable Long id, @RequestBody Milestone milestone)
     {
@@ -70,6 +81,8 @@ public class MilestoneController extends BaseController
     /**
      * 删除里程碑
      */
+    @RequiresPermissions("project:milestone:remove")
+    @Log(title = "里程碑管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/milestone/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {
@@ -79,6 +92,8 @@ public class MilestoneController extends BaseController
     /**
      * 关联迭代到里程碑
      */
+    @RequiresPermissions("project:milestone:edit")
+    @Log(title = "里程碑管理", businessType = BusinessType.UPDATE)
     @PostMapping("/milestone/{id}/iteration")
     public AjaxResult addIteration(@PathVariable Long id, @RequestBody MilestoneIteration relation)
     {

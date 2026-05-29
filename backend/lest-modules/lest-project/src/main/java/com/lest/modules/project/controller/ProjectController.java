@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lest.common.core.web.controller.BaseController;
 import com.lest.common.core.web.domain.AjaxResult;
 import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.common.log.annotation.Log;
+import com.lest.common.log.enums.BusinessType;
+import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.project.domain.Project;
 import com.lest.modules.project.domain.ProjectMember;
 import com.lest.modules.project.service.IProjectService;
@@ -32,6 +35,7 @@ public class ProjectController extends BaseController
     /**
      * 查询项目列表
      */
+    @RequiresPermissions("project:project:list")
     @GetMapping("/list")
     public TableDataInfo list(Project project)
     {
@@ -43,6 +47,7 @@ public class ProjectController extends BaseController
     /**
      * 获取项目详情
      */
+    @RequiresPermissions("project:project:query")
     @GetMapping("/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
     {
@@ -52,6 +57,8 @@ public class ProjectController extends BaseController
     /**
      * 新增项目
      */
+    @RequiresPermissions("project:project:add")
+    @Log(title = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Project project)
     {
@@ -61,6 +68,8 @@ public class ProjectController extends BaseController
     /**
      * 修改项目
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Project project)
     {
@@ -70,6 +79,8 @@ public class ProjectController extends BaseController
     /**
      * 删除项目
      */
+    @RequiresPermissions("project:project:remove")
+    @Log(title = "项目管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {
@@ -79,6 +90,8 @@ public class ProjectController extends BaseController
     /**
      * 归档项目
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/archive")
     public AjaxResult archive(@PathVariable Long id)
     {
@@ -88,6 +101,8 @@ public class ProjectController extends BaseController
     /**
      * 取消归档项目
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/unarchive")
     public AjaxResult unarchive(@PathVariable Long id)
     {
@@ -107,6 +122,8 @@ public class ProjectController extends BaseController
     /**
      * 添加项目成员
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目成员", businessType = BusinessType.INSERT)
     @PostMapping("/{id}/member")
     public AjaxResult addMember(@PathVariable Long id, @RequestBody ProjectMember member)
     {
@@ -117,6 +134,8 @@ public class ProjectController extends BaseController
     /**
      * 移除项目成员
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}/member/{userId}")
     public AjaxResult removeMember(@PathVariable Long id, @PathVariable Long userId)
     {
@@ -126,6 +145,8 @@ public class ProjectController extends BaseController
     /**
      * 修改项目成员角色
      */
+    @RequiresPermissions("project:project:edit")
+    @Log(title = "项目成员", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/member/{userId}/role")
     public AjaxResult updateMemberRole(@PathVariable Long id, @PathVariable Long userId, @RequestBody ProjectMember member)
     {
