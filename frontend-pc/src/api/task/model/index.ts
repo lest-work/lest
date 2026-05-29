@@ -39,6 +39,51 @@ export interface Task {
 }
 
 /**
+ * 任务工时记录
+ */
+export interface TaskWorklog {
+  id?: number;
+  taskId?: number;
+  userId?: number;
+  hours?: number;
+  workDate?: string;
+  description?: string;
+  createTime?: string;
+}
+
+/**
+ * 任务评论
+ */
+export interface TaskComment {
+  id?: number;
+  taskId?: number;
+  userId?: number;
+  content?: string;
+  parentId?: number;
+  createTime?: string;
+  updateTime?: string;
+}
+
+/**
+ * 标签
+ */
+export interface Label {
+  id?: number;
+  projectId?: number;
+  name?: string;
+  color?: string;
+}
+
+/**
+ * 看板列
+ */
+export interface BoardColumn {
+  status: string;
+  title: string;
+  tasks: Task[];
+}
+
+/**
  * 任务查询参数
  */
 export interface TaskParam extends PageParam {

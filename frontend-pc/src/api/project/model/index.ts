@@ -38,10 +38,45 @@ export interface ProjectMember {
 }
 
 /**
+ * 迭代
+ */
+export interface Iteration {
+  id?: number;
+  projectId?: number;
+  name?: string;
+  goal?: string;
+  /** 状态：1=计划中，2=进行中，3=已完成 */
+  status?: number;
+  startDate?: string;
+  endDate?: string;
+  completedAt?: string;
+}
+
+/**
+ * 里程碑
+ */
+export interface Milestone {
+  id?: number;
+  projectId?: number;
+  name?: string;
+  description?: string;
+  targetDate?: string;
+  iterations?: Iteration[];
+}
+
+/**
  * 项目查询参数
  */
 export interface ProjectParam extends PageParam {
   name?: string;
   status?: number;
   ownerId?: number;
+}
+
+/**
+ * 迭代查询参数
+ */
+export interface IterationParam extends PageParam {
+  projectId?: number;
+  status?: number;
 }

@@ -1,15 +1,15 @@
 # 📋 任务管理服务微观开发任务清单 (任务管理_tasks.md)
 
-> **最后更新**：2026-05-29 | **整体状态**：🟡 后端基础完成，前端页面待开发
+> **最后更新**：2026-05-30 | **整体状态**：� 后端完成，前端核心页面已完成
 
 ## 📌 模块技术上下文
 
 - **微服务模块**：`lest-task`（端口: 8083）
 - **主目录**：`backend/lest-modules/lest-task`
 - **包路径**：`com.lest.modules.task`
-- **初始化 SQL**：❌ 尚未加入 `01_lest_platform_init.sql`（待补充）
-- **前端 API**：`frontend-pc/src/api/task/index.ts` + `model/index.ts`
-- **前端 PC 页面**：`frontend-pc/src/views/task/`（待开发）
+- **初始化 SQL**：✅ 已加入 `01_lest_platform_init.sql`（2026-05-30，task/label/task_label/task_watcher/task_worklog/task_comment/task_commit/task_dependency 建表 SQL）
+- **前端 API**：`frontend-pc/src/api/task/index.ts` + `model/index.ts`（含 Worklog/Comment/Label/BoardColumn 补全）
+- **前端 PC 页面**：`frontend-pc/src/views/task/`（✅ 核心页面已完成）
 
 ---
 
@@ -17,16 +17,14 @@
 
 | 任务 ID | 表名 | 说明 | 优先级 | 状态 | 备注 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TSK-TASK-DDL-101** | `task` | 任务主表（id/title/description/project_id/iteration_id/parent_id/task_type/priority/status/assignee_id/due_date/start_time/estimated_hours/actual_hours/sort/del_flag） | P0 | ⚠️ 代码已有，SQL 未补 | Java 实体 Task.java 存在，需加入 init.sql |
-| **TSK-TASK-DDL-102** | `label` | 标签主表（id/name/color/project_id） | P1 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-103** | `task_label` | 任务-标签关联（task_id/label_id） | P1 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-104** | `task_watcher` | 任务关注人（task_id/user_id/create_time） | P2 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-105** | `task_worklog` | 工时记录（id/task_id/user_id/hours/log_date/description/create_time） | P1 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-106** | `task_comment` | 任务评论（id/task_id/user_id/content/parent_id/create_time） | P1 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-107** | `task_commit` | 关联代码提交（id/task_id/repo/commit_hash/message/author/committed_at） | P2 | ⚠️ 代码已有，SQL 未补 | |
-| **TSK-TASK-DDL-108** | `task_dependency` | 任务依赖关系（id/task_id/depends_on_id/type） | P2 | ⚠️ 代码已有，SQL 未补 | |
-
-> **⚡ 下一步**：将上述建表 SQL 追加到 `backend/docker/mysql/db/01_lest_platform_init.sql`
+| **TSK-TASK-DDL-101** | `task` | 任务主表（id/title/description/project_id/iteration_id/parent_id/task_type/priority/status/assignee_id/due_date/start_time/estimated_hours/actual_hours/sort/deleted） | P0 | 🟢 已完成 | 2026-05-30 |
+| **TSK-TASK-DDL-102** | `label` | 标签主表（id/name/color/project_id） | P1 | 🟢 已完成 | |
+| **TSK-TASK-DDL-103** | `task_label` | 任务-标签关联（task_id/label_id） | P1 | 🟢 已完成 | |
+| **TSK-TASK-DDL-104** | `task_watcher` | 任务关注人（task_id/user_id/create_time） | P2 | 🟢 已完成 | |
+| **TSK-TASK-DDL-105** | `task_worklog` | 工时记录（id/task_id/user_id/hours/work_date/description/create_time） | P1 | 🟢 已完成 | |
+| **TSK-TASK-DDL-106** | `task_comment` | 任务评论（id/task_id/user_id/content/parent_id/create_time/update_time） | P1 | 🟢 已完成 | |
+| **TSK-TASK-DDL-107** | `task_commit` | 关联代码提交（id/task_id/repo/commit_hash/message/author/committed_at） | P2 | 🟢 已完成 | |
+| **TSK-TASK-DDL-108** | `task_dependency` | 任务依赖关系（id/task_id/depends_on_id/type） | P2 | 🟢 已完成 | |
 
 ---
 
@@ -73,8 +71,8 @@
 
 | 任务 ID | 文件 | 说明 | 状态 |
 | :--- | :--- | :--- | :--- |
-| **TSK-TASK-FE-301** | `src/api/task/index.ts` | CRUD + 状态/认领/看板/甘特/工时 API | 🟢 已完成，Cascade 2026-05-29 |
-| **TSK-TASK-FE-302** | `src/api/task/model/index.ts` | Task/TaskParam 类型定义 | 🟢 已完成，Cascade 2026-05-29 |
+| **TSK-TASK-FE-301** | `src/api/task/index.ts` | CRUD + 状态/认领/看板/甘特/工时/评论/标签/子任务 API | 🟢 已完成，Cascade 2026-05-30 |
+| **TSK-TASK-FE-302** | `src/api/task/model/index.ts` | Task/TaskParam/TaskWorklog/TaskComment/Label/BoardColumn 类型 | 🟢 已完成，Cascade 2026-05-30 |
 
 ### 3.2 首页仪表盘集成
 
@@ -82,12 +80,12 @@
 | :--- | :--- | :--- | :--- |
 | **TSK-TASK-FE-303** | `views/index/components/task-card.vue` | 首页"我的任务"卡片，按当前用户过滤，显示优先级和状态 | 🟢 已完成，Cascade 2026-05-29 |
 
-### 3.3 独立页面（待开发）
+### 3.3 独立页面
 
-| 任务 ID | 页面路径 | 路由 | 功能 | 优先级 | 状态 |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TSK-TASK-FE-310** | `views/task/index.vue` | `/task` | 任务列表页（筛选：项目/迭代/状态/优先级/负责人） | P0 | 🔴 待开发 |
-| **TSK-TASK-FE-311** | `views/task/board/index.vue` | `/task/board` | 看板视图（列：待办/进行中/已完成，拖拽更新状态） | P0 | 🔴 待开发 |
-| **TSK-TASK-FE-312** | `views/task/gantt/index.vue` | `/task/gantt` | 甘特图（ECharts 横道图） | P1 | 🔴 待开发 |
-| **TSK-TASK-FE-313** | 任务详情抽屉 | — | 标题/描述/子任务/评论/工时/关联 commit | P0 | 🔴 待开发 |
-| **TSK-TASK-FE-314** | 工时日志组件 | — | 工时列表 + 新增工时弹窗 | P1 | 🔴 待开发 |
+| 任务 ID | 页面路径 | 路由 | 功能 | 优先级 | 状态 | 备注 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **TSK-TASK-FE-310** | `views/task/index.vue` | `/task` | 任务列表页（筛选：项目/状态/优先级/分页/状态更改/详情抽屉） | P0 | � 已完成 | 2026-05-30 |
+| **TSK-TASK-FE-311** | `views/task/board/index.vue` | `/task/board` | 看板视图（三列看板、按项目/迭代过滤、状态快捷按钮） | P0 | � 已完成 | 2026-05-30，拖拽待后续 |
+| **TSK-TASK-FE-312** | `views/task/gantt/index.vue` | `/task/gantt` | 甘特图（ECharts 横道图） | P1 | 🔴 待开发 | 下一阶段 |
+| **TSK-TASK-FE-313** | 任务详情抽屉 | — | 所属信息已内置于列表页 Drawer | P0 | � 基础完成 | 工时/评论待完善 |
+| **TSK-TASK-FE-314** | 工时日志组件 | — | 工时列表 + 新增工时弹窗 | P1 | 🔴 待开发 | 下一阶段 |

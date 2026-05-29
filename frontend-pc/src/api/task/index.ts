@@ -1,8 +1,8 @@
 import request from '@/utils/request';
 import type { AjaxResult, TableDataInfo } from '@/api';
-import type { Task, TaskParam } from './model';
+import type { Task, TaskParam, TaskWorklog, TaskComment, Label, BoardColumn } from './model';
 
-export type { Task, TaskParam } from './model';
+export type { Task, TaskParam, TaskWorklog, TaskComment, Label, BoardColumn } from './model';
 
 const PRIORITY_ORDER: Record<string, number> = { p0: 1, p1: 2, p2: 3, p3: 4 };
 
@@ -71,13 +71,94 @@ export async function claimTask(id: number): Promise<string> {
 }
 
 /**
- * 获取看板视图
+ * 获取看板视图（按状态分组）
  */
-export async function getBoard(projectId: number, iterationId?: number) {
-  const res = await request.get<AjaxResult<unknown>>('/task/board', {
+export async function getBoard(projectId: number, iterationId?: number): Promise<BoardColumn[]> {
+  const res = await request.get<AjaxResult<BoardColumn[]>>('/task/board', {
     params: { projectId, iterationId }
   });
+  if (res.data.code === 200) return res.data.data ?? [];
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 获取甘特图数据
+ */
+export async function getGantt(projectId: number) {
+  const res = await request.get<AjaxResult<unknown>>('/task/gantt', { params: { projectId } });
   if (res.data.code === 200) return res.data.data;
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 查询子任务列表
+ */
+export async function listSubtasks(id: number): Promise<Task[]> {
+  const res = await request.get<AjaxResult<Task[]>>(`/task/${id}/subtask`);
+  if (res.data.code === 200) return res.data.data ?? [];
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 查询工时记录
+ */
+export async function listWorklogs(taskId: number): Promise<TaskWorklog[]> {
+  const res = await request.get<AjaxResult<TaskWorklog[]>>(`/task/${taskId}/worklog`);
+  if (res.data.code === 200) return res.data.data ?? [];
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 新增工时记录
+ */
+export async function addWorklog(data: TaskWorklog): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>('/task/worklog', data);
+  if (res.data.code === 200) return res.data.msg;
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 查询任务评论列表
+ */
+export async function listComments(taskId: number): Promise<TaskComment[]> {
+  const res = await request.get<AjaxResult<TaskComment[]>>(`/task/${taskId}/comment`);
+  if (res.data.code === 200) return res.data.data ?? [];
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 新增任务评论
+ */
+export async function addComment(data: TaskComment): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>('/task/comment', data);
+  if (res.data.code === 200) return res.data.msg;
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 查询标签列表
+ */
+export async function listLabels(projectId?: number): Promise<Label[]> {
+  const res = await request.get<AjaxResult<Label[]>>('/label/list', { params: { projectId } });
+  if (res.data.code === 200) return res.data.data ?? [];
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 新增标签
+ */
+export async function addLabel(data: Label): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>('/label', data);
+  if (res.data.code === 200) return res.data.msg;
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 删除标签
+ */
+export async function removeLabel(id: number): Promise<string> {
+  const res = await request.delete<AjaxResult<unknown>>(`/label/${id}`);
+  if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
 

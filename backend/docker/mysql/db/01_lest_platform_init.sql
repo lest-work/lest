@@ -705,3 +705,216 @@ INSERT INTO sys_menu (menu_id, parent_id, menu_name, order_num, path, component,
 -- 角色菜单关联（超管拥有所有菜单）
 INSERT INTO sys_role_menu (role_id, menu_id)
 SELECT 1, menu_id FROM sys_menu;
+
+-- ============================================================
+-- 项目管理模块 Project Module
+-- ============================================================
+
+DROP TABLE IF EXISTS `project`;
+CREATE TABLE `project` (
+  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '项目ID',
+  `name`        varchar(100) NOT NULL                COMMENT '项目名称',
+  `description` text                                 COMMENT '项目描述',
+  `status`      tinyint      NOT NULL DEFAULT 1      COMMENT '状态：1-活跃 2-已归档',
+  `template`    varchar(20)  NOT NULL DEFAULT 'agile' COMMENT '模板：agile/waterfall/kanban',
+  `owner_id`    bigint                               COMMENT '负责人用户ID',
+  `start_date`  date                                 COMMENT '开始日期',
+  `end_date`    date                                 COMMENT '结束日期',
+  `deleted`     tinyint      NOT NULL DEFAULT 0      COMMENT '逻辑删除：0-正常 1-删除',
+  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
+  `create_time` datetime                             COMMENT '创建时间',
+  `update_by`   varchar(64)           DEFAULT ''     COMMENT '更新者',
+  `update_time` datetime                             COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='项目表';
+
+DROP TABLE IF EXISTS `project_member`;
+CREATE TABLE `project_member` (
+  `project_id` bigint      NOT NULL                    COMMENT '项目ID',
+  `user_id`    bigint      NOT NULL                    COMMENT '用户ID',
+  `role`       varchar(20) NOT NULL DEFAULT 'developer' COMMENT '角色：admin/developer/observer',
+  `joined_at`  datetime             DEFAULT CURRENT_TIMESTAMP COMMENT '加入时间',
+  PRIMARY KEY (`project_id`, `user_id`)
+) ENGINE=InnoDB COMMENT='项目成员表';
+
+DROP TABLE IF EXISTS `iteration`;
+CREATE TABLE `iteration` (
+  `id`           bigint      NOT NULL AUTO_INCREMENT COMMENT '迭代ID',
+  `project_id`   bigint      NOT NULL                COMMENT '所属项目ID',
+  `name`         varchar(100) NOT NULL               COMMENT '迭代名称',
+  `goal`         text                                COMMENT '迭代目标',
+  `status`       tinyint     NOT NULL DEFAULT 1      COMMENT '状态：1-计划中 2-进行中 3-已完成',
+  `start_date`   date                                COMMENT '开始日期',
+  `end_date`     date                                COMMENT '结束日期',
+  `completed_at` datetime                            COMMENT '完成时间',
+  `create_by`    varchar(64)          DEFAULT ''     COMMENT '创建者',
+  `create_time`  datetime                            COMMENT '创建时间',
+  `update_by`    varchar(64)          DEFAULT ''     COMMENT '更新者',
+  `update_time`  datetime                            COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_iteration_project` (`project_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='迭代表';
+
+DROP TABLE IF EXISTS `milestone`;
+CREATE TABLE `milestone` (
+  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '里程碑ID',
+  `project_id`  bigint       NOT NULL                COMMENT '所属项目ID',
+  `name`        varchar(100) NOT NULL                COMMENT '里程碑名称',
+  `description` text                                 COMMENT '描述',
+  `target_date` date                                 COMMENT '目标日期',
+  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
+  `create_time` datetime                             COMMENT '创建时间',
+  `update_by`   varchar(64)           DEFAULT ''     COMMENT '更新者',
+  `update_time` datetime                             COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_milestone_project` (`project_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='里程碑表';
+
+DROP TABLE IF EXISTS `milestone_iteration`;
+CREATE TABLE `milestone_iteration` (
+  `milestone_id`  bigint NOT NULL COMMENT '里程碑ID',
+  `iteration_id`  bigint NOT NULL COMMENT '迭代ID',
+  PRIMARY KEY (`milestone_id`, `iteration_id`)
+) ENGINE=InnoDB COMMENT='里程碑-迭代关联表';
+
+-- ============================================================
+-- 任务管理模块 Task Module
+-- ============================================================
+
+DROP TABLE IF EXISTS `task`;
+CREATE TABLE `task` (
+  `id`               bigint        NOT NULL AUTO_INCREMENT  COMMENT '任务ID',
+  `title`            varchar(200)  NOT NULL                 COMMENT '任务标题',
+  `description`      text                                   COMMENT '任务描述',
+  `project_id`       bigint        NOT NULL                 COMMENT '所属项目ID',
+  `iteration_id`     bigint                                 COMMENT '所属迭代ID',
+  `parent_id`        bigint                                 COMMENT '父任务ID（子任务）',
+  `task_type`        varchar(20)   NOT NULL DEFAULT 'task'  COMMENT '类型：story/task/bug/improvement',
+  `priority`         varchar(10)   NOT NULL DEFAULT 'p2'    COMMENT '优先级：p0/p1/p2/p3',
+  `status`           varchar(20)   NOT NULL DEFAULT 'todo'  COMMENT '状态：todo/in_progress/completed',
+  `assignee_id`      bigint                                 COMMENT '负责人用户ID',
+  `start_time`       datetime                               COMMENT '开始时间',
+  `completed_at`     datetime                               COMMENT '完成时间',
+  `estimated_hours`  decimal(6,2)                           COMMENT '预估工时（小时）',
+  `actual_hours`     decimal(6,2)                           COMMENT '实际工时（小时）',
+  `due_date`         date                                   COMMENT '截止日期',
+  `sort`             int                    DEFAULT 0       COMMENT '排序权重',
+  `deleted`          tinyint       NOT NULL DEFAULT 0       COMMENT '逻辑删除：0-正常 1-删除',
+  `create_by`        varchar(64)            DEFAULT ''      COMMENT '创建者',
+  `create_time`      datetime                               COMMENT '创建时间',
+  `update_by`        varchar(64)            DEFAULT ''      COMMENT '更新者',
+  `update_time`      datetime                               COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_task_project`  (`project_id`),
+  KEY `idx_task_assignee` (`assignee_id`),
+  KEY `idx_task_status`   (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务表';
+
+DROP TABLE IF EXISTS `label`;
+CREATE TABLE `label` (
+  `id`          bigint      NOT NULL AUTO_INCREMENT    COMMENT '标签ID',
+  `project_id`  bigint      NOT NULL                  COMMENT '所属项目ID',
+  `name`        varchar(50) NOT NULL                  COMMENT '标签名称',
+  `color`       varchar(20) NOT NULL DEFAULT '#409EFF' COMMENT '标签颜色',
+  `create_by`   varchar(64)          DEFAULT ''        COMMENT '创建者',
+  `create_time` datetime                               COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='标签表';
+
+DROP TABLE IF EXISTS `task_label`;
+CREATE TABLE `task_label` (
+  `task_id`  bigint NOT NULL COMMENT '任务ID',
+  `label_id` bigint NOT NULL COMMENT '标签ID',
+  PRIMARY KEY (`task_id`, `label_id`)
+) ENGINE=InnoDB COMMENT='任务-标签关联表';
+
+DROP TABLE IF EXISTS `task_watcher`;
+CREATE TABLE `task_watcher` (
+  `task_id`     bigint   NOT NULL                         COMMENT '任务ID',
+  `user_id`     bigint   NOT NULL                         COMMENT '用户ID',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP        COMMENT '关注时间',
+  PRIMARY KEY (`task_id`, `user_id`)
+) ENGINE=InnoDB COMMENT='任务关注人表';
+
+DROP TABLE IF EXISTS `task_worklog`;
+CREATE TABLE `task_worklog` (
+  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '工时记录ID',
+  `task_id`     bigint       NOT NULL                COMMENT '任务ID',
+  `user_id`     bigint       NOT NULL                COMMENT '记录人用户ID',
+  `hours`       decimal(6,2) NOT NULL                COMMENT '工时（小时）',
+  `work_date`   date         NOT NULL                COMMENT '工作日期',
+  `description` varchar(500)                         COMMENT '工作内容描述',
+  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
+  `create_time` datetime                             COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_worklog_task` (`task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务工时记录表';
+
+DROP TABLE IF EXISTS `task_comment`;
+CREATE TABLE `task_comment` (
+  `id`          bigint   NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+  `task_id`     bigint   NOT NULL                COMMENT '任务ID',
+  `user_id`     bigint   NOT NULL                COMMENT '评论人用户ID',
+  `content`     text     NOT NULL                COMMENT '评论内容',
+  `parent_id`   bigint                           COMMENT '父评论ID（回复）',
+  `create_by`   varchar(64)      DEFAULT ''      COMMENT '创建者',
+  `create_time` datetime                         COMMENT '创建时间',
+  `update_time` datetime                         COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_comment_task` (`task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务评论表';
+
+DROP TABLE IF EXISTS `task_commit`;
+CREATE TABLE `task_commit` (
+  `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `task_id`      bigint       NOT NULL                COMMENT '任务ID',
+  `repo`         varchar(200)                         COMMENT '仓库名称',
+  `commit_hash`  varchar(64)  NOT NULL                COMMENT '提交哈希',
+  `message`      varchar(500)                         COMMENT '提交信息',
+  `author`       varchar(100)                         COMMENT '提交者',
+  `committed_at` datetime                             COMMENT '提交时间',
+  `create_by`    varchar(64)           DEFAULT ''     COMMENT '创建者',
+  `create_time`  datetime                             COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_commit_task` (`task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务关联代码提交表';
+
+DROP TABLE IF EXISTS `task_dependency`;
+CREATE TABLE `task_dependency` (
+  `id`            bigint      NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `task_id`       bigint      NOT NULL                COMMENT '任务ID',
+  `depends_on_id` bigint      NOT NULL                COMMENT '依赖的任务ID',
+  `type`          varchar(20) NOT NULL DEFAULT 'blocks' COMMENT '依赖类型：blocks/blocked_by',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_task_dep` (`task_id`, `depends_on_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务依赖关系表';
+
+-- ============================================================
+-- 项目管理 & 任务管理菜单 sys_menu
+-- ============================================================
+INSERT INTO sys_menu (menu_id, parent_id, menu_name, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, remark) VALUES
+-- 一级目录：项目管理
+(4,   0, '项目管理', 4, '/project', NULL, '', '', 1, 0, 'M', '0', '0', '', 'IconElFolderOpened', 'admin', NOW(), ''),
+-- 一级目录：任务管理
+(5,   0, '任务管理', 5, '/task',    NULL, '', '', 1, 0, 'M', '0', '0', '', 'IconElTickets',      'admin', NOW(), ''),
+-- 项目管理子菜单
+(400, 4, '项目列表',  1, 'index',      '/project/index',  '', '', 1, 0, 'C', '0', '0', 'project:list',   'IconElGrid',     'admin', NOW(), ''),
+(401, 4, '项目详情',  2, 'detail/:id', '/project/detail', '', '', 1, 0, 'C', '1', '0', 'project:query',  '',               'admin', NOW(), ''),
+-- 任务管理子菜单
+(500, 5, '任务列表',  1, 'index', '/task/index', '', '', 1, 0, 'C', '0', '0', 'task:list',  'IconElList',   'admin', NOW(), ''),
+(501, 5, '任务看板',  2, 'board', '/task/board', '', '', 1, 0, 'C', '0', '0', 'task:board', 'IconElPicture','admin', NOW(), ''),
+-- 项目管理按钮
+(2000, 400, '项目查询', 1, '#', '', '', '', 1, 0, 'F', '0', '0', 'project:query',  '#', 'admin', NOW(), ''),
+(2001, 400, '项目新增', 2, '#', '', '', '', 1, 0, 'F', '0', '0', 'project:add',    '#', 'admin', NOW(), ''),
+(2002, 400, '项目修改', 3, '#', '', '', '', 1, 0, 'F', '0', '0', 'project:edit',   '#', 'admin', NOW(), ''),
+(2003, 400, '项目删除', 4, '#', '', '', '', 1, 0, 'F', '0', '0', 'project:remove', '#', 'admin', NOW(), ''),
+-- 任务管理按钮
+(2010, 500, '任务查询', 1, '#', '', '', '', 1, 0, 'F', '0', '0', 'task:query',  '#', 'admin', NOW(), ''),
+(2011, 500, '任务新增', 2, '#', '', '', '', 1, 0, 'F', '0', '0', 'task:add',    '#', 'admin', NOW(), ''),
+(2012, 500, '任务修改', 3, '#', '', '', '', 1, 0, 'F', '0', '0', 'task:edit',   '#', 'admin', NOW(), ''),
+(2013, 500, '任务删除', 4, '#', '', '', '', 1, 0, 'F', '0', '0', 'task:remove', '#', 'admin', NOW(), '');
+
+-- 超管角色关联新菜单
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES
+(1,4),(1,5),(1,400),(1,401),(1,500),(1,501),
+(1,2000),(1,2001),(1,2002),(1,2003),(1,2010),(1,2011),(1,2012),(1,2013);

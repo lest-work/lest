@@ -79,23 +79,52 @@
 - Vue 3 + TypeScript + Element Plus + EleAdmin Pro
 
 ### ⚠️ 已知待完成 / Known Pending Items
-- `project`/`task` 建表 SQL 尚未加入 `01_lest_platform_init.sql` / DDL not yet in init SQL
-- 项目管理前端页面尚未开发 / Project management UI pages not yet built
-- 任务管理前端页面尚未开发 / Task management UI pages not yet built
+- 项目燃尽图（ECharts）尚未开发 / Project burndown chart not yet built
+- 任务详情页工时/评论功能待完善 / Task worklog & comment UI pending
 
 ---
 
-## [Unreleased] — upcoming v0.2.0 (W23, 2026-06-05)
+## [v0.2.0] — 2026-05-30 (W22)
+
+### 🎯 本周主题 / Sprint Theme
+**项目与任务前端页面** — Project & Task Frontend Pages (Milestone 2)
+
+### ✨ 新功能 / New Features
+
+#### 数据库 / Database
+- `project`/`project_member`/`iteration`/`milestone`/`milestone_iteration` 建表 SQL 加入 `01_lest_platform_init.sql`
+  / Project & iteration DDL added to unified init SQL
+- `task`/`label`/`task_label`/`task_watcher`/`task_worklog`/`task_comment`/`task_commit`/`task_dependency` 建表 SQL
+  / Task module DDL added to unified init SQL
+- `sys_menu` 新增项目管理与任务管理菜单及按钮权限数据 / Added project & task menus with button permissions
+
+#### 前端 API / Frontend API
+- `api/project/index.ts` 补全：Iteration CRUD、Milestone CRUD、Member 添加/移除 / Extended project API
+- `api/project/model/index.ts` 补全：`Iteration`、`Milestone`、`IterationParam` 类型 / Extended project models
+- `api/task/index.ts` 补全：Worklog、Comment、Label、子任务、Gantt、看板（类型化）/ Extended task API
+- `api/task/model/index.ts` 补全：`TaskWorklog`、`TaskComment`、`Label`、`BoardColumn` 类型 / Extended task models
+
+#### 前端页面 / Frontend Pages
+- `views/project/index.vue` — 项目列表（卡片网格、新建/编辑/归档/删除）/ Project list with card grid
+- `views/project/detail/index.vue` — 项目详情（概况/成员/迭代/里程碑四 Tab）/ Project detail with 4-tab layout
+- `views/task/index.vue` — 任务列表（搜索/分页/状态更改/详情抽屉）/ Task list with filters & drawer
+- `views/task/board/index.vue` — 任务看板（三列看板、按项目/迭代过滤、快捷状态流转）/ Kanban board
+
+### ⚠️ 已知待完成 / Known Pending Items
+- 项目燃尽图（ECharts）/ Project burndown chart
+- 任务工时/评论详情面板 / Task worklog & comment panel
+- 看板拖拽排序 / Kanban drag-and-drop sorting
+
+## [Unreleased] — upcoming v0.3.0 (W23, 2026-06-05)
 
 ### 🎯 计划主题 / Planned Theme
-**项目与任务前端页面** — Project & Task Frontend Pages
+**项目燃尽图与任务增强** — Burndown Chart & Task Enhancement
 
 ### 📋 计划内容 / Planned Items
-- [ ] 项目列表页 + 详情页（概况/成员/迭代/里程碑）/ Project list + detail page
-- [ ] 任务列表页（筛选/排序）/ Task list page with filters
-- [ ] 看板视图（拖拽更新状态）/ Kanban board with drag-and-drop
-- [ ] 任务详情抽屉（子任务/评论/工时）/ Task detail drawer
-- [ ] project/task 建表 SQL 加入 init.sql / Add DDL to init SQL
+- [ ] 项目燃尽图（ECharts）/ Project burndown chart
+- [ ] 任务详情面板（工时记录/评论区）/ Task detail panel with worklog & comments
+- [ ] 看板拖拽排序（HTML5 DnD / vuedraggable）/ Kanban drag-and-drop
+- [ ] 发布管理前端页面 / Release management UI pages
 
 ---
 
