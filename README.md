@@ -1,204 +1,233 @@
-# LEST Platform
-
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-brightgreen.svg" alt="version">
-  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
-  <img src="https://img.shields.io/badge/JDK-25-blue.svg" alt="jdk">
+  <img src="docs/assets/logo.png" alt="LEST Platform" width="120" />
 </p>
 
-基于 Spring Boot 4.x / Spring Cloud Alibaba / Maven 的企业级项目管理平台。
+<h1 align="center">LEST Platform</h1>
 
-> 对标 RuoYi-Cloud 目录结构，采用 Maven 多模块扁平化架构。
+<p align="center">
+  An open-source, cloud-native project management platform built for modern engineering teams.
+</p>
 
-## 目录结构
+<p align="center">
+  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/version-v0.2.0-brightgreen.svg" alt="version"></a>
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
+  <img src="https://img.shields.io/badge/JDK-21+-blue.svg" alt="jdk">
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green.svg" alt="spring boot">
+  <img src="https://img.shields.io/badge/Vue-3.x-42b883.svg" alt="vue">
+  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/文档-中文版-red.svg" alt="中文文档"></a>
+</p>
+
+<p align="center">
+  <a href="README.zh-CN.md">中文文档</a> ·
+  <a href="https://github.com/yshan2028/Lest/issues">Report Bug</a> ·
+  <a href="https://github.com/yshan2028/Lest/issues">Request Feature</a>
+</p>
+
+---
+
+## 📖 Overview
+
+**LEST Platform** is a full-featured, cloud-native project & task management platform targeting software engineering teams. It provides an integrated environment for project lifecycle management, sprint planning, task tracking, work-log recording, release management, and team collaboration.
+
+The backend is inspired by and architecturally aligned with the battle-tested [RuoYi-Cloud](https://ruoyi.vip) microservice framework. The frontend admin UI is built on top of [EleAdmin Pro](https://eleadmin.com), a premium Vue 3 component library.
+
+> **Note on Licensing** — The core frameworks we depend on offer official commercial licenses. If you use RuoYi in a commercial product, consider supporting the authors at [ruoyi.vip](https://ruoyi.vip). If you adopt EleAdmin Pro in production, purchasing an official license at [eleadmin.com](https://eleadmin.com) is the right thing to do and directly funds ongoing development.
+
+---
+
+## ✨ Features
+
+| Module | Highlights |
+|--------|-----------|
+| **Auth Service** | Captcha login, JWT token issuance & refresh, Redis session management |
+| **System Management** | User / Role / Menu / Dept / Post / Dictionary / Config / Notice |
+| **Audit Logs** | Operation logs, login logs, online user management, force logout |
+| **Scheduler** | Quartz-based job scheduler with execution history |
+| **Project Management** | Project CRUD, archive, member management, template support (Agile / Kanban / Waterfall) |
+| **Sprint / Iteration** | Sprint planning, status lifecycle, milestone timeline |
+| **Task Management** | Task CRUD, priority & type labeling, sub-tasks, assignment, due dates |
+| **Kanban Board** | Three-column board (Todo / In Progress / Done), filter by project & iteration |
+| **Work Log** | Per-task time logging with estimated vs actual hours tracking |
+| **File Service** | File upload/download backed by MinIO object storage |
+| **Dashboard** | Real-time activity feed, member online status, project progress cards |
+
+---
+
+## 🏗️ Architecture
+
+```
+                ┌──────────────────────────────────┐
+                │          Nginx / Frontend          │
+                │   Vue 3 + TypeScript + EleAdmin    │
+                └────────────────┬─────────────────┘
+                                 │ HTTP /api/*
+                ┌────────────────▼─────────────────┐
+                │          API Gateway [8080]        │
+                │   Spring Cloud Gateway + JWT Auth  │
+                └──┬────┬────┬────┬────┬────┬──────┘
+                   │    │    │    │    │    │
+        ┌──────────▼─┐ ┌▼──┐ ┌▼──┐ ┌▼──┐ ┌▼──┐  ┌──────┐
+        │ lest-auth  │ │sys│ │prj│ │tsk│ │job│  │ ...  │
+        │  [8096]    │ │81 │ │82 │ │83 │ │93 │  │      │
+        └────────────┘ └───┘ └───┘ └───┘ └───┘  └──────┘
+                   │    │    │    │    │
+        ┌──────────▼────▼────▼────▼────▼──────────────┐
+        │          Nacos (Service Registry + Config)    │
+        │          MySQL 8  ·  Redis 7  ·  Kafka        │
+        │          MinIO  ·  Sentinel                   │
+        └───────────────────────────────────────────────┘
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Backend Framework** | Spring Boot `4.0.3` + Spring Cloud `2025.1.0` + Spring Cloud Alibaba `2025.1.0.0` |
+| **Database ORM** | Native MyBatis + PageHelper (no Lombok, explicit accessors) |
+| **Security** | Spring Security + JWT (`jjwt 0.12.7`) |
+| **Service Registry** | Nacos v2.x |
+| **Cache** | Redis 7 + Spring Cache |
+| **Message Queue** | Apache Kafka |
+| **Object Storage** | MinIO |
+| **Scheduler** | Quartz |
+| **Frontend** | Vue 3 + TypeScript + Element Plus + Vite |
+| **UI Library** | [EleAdmin Pro](https://eleadmin.com) |
+| **Build** | Maven 3.9+ (multi-module flat layout) |
+| **Container** | Docker + Docker Compose |
+
+---
+
+## 📦 Module Structure
 
 ```
 lest-platform/
-├── bin/                          # 启动脚本
-│   ├── package.sh                 # Maven 全量构建
-│   ├── clean.sh                   # 清理构建产物
-│   ├── start-all.sh               # 启动核心服务
-│   ├── start-gateway.sh           # 启动网关
-│   ├── start-auth.sh              # 启动认证服务
-│   ├── start-system.sh            # 启动系统服务
-│   └── stop.sh                    # 停止所有服务
-├── docker/                        # Docker 部署
-│   ├── docker-compose.yml          # 完整部署编排
-│   ├── deploy.sh                   # 一键部署脚本
-│   ├── copy.sh                    # 构建产物复制脚本
-│   ├── mysql/                     # MySQL 配置
-│   ├── nacos/                     # Nacos 配置
-│   ├── redis/                     # Redis 配置
-│   ├── nginx/                     # Nginx 配置
-│   └── lest/                     # 微服务镜像目录
-│       ├── gateway/
-│       ├── auth/
-│       └── modules/ (system, project, task, ...)
-├── sql/                          # 数据库脚本
-├── docs/                         # 文档
-├── backend/                       # 后端源码
-│   ├── pom.xml                    # 父 POM
-│   ├── lest-common/             # 公共模块（8个子模块）
-│   │   ├── lest-common-core/    # 核心工具（Result/Exception/Utils）
-│   │   ├── lest-common-security/ # 安全认证（JWT/权限）
-│   │   ├── lest-common-log/     # 日志记录（LogAspect）
-│   │   ├── lest-common-redis/   # Redis 缓存
-│   │   ├── lest-common-swagger/ # Swagger 文档
-│   │   ├── lest-common-datascope/ # 数据权限
-│   │   ├── lest-common-datasource/ # 多数据源
-│   │   └── lest-common-sensitive/  # 数据脱敏
-│   ├── lest-auth-entity/        # 认证实体层（共享实体/Mapper）
-│   ├── lest-api/                 # Feign 接口层
-│   │   └── lest-api-system/     # 系统模块 Feign 客户端
-│   ├── lest-gateway/             # API 网关 [8080]
-│   ├── lest-auth/                # 认证服务 [8096]
-│   ├── lest-modules/             # 业务微服务
-│   │   ├── lest-system/         # 系统服务 [8081]
-│   │   ├── lest-project/        # 项目管理 [8082]
-│   │   ├── lest-task/           # 任务管理 [8083]
-│   │   ├── lest-release/        # 发布管理 [8087]
-│   │   ├── lest-job/            # 定时任务 [8093]
-│   │   ├── lest-file/          # 文件服务 [8091]
-│   │   ├── lest-ai/             # AI 服务 [8090]
-│   │   ├── lest-code/           # 代码管理 [8084]
-│   │   ├── lest-meeting/        # 会议服务 [8085]
-│   │   ├── lest-notification/   # 通知服务 [8086]
-│   │   ├── lest-performance/    # 性能监控 [8088]
-│   │   ├── lest-plugin/         # 插件服务 [8092]
-│   │   ├── lest-open/           # 开放平台 [8094]
-│   │   └── lest-wakapi/         # 时间追踪 [8089]
-│   └── lest-visual/             # 可视化模块
-│       └── lest-monitor/        # 监控中心 [9090]
-├── frontend-pc/                  # PC 端管理后台
-├── frontend-app/                 # 移动端
-├── frontend-h5/                  # H5 端
-└── Dockerfile                     # 多阶段 Docker 构建
+├── backend/                    # Java backend (Maven multi-module)
+│   ├── lest-common/            # Shared libraries (core/security/log/redis/...)
+│   ├── lest-auth/              # Authentication service            [8096]
+│   ├── lest-gateway/           # API Gateway                       [8080]
+│   ├── lest-api/               # Feign client interfaces
+│   └── lest-modules/
+│       ├── lest-system/        # System management                 [8081]
+│       ├── lest-project/       # Project management                [8082]
+│       ├── lest-task/          # Task management                   [8083]
+│       ├── lest-release/       # Release management                [8087]
+│       ├── lest-job/           # Job scheduler                     [8093]
+│       └── lest-file/          # File service                      [8091]
+├── frontend-pc/                # Admin web application (Vue 3 + TS)
+├── frontend-h5/                # Mobile H5 frontend
+├── frontend-app/               # Native mobile app
+└── docs/                       # Architecture, API, PRD, task docs
 ```
 
-## 技术栈
+---
 
-| 分类 | 技术 |
-|------|------|
-| 后端框架 | Spring Boot 3.4.5 / Spring Cloud 2025.0 / Spring Cloud Alibaba |
-| 构建工具 | Maven 3.9+ (JDK 25) |
-| 数据库 | MySQL 9.x + MyBatis-Plus 4.0 |
-| 缓存 | Redis 8.0 + Redisson |
-| 注册中心 | Nacos v3.1.0 |
-| 流量控制 | Sentinel 1.9.0 |
-| 消息队列 | Apache Kafka |
-| 对象存储 | MinIO |
-| 前端 | Vue 3 + Element Plus + Vite |
+## 🚀 Quick Start
 
-## 内置功能
+### Prerequisites
 
-1. **用户管理** - 系统用户配置与状态管理
-2. **角色管理** - 角色权限分配与数据范围控制
-3. **菜单管理** - 前端路由与按钮权限配置
-4. **机构管理** - 组织架构树形管理
-5. **字典管理** - 系统通用字典数据维护
-6. **参数管理** - 动态系统参数配置
-7. **岗位管理** - 用户所属职务配置
-8. **通知公告** - 系统通知公告发布与查看
-9. **登录日志** - 登录成功/失败记录与查询
-10. **操作日志** - 业务操作审计与追踪
-11. **项目管理** - 项目全生命周期管理（敏捷/看板/瀑布流）
-12. **迭代管理** - 敏捷迭代规划与追踪
-13. **任务管理** - 任务创建、分配、追踪、工时记录
-14. **发布管理** - 发布计划、制品、变更管理
-15. **定时任务** - 定时任务调度与执行日志
-16. **文件管理** - 文件上传、存储、下载
+| Dependency | Minimum Version |
+|-----------|----------------|
+| JDK | 21 |
+| Maven | 3.9 |
+| Docker | 24.x |
+| Docker Compose | 2.x |
+| Node.js | 18+ |
 
-## 环境要求
-
-- JDK 25+
-- Maven 3.9+
-- Docker & Docker Compose
-- MySQL 9.x
-- Redis 8.0+
-
-## 快速开始
-
-### 方式一：Maven 构建
+### Option 1 — Docker Compose (Recommended)
 
 ```bash
-# 全量构建（跳过测试）
+# Clone the repository
+git clone https://github.com/yshan2028/Lest.git
+cd lest-platform
+
+# Start all infrastructure + services
+docker compose -f docker-compose.dev.yml up -d
+
+# The frontend dev server (hot-reload)
+cd frontend-pc
+npm install
+npm run dev
+```
+
+### Option 2 — Local Development
+
+```bash
+# 1. Start infrastructure (MySQL, Redis, Nacos)
+docker compose -f docker-compose.dev.yml up mysql redis nacos -d
+
+# 2. Build backend
 cd backend
 mvn clean install -DskipTests
 
-# 启动核心服务
-cd ..
-./bin/start-all.sh
+# 3. Start services individually (in separate terminals)
+./bin/run-auth.sh
+./bin/run-gateway.sh
+./bin/run-system.sh
+
+# 4. Start frontend
+cd ../frontend-pc
+npm run dev
 ```
 
-### 方式二：Docker 部署
+---
 
-```bash
-# 1. 构建后端
-cd backend
-mvn clean package -DskipTests
+## 🌐 Service Endpoints
 
-# 2. 复制产物到 Docker 目录
-cd ..
-./docker/copy.sh
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Frontend** | http://localhost:5173 | admin / admin123 |
+| **API Gateway** | http://localhost:8080 | — |
+| **Swagger UI** | http://localhost:8080/doc.html | — |
+| **Nacos Console** | http://localhost:8848/nacos | nacos / nacos |
+| **MinIO Console** | http://localhost:9001 | minioadmin / minioadmin |
 
-# 3. 启动基础设施
-cd docker
-./deploy.sh base
+---
 
-# 4. 启动微服务
-./deploy.sh modules
-```
+## 📋 Roadmap
 
-### 方式三：完整 Docker Compose
+| Version | Theme | Status |
+|---------|-------|--------|
+| **v0.1.0** | Foundation — Auth, System, Gateway, Dashboard | ✅ Released |
+| **v0.2.0** | Project & Task Frontend Pages, DDL, API completion | ✅ Released |
+| **v0.3.0** | Burndown charts, Task worklog/comment panel, Kanban DnD | 🔵 Planned |
+| **v0.4.0** | Release management UI, Webhook integration | 🔵 Planned |
+| **v1.0.0** | Stable release, mobile app, full documentation | 🔵 Planned |
 
-```bash
-docker compose -f docker-compose.yml up -d
-```
+See the full changelog at [CHANGELOG.md](./CHANGELOG.md) and milestone roadmap at [docs/MILESTONES.md](./docs/MILESTONES.md).
 
-## 访问地址
+---
 
-| 服务 | 地址 | 说明 |
-|------|------|------|
-| 前端 | http://localhost:5173 | Vite 开发服务器 |
-| 网关 API | http://localhost:8080 | 后端统一入口 |
-| Swagger | http://localhost:8080/doc.html | API 文档 |
-| Nacos | http://localhost:8848/nacos | 注册中心（nacos/nacos） |
-| Sentinel | http://localhost:9090 | 流量控制台 |
-| MinIO | http://localhost:9001 | 对象存储控制台 |
+## 🤝 Contributing
 
-## 默认账号
+Contributions, issues, and feature requests are welcome!
 
-- 用户名: `admin`
-- 密码: `Lest@123456`
+1. Fork the repository
+2. Create your branch: `git checkout -b feat/your-feature`
+3. Commit your changes: `git commit -m 'feat: add some feature'`
+4. Push to the branch: `git push origin feat/your-feature`
+5. Open a Pull Request
 
-## Maven 模块说明
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and submission process.
 
-```
-lest-platform (pom.xml - 父项目)
-├── lest-common (pom.xml - 公共模块父)
-│   ├── lest-common-core        # 核心工具层
-│   ├── lest-common-log         # 日志
-│   ├── lest-common-redis       # 缓存
-│   ├── lest-common-security    # 安全
-│   ├── lest-common-swagger     # 文档
-│   ├── lest-common-datascope   # 数据权限
-│   ├── lest-common-datasource  # 多数据源
-│   └── lest-common-sensitive   # 数据脱敏
-├── lest-auth-entity           # 认证实体（共享）
-├── lest-api (pom.xml - API 父)
-│   └── lest-api-system         # Feign 客户端
-├── lest-gateway               # 网关（独立）
-├── lest-auth                  # 认证服务（独立）
-├── lest-modules (pom.xml - 业务模块父)
-│   └── lest-xxx (14个)        # 业务微服务
-└── lest-visual (pom.xml - 可视化父)
-    └── lest-monitor           # 监控中心
-```
+---
 
-## 相关文档
+## 🙏 Acknowledgements
 
-- [RuoYi-Cloud 差异报告](docs/RUOYI_DIFF_STATUS.md)
+This project stands on the shoulders of giants. We sincerely thank:
 
-## 许可证
+- **[RuoYi-Cloud](https://ruoyi.vip)** — The backend microservice architecture, security framework, permission model, and code generation patterns of LEST Platform are deeply inspired by RuoYi-Cloud. It is one of the most comprehensive open-source Java microservice scaffolds in the Chinese developer community. **If you use RuoYi in a commercial product, please consider purchasing an official license or sponsoring the team at [ruoyi.vip](https://ruoyi.vip).**
 
-MIT
+- **[EleAdmin Pro](https://eleadmin.com)** — The frontend admin UI of LEST Platform is built upon EleAdmin Pro, a beautifully designed Vue 3 + Element Plus component library. It delivers an exceptional developer experience with rich pre-built components. **If you adopt EleAdmin Pro for your own projects, we strongly encourage you to purchase an official commercial license at [eleadmin.com](https://eleadmin.com) to support continued development.**
+
+- [Spring Boot](https://spring.io/projects/spring-boot) / [Spring Cloud Alibaba](https://github.com/alibaba/spring-cloud-alibaba) / [Vue 3](https://vuejs.org) / [Element Plus](https://element-plus.org) — and all other open-source dependencies that make this project possible.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+
+> The MIT License applies to the LEST Platform source code itself. Please respect the individual licenses of third-party dependencies, particularly the commercial components listed in the Acknowledgements section above.
+
