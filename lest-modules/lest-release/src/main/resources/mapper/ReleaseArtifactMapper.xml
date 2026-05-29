@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.release.mapper.ReleaseArtifactMapper">
+
+    <select id="selectArtifactPage" resultType="com.lest.modules.release.entity.domain.ReleaseArtifact">
+        SELECT
+            ra.id,
+            ra.release_id,
+            ra.artifact_name,
+            ra.artifact_type,
+            ra.file_name,
+            ra.file_path,
+            ra.file_size,
+            ra.file_hash,
+            ra.download_url,
+            ra.download_count,
+            ra.uploaded_by,
+            ra.uploaded_at,
+            ra.metadata,
+            rp.name AS release_name,
+            su.username AS uploaded_by_name
+        FROM release_artifact ra
+        LEFT JOIN release_plan rp ON ra.release_id = rp.id AND rp.deleted = 0
+        LEFT JOIN sys_user su ON ra.uploaded_by = su.id AND su.deleted = 0
+        ${ew.customSqlSegment}
+        ORDER BY ra.uploaded_at DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,34 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude:
+      # 禁用数据库相关自动配置
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+      - com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+      # 禁用 Redis 相关自动配置
+      - org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration
+      - org.redisson.spring.starter.RedissonAutoConfiguration
+      - org.redisson.spring.starter.RedissonAutoConfigurationV2
+      - org.redisson.spring.starter.RedissonAutoConfigurationV4
+      # 禁用 Kafka 自动配置
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  # 禁用 Nacos 服务发现
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+
+# JWT 配置（测试用）
+jwt:
+  secret: test-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm-padding
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+  issuer: lest-platform
+
+# 验证码配置
+captcha:
+  width: 120
+  height: 40

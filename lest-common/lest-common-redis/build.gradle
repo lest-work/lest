@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    annotationProcessor platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    api project(':lest-common:lest-common-core')
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    api 'com.alibaba.fastjson2:fastjson2:2.0.56'
+    api 'org.apache.commons:commons-pool2'
+    api "org.redisson:redisson-spring-boot-starter:${rootProject.ext.redissonVersion}"
+}

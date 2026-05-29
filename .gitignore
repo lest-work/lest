@@ -1,6 +1,7 @@
-# Project-specific
+# Project-specific - reference projects (not for commit / 参考项目，不提交)
 Old-旧项目用来参考-里面内容不需要开发和编辑/
 ele-admin-plus-ts 当前前端参考的模版/
+refe/
 
 # Build outputs
 target/
