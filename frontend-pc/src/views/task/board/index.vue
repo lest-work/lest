@@ -201,7 +201,7 @@
     iterationId.value = undefined;
     iterationOptions.value = [];
     if (val) {
-      listIterations({ projectId: val, pageSize: 100 }).then((res) => {
+      listIterations(val, { pageSize: 100 }).then((res) => {
         iterationOptions.value = res.rows ?? [];
       }).catch(() => {});
     }

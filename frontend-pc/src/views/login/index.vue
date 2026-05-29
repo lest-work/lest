@@ -3,8 +3,9 @@
     <div class="login-main">
       <ele-card shadow="always" class="login-card">
         <div class="login-cover">
-          <h1 class="login-title">RuoYi EleAdmin</h1>
-          <h4 class="login-subtitle">界面美观组件丰富的中后台前端解决方案</h4>
+          <img src="@/assets/logo.svg" class="login-logo" alt="Lest" />
+          <h1 class="login-title">Lest</h1>
+          <h4 class="login-subtitle">工程团队项目管理平台</h4>
         </div>
         <div class="login-body">
           <ele-text type="heading" style="font-size: 24px; margin-bottom: 18px">
@@ -73,26 +74,7 @@
             </el-form-item>
           </el-form>
           <div v-else class="login-qrcode-group">
-            <ele-qr-code-svg
-              :size="180"
-              :margin="2"
-              :value="qrcode"
-              class="login-qrcode"
-            />
-            <el-link
-              type="primary"
-              underline="never"
-              style="margin-top: 16px; user-select: none"
-              @click="refreshQrCode"
-            >
-              <el-icon
-                :size="15"
-                style="transform: translateY(-1px); margin-right: 6px"
-              >
-                <ReloadOutlined />
-              </el-icon>
-              <span>刷新二维码</span>
-            </el-link>
+            <el-empty description="扫码登录功能开发中" :image-size="80" style="padding: 32px 0" />
           </div>
         </div>
       </ele-card>
@@ -105,12 +87,7 @@
   import { ref, reactive, unref } from 'vue';
   import { useRouter } from 'vue-router';
   import { EleMessage } from 'ele-admin-plus';
-  import {
-    UserOutlined,
-    LockOutlined,
-    ProtectOutlined,
-    ReloadOutlined
-  } from '@/components/icons';
+  import { UserOutlined, LockOutlined, ProtectOutlined } from '@/components/icons';
   import { getToken } from '@/utils/token-util';
   import { usePageTab } from '@/utils/use-page-tab';
   import { login, getCaptcha } from '@/api/login';
@@ -171,8 +148,6 @@
   /** 图形验证码样式 */
   const captchaStyle = ref({});
 
-  /** 二维码 */
-  const qrcode = ref('');
 
   /** 提交 */
   const submit = () => {
@@ -212,17 +187,8 @@
       });
   };
 
-  /** 刷新二维码 */
-  const refreshQrCode = () => {
-    qrcode.value = `https://api.eleadmin.com/v2/auth/login?code=${Date.now()}`;
-  };
-
   /** 选项卡切换事件 */
-  const handleTabChange = (active) => {
-    if (active === 2) {
-      refreshQrCode();
-    }
-  };
+  const handleTabChange = (_active) => {};
 
   /** 跳转到首页 */
   const goHome = () => {
@@ -340,24 +306,31 @@
     }
   }
 
+  /* Logo */
+  .login-logo {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  }
+
   /* 标题 */
   .login-title {
     color: rgba(255, 255, 255, 0.98);
-    font-size: 28px;
-    margin: 0 0 6px 0;
-    font-weight: normal;
-    letter-spacing: 1.2px;
+    font-size: 34px;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    letter-spacing: 4px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   }
 
   .login-subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 16px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
     margin: 0;
     font-weight: normal;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
   }
 
   /* 二维码 */

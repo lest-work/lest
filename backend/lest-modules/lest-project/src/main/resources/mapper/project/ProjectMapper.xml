@@ -11,13 +11,16 @@
         <result property="ownerId"     column="owner_id"    />
         <result property="startDate"   column="start_date"  />
         <result property="endDate"     column="end_date"    />
-        <result property="createTime"   column="created_at"  />
-        <result property="updateTime"   column="updated_at"  />
+        <result property="createBy"    column="create_by"   />
+        <result property="createTime"  column="create_time" />
+        <result property="updateBy"    column="update_by"   />
+        <result property="updateTime"  column="update_time" />
         <result property="deleted"     column="deleted"     />
     </resultMap>
 
     <sql id="selectProjectVo">
-        select id, name, description, status, template, owner_id, start_date, end_date, created_at, updated_at
+        select id, name, description, status, template, owner_id, start_date, end_date,
+               create_by, create_time, update_by, update_time
         from project where deleted = 0
     </sql>
 
@@ -37,12 +40,12 @@
         <if test="status != null">
             and status = #{status}
         </if>
-        order by created_at desc
+        order by create_time desc
     </select>
 
     <insert id="insert" parameterType="com.lest.modules.project.domain.Project" useGeneratedKeys="true" keyProperty="id">
-        insert into project (name, description, status, template, owner_id, start_date, end_date, created_at, updated_at)
-        values (#{name}, #{description}, #{status}, #{template}, #{ownerId}, #{startDate}, #{endDate}, now(), now())
+        insert into project (name, description, status, template, owner_id, start_date, end_date, create_by, create_time, update_by, update_time)
+        values (#{name}, #{description}, #{status}, #{template}, #{ownerId}, #{startDate}, #{endDate}, #{createBy}, now(), #{updateBy}, now())
     </insert>
 
     <update id="updateById" parameterType="com.lest.modules.project.domain.Project">
@@ -55,7 +58,8 @@
             <if test="ownerId != null">owner_id = #{ownerId},</if>
             <if test="startDate != null">start_date = #{startDate},</if>
             <if test="endDate != null">end_date = #{endDate},</if>
-            updated_at = now()
+            update_by = #{updateBy},
+            update_time = now()
         </set>
         where id = #{id} and deleted = 0
     </update>

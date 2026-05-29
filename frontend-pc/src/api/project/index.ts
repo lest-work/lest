@@ -88,9 +88,10 @@ export async function removeProjectMember(projectId: number, userId: number): Pr
 
 /**
  * 查询迭代列表
+ * GET /project/{projectId}/iteration/list → gateway strips 'project' → lest-project /{projectId}/iteration/list
  */
-export async function listIterations(params?: IterationParam): Promise<TableDataInfo<Iteration>> {
-  const res = await request.get<TableDataInfo<Iteration>>('/iteration/list', { params });
+export async function listIterations(projectId: number, params?: IterationParam): Promise<TableDataInfo<Iteration>> {
+  const res = await request.get<TableDataInfo<Iteration>>(`/project/${projectId}/iteration/list`, { params });
   if (res.data.code === 200) return res.data;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -98,8 +99,8 @@ export async function listIterations(params?: IterationParam): Promise<TableData
 /**
  * 新增迭代
  */
-export async function addIteration(data: Iteration): Promise<string> {
-  const res = await request.post<AjaxResult<unknown>>('/iteration', data);
+export async function addIteration(projectId: number, data: Iteration): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>(`/project/${projectId}/iteration`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -108,7 +109,7 @@ export async function addIteration(data: Iteration): Promise<string> {
  * 修改迭代（含状态更新）
  */
 export async function updateIteration(data: Iteration): Promise<string> {
-  const res = await request.put<AjaxResult<unknown>>(`/iteration/${data.id}`, data);
+  const res = await request.put<AjaxResult<unknown>>(`/project/iteration/${data.id}`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -117,16 +118,17 @@ export async function updateIteration(data: Iteration): Promise<string> {
  * 删除迭代
  */
 export async function removeIteration(id: number): Promise<string> {
-  const res = await request.delete<AjaxResult<unknown>>(`/iteration/${id}`);
+  const res = await request.delete<AjaxResult<unknown>>(`/project/iteration/${id}`);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
 
 /**
  * 查询里程碑列表
+ * GET /project/{projectId}/milestone/list → gateway strips 'project' → lest-project /{projectId}/milestone/list
  */
 export async function listMilestones(projectId: number): Promise<Milestone[]> {
-  const res = await request.get<AjaxResult<Milestone[]>>('/milestone/list', { params: { projectId } });
+  const res = await request.get<AjaxResult<Milestone[]>>(`/project/${projectId}/milestone/list`);
   if (res.data.code === 200) return res.data.data ?? [];
   return Promise.reject(new Error(res.data.msg));
 }
@@ -134,8 +136,8 @@ export async function listMilestones(projectId: number): Promise<Milestone[]> {
 /**
  * 新增里程碑
  */
-export async function addMilestone(data: Milestone): Promise<string> {
-  const res = await request.post<AjaxResult<unknown>>('/milestone', data);
+export async function addMilestone(projectId: number, data: Milestone): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>(`/project/${projectId}/milestone`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -144,7 +146,7 @@ export async function addMilestone(data: Milestone): Promise<string> {
  * 删除里程碑
  */
 export async function removeMilestone(id: number): Promise<string> {
-  const res = await request.delete<AjaxResult<unknown>>(`/milestone/${id}`);
+  const res = await request.delete<AjaxResult<unknown>>(`/project/milestone/${id}`);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }

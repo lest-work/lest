@@ -29,7 +29,7 @@ public class IterationController extends BaseController
     /**
      * 查询迭代列表
      */
-    @GetMapping("/project/{projectId}/iteration/list")
+    @GetMapping("/{projectId}/iteration/list")
     public TableDataInfo list(@PathVariable Long projectId, Iteration iteration)
     {
         startPage();
@@ -49,7 +49,7 @@ public class IterationController extends BaseController
     /**
      * 新增迭代
      */
-    @PostMapping("/project/{projectId}/iteration")
+    @PostMapping("/{projectId}/iteration")
     public AjaxResult add(@PathVariable Long projectId, @RequestBody Iteration iteration)
     {
         iteration.setProjectId(projectId);
@@ -59,9 +59,10 @@ public class IterationController extends BaseController
     /**
      * 修改迭代
      */
-    @PutMapping("/iteration")
-    public AjaxResult edit(@RequestBody Iteration iteration)
+    @PutMapping("/iteration/{id}")
+    public AjaxResult edit(@PathVariable Long id, @RequestBody Iteration iteration)
     {
+        iteration.setId(id);
         return toAjax(iterationService.updateIteration(iteration));
     }
 

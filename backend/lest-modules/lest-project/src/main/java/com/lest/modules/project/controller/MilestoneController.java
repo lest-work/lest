@@ -30,7 +30,7 @@ public class MilestoneController extends BaseController
     /**
      * 查询里程碑列表
      */
-    @GetMapping("/project/{projectId}/milestone/list")
+    @GetMapping("/{projectId}/milestone/list")
     public TableDataInfo list(@PathVariable Long projectId)
     {
         startPage();
@@ -50,7 +50,7 @@ public class MilestoneController extends BaseController
     /**
      * 新增里程碑
      */
-    @PostMapping("/project/{projectId}/milestone")
+    @PostMapping("/{projectId}/milestone")
     public AjaxResult add(@PathVariable Long projectId, @RequestBody Milestone milestone)
     {
         milestone.setProjectId(projectId);
@@ -60,9 +60,10 @@ public class MilestoneController extends BaseController
     /**
      * 修改里程碑
      */
-    @PutMapping("/milestone")
-    public AjaxResult edit(@RequestBody Milestone milestone)
+    @PutMapping("/milestone/{id}")
+    public AjaxResult edit(@PathVariable Long id, @RequestBody Milestone milestone)
     {
+        milestone.setId(id);
         return toAjax(milestoneService.updateMilestone(milestone));
     }
 

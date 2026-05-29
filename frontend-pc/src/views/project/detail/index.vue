@@ -272,7 +272,7 @@
     const id = getProjectId();
     getProject(id).then((data) => { project.value = data; }).catch(() => {});
     getProjectMembers(id).then((data) => { members.value = data; }).catch(() => {});
-    listIterations({ projectId: id, pageSize: 100 }).then((res) => { iterations.value = res.rows ?? []; }).catch(() => {});
+    listIterations(id, { pageSize: 100 }).then((res) => { iterations.value = res.rows ?? []; }).catch(() => {});
     listMilestones(id).then((data) => { milestones.value = data; }).catch(() => {});
   }
 
@@ -291,11 +291,12 @@
   function handleSaveIteration() {
     iterFormRef.value?.validate().then(() => {
       saveLoading.value = true;
-      const fn = iterForm.id ? updateIteration(iterForm) : addIteration(iterForm);
+      const projectId = getProjectId();
+      const fn = iterForm.id ? updateIteration(iterForm) : addIteration(projectId, iterForm);
       fn.then(() => {
         EleMessage.success({ message: '保存成功', plain: true });
         iterationDialogVisible.value = false;
-        listIterations({ projectId: getProjectId(), pageSize: 100 }).then((res) => {
+        listIterations(projectId, { pageSize: 100 }).then((res) => {
           iterations.value = res.rows ?? [];
         });
       }).catch((e) => {
@@ -325,7 +326,7 @@
   function handleSaveMilestone() {
     milestoneFormRef.value?.validate().then(() => {
       saveLoading.value = true;
-      addMilestone(milestoneForm).then(() => {
+      addMilestone(getProjectId(), milestoneForm).then(() => {
         EleMessage.success({ message: '保存成功', plain: true });
         milestoneDialogVisible.value = false;
         listMilestones(getProjectId()).then((data) => { milestones.value = data; });
