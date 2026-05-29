@@ -1,0 +1,13 @@
+# 基础镜像
+FROM redis:alpine
+# author
+MAINTAINER lest
+
+# 挂载目录
+VOLUME /home/lest/redis
+# 创建目录
+RUN mkdir -p /home/lest/redis
+# 指定路径
+WORKDIR /home/lest/redis
+# 复制conf文件到路径
+COPY ./conf/redis.conf /home/lest/redis/redis.conf

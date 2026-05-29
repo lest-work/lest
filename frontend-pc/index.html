@@ -9,34 +9,13 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      (function () {
-        var metaEl = document.createElement('meta');
-        metaEl.setAttribute('name', 'viewport');
-        var responsive = true;
-        try {
-          responsive = JSON.parse(
-            localStorage.getItem('theme') || '{}'
-          ).responsive;
-        } catch (e) {
-          console.error(e);
-        }
-        if (responsive === false) {
-          metaEl.setAttribute('content', 'width=1200, initial-scale=1.0');
-        } else {
-          metaEl.setAttribute(
-            'content',
-            'width=device-width, initial-scale=1.0'
-          );
-          document.documentElement.style.overflowX = 'hidden';
-        }
-        document.head.appendChild(metaEl);
-        if (navigator.userAgent.includes('WebKit')) {
-          document.documentElement.classList.add('is-webkit');
-        }
-      })();
+      if (navigator.userAgent.includes('WebKit')) {
+        document.documentElement.classList.add('is-webkit');
+      }
     </script>
-    <title>LEST Platform</title>
+    <title>RuoYi Ele Admin</title>
     <style>
       .ele-admin-loading {
         width: 28px;

@@ -1,157 +1,221 @@
 package com.lest.modules.release.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lest.common.base.Result;
-import com.lest.common.security.util.SecurityUtils;
-import com.lest.modules.release.entity.dto.AddReleaseIssueDTO;
-import com.lest.modules.release.entity.dto.CreateReleaseArtifactDTO;
-import com.lest.modules.release.entity.dto.CreateReleasePlanDTO;
-import com.lest.modules.release.entity.dto.ReleaseArtifactDTO;
-import com.lest.modules.release.entity.dto.ReleaseIssueDTO;
-import com.lest.modules.release.entity.dto.ReleasePlanDTO;
-import com.lest.modules.release.entity.dto.ReleasePlanQueryDTO;
-import com.lest.modules.release.entity.dto.UpdateReleasePlanDTO;
-import com.lest.modules.release.entity.vo.ReleaseArtifactVO;
-import com.lest.modules.release.entity.vo.ReleaseIssueVO;
-import com.lest.modules.release.entity.vo.ReleasePlanVO;
-import com.lest.modules.release.service.ReleasePlanService;
-import com.lest.modules.release.service.ReleaseIssueService;
-import com.lest.modules.release.service.ReleaseArtifactService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import com.lest.common.core.web.controller.BaseController;
+import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.modules.release.domain.ReleasePlan;
+import com.lest.modules.release.domain.ReleaseArtifact;
+import com.lest.modules.release.domain.ReleaseIssue;
+import com.lest.modules.release.service.IReleasePlanService;
+import com.lest.modules.release.service.IReleaseArtifactService;
+import com.lest.modules.release.service.IReleaseIssueService;
 
+/**
+ * 发布管理
+ * 
+ * @author yshan2028
+ */
 @RestController
 @RequestMapping("/release")
-@RequiredArgsConstructor
-public class ReleasePlanController {
+public class ReleasePlanController extends BaseController
+{
+    @Autowired
+    private IReleasePlanService releasePlanService;
 
-    private final ReleasePlanService releasePlanService;
-    private final ReleaseArtifactService releaseArtifactService;
-    private final ReleaseIssueService releaseIssueService;
+    @Autowired
+    private IReleaseArtifactService releaseArtifactService;
 
-    @PostMapping("/plan")
-    public Result<Void> create(@Valid @RequestBody CreateReleasePlanDTO dto) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.create(dto, userId);
-        return Result.success();
+    @Autowired
+    private IReleaseIssueService releaseIssueService;
+
+    /**
+     * 查询发布计划列表
+     */
+    @GetMapping("/plan/list")
+    public TableDataInfo list(ReleasePlan plan)
+    {
+        startPage();
+        List<ReleasePlan> list = releasePlanService.selectReleasePlanList(plan);
+        return getDataTable(list);
     }
 
-    @PutMapping("/plan")
-    public Result<Void> update(@Valid @RequestBody UpdateReleasePlanDTO dto) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.update(dto, userId);
-        return Result.success();
-    }
-
-    @DeleteMapping("/plan/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
-        releasePlanService.delete(id);
-        return Result.success();
-    }
-
+    /**
+     * 获取发布计划详情
+     */
     @GetMapping("/plan/{id}")
-    public Result<ReleasePlanDTO> getById(@PathVariable Long id) {
-        return Result.success(releasePlanService.getById(id));
+    public AjaxResult getInfo(@PathVariable Long id)
+    {
+        return success(releasePlanService.selectReleasePlanById(id));
     }
 
-    @PostMapping("/plan/page")
-    public Result<Page<ReleasePlanVO>> pageQuery(@RequestBody ReleasePlanQueryDTO dto) {
-        return Result.success(releasePlanService.pageQuery(dto));
+    /**
+     * 新增发布计划
+     */
+    @PostMapping("/plan")
+    public AjaxResult add(@RequestBody ReleasePlan plan)
+    {
+        return toAjax(releasePlanService.insertReleasePlan(plan));
     }
 
+    /**
+     * 修改发布计划
+     */
+    @PutMapping("/plan")
+    public AjaxResult edit(@RequestBody ReleasePlan plan)
+    {
+        return toAjax(releasePlanService.updateReleasePlan(plan));
+    }
+
+    /**
+     * 删除发布计划
+     */
+    @DeleteMapping("/plan/{id}")
+    public AjaxResult remove(@PathVariable Long id)
+    {
+        return toAjax(releasePlanService.deleteReleasePlanById(id));
+    }
+
+    /**
+     * 发布
+     */
     @PostMapping("/plan/{id}/publish")
-    public Result<Void> publish(@PathVariable Long id) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.publish(id, userId);
-        return Result.success();
+    public AjaxResult publish(@PathVariable Long id)
+    {
+        return toAjax(releasePlanService.publish(id));
     }
 
+    /**
+     * 归档
+     */
     @PostMapping("/plan/{id}/archive")
-    public Result<Void> archive(@PathVariable Long id) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.archive(id, userId);
-        return Result.success();
+    public AjaxResult archive(@PathVariable Long id)
+    {
+        return toAjax(releasePlanService.archive(id));
     }
 
+    /**
+     * 恢复
+     */
     @PostMapping("/plan/{id}/restore")
-    public Result<Void> restore(@PathVariable Long id) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.restore(id, userId);
-        return Result.success();
+    public AjaxResult restore(@PathVariable Long id)
+    {
+        return toAjax(releasePlanService.restore(id));
     }
 
+    /**
+     * 开始构建
+     */
     @PostMapping("/plan/{id}/build/start")
-    public Result<Void> startBuild(@PathVariable Long id) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.startBuild(id, userId);
-        return Result.success();
+    public AjaxResult startBuild(@PathVariable Long id)
+    {
+        return toAjax(releasePlanService.startBuild(id));
     }
 
+    /**
+     * 完成构建
+     */
     @PostMapping("/plan/{id}/build/complete")
-    public Result<Void> completeBuild(@PathVariable Long id, @RequestParam(required = false) String downloadUrl) {
-        Long userId = SecurityUtils.getUserId();
-        releasePlanService.completeBuild(id, userId, downloadUrl);
-        return Result.success();
+    public AjaxResult completeBuild(@PathVariable Long id,
+                                     @RequestParam(required = false) String downloadUrl)
+    {
+        return toAjax(releasePlanService.completeBuild(id, downloadUrl));
     }
 
+    /**
+     * 即将到来的发布
+     */
     @GetMapping("/plan/upcoming")
-    public Result<List<ReleasePlanDTO>> getUpcoming() {
-        return Result.success(releasePlanService.getUpcoming());
+    public AjaxResult upcoming()
+    {
+        return success(releasePlanService.selectUpcoming());
     }
 
+    /**
+     * 最近的发布
+     */
     @GetMapping("/plan/recent")
-    public Result<List<ReleasePlanDTO>> getRecent(@RequestParam(required = false) Long projectId,
-                                                  @RequestParam(required = false) Integer limit) {
-        return Result.success(releasePlanService.getRecent(projectId, limit));
+    public AjaxResult recent(@RequestParam(required = false) Long projectId,
+                             @RequestParam(required = false) Integer limit)
+    {
+        return success(releasePlanService.selectRecent(projectId, limit));
     }
 
+    /**
+     * 新增产物
+     */
     @PostMapping("/artifact")
-    public Result<Void> createArtifact(@Valid @RequestBody CreateReleaseArtifactDTO dto) {
-        Long userId = SecurityUtils.getUserId();
-        releaseArtifactService.create(dto, userId);
-        return Result.success();
+    public AjaxResult addArtifact(@RequestBody ReleaseArtifact artifact)
+    {
+        return toAjax(releaseArtifactService.insertArtifact(artifact));
     }
 
-    @PostMapping("/artifact/page")
-    public Result<Page<ReleaseArtifactVO>> pageArtifact(@RequestBody ReleaseArtifactDTO dto) {
-        return Result.success(releaseArtifactService.pageQuery(dto));
+    /**
+     * 获取产物列表
+     */
+    @GetMapping("/artifact/list")
+    public AjaxResult artifactList(@RequestParam Long releaseId)
+    {
+        return success(releaseArtifactService.selectArtifactsByReleaseId(releaseId));
     }
 
+    /**
+     * 删除产物
+     */
     @DeleteMapping("/artifact/{id}")
-    public Result<Void> deleteArtifact(@PathVariable Long id) {
-        releaseArtifactService.delete(id);
-        return Result.success();
+    public AjaxResult removeArtifact(@PathVariable Long id)
+    {
+        return toAjax(releaseArtifactService.deleteArtifactById(id));
     }
 
+    /**
+     * 新增关联问题
+     */
     @PostMapping("/issue")
-    public Result<Void> addIssue(@Valid @RequestBody AddReleaseIssueDTO dto) {
-        Long userId = SecurityUtils.getUserId();
-        releaseIssueService.add(dto, userId);
-        return Result.success();
+    public AjaxResult addIssue(@RequestBody ReleaseIssue issue)
+    {
+        return toAjax(releaseIssueService.insertIssue(issue));
     }
 
+    /**
+     * 批量新增关联问题
+     */
     @PostMapping("/issue/batch")
-    public Result<Void> batchAddIssues(@RequestParam Long releaseId,
-                                       @RequestParam(required = false) Long[] taskIds,
-                                       @RequestParam(required = false) Long[] issueIds,
-                                       @RequestParam Integer category,
-                                       @RequestParam(required = false) String notes) {
-        Long userId = SecurityUtils.getUserId();
-        releaseIssueService.batchAdd(releaseId, taskIds, issueIds, category, notes, userId);
-        return Result.success();
+    public AjaxResult batchAddIssues(@RequestParam Long releaseId,
+                                      @RequestParam(required = false) Long[] taskIds,
+                                      @RequestParam(required = false) Long[] issueIds,
+                                      @RequestParam Integer category,
+                                      @RequestParam(required = false) String notes)
+    {
+        return toAjax(releaseIssueService.batchAddIssues(releaseId, taskIds, issueIds, category, notes));
     }
 
-    @PostMapping("/issue/page")
-    public Result<Page<ReleaseIssueVO>> pageIssue(@RequestBody ReleaseIssueDTO dto) {
-        return Result.success(releaseIssueService.pageQuery(dto));
+    /**
+     * 获取关联问题列表
+     */
+    @GetMapping("/issue/list")
+    public AjaxResult issueList(@RequestParam Long releaseId)
+    {
+        return success(releaseIssueService.selectIssuesByReleaseId(releaseId));
     }
 
+    /**
+     * 删除关联问题
+     */
     @DeleteMapping("/issue/{id}")
-    public Result<Void> removeIssue(@PathVariable Long id) {
-        releaseIssueService.remove(id);
-        return Result.success();
+    public AjaxResult removeIssue(@PathVariable Long id)
+    {
+        return toAjax(releaseIssueService.deleteIssueById(id));
     }
 }

@@ -1,85 +1,53 @@
 package com.lest.modules.task.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.lest.common.base.Assert;
-import com.lest.modules.task.common.ErrorCode;
-import com.lest.modules.task.entity.domain.Label;
-import com.lest.modules.task.entity.dto.LabelDTO;
-import com.lest.modules.task.entity.vo.LabelVO;
-import com.lest.modules.task.mapper.LabelMapper;
-import com.lest.modules.task.service.LabelService;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.lest.common.core.exception.ServiceException;
+import com.lest.modules.task.domain.Label;
+import com.lest.modules.task.mapper.LabelMapper;
+import com.lest.modules.task.service.ILabelService;
 
 /**
- * 标签服务实现
- *
- * @author Lest
- * @since 2026-05-26
+ * 标签 服务层实现
+ * 
+ * @author yshan2028
  */
-@Slf4j
 @Service
-public class LabelServiceImpl implements LabelService {
+public class LabelServiceImpl implements ILabelService
+{
+    @Autowired
+    private LabelMapper labelMapper;
 
-    private final LabelMapper labelMapper;
+    @Override
+    public List<Label> selectLabelsByProjectId(Long projectId)
+    {
+        return labelMapper.selectByProjectId(projectId);
+    }
 
-    public LabelServiceImpl(LabelMapper labelMapper) {
-        this.labelMapper = labelMapper;
+    @Override
+    public Label selectLabelById(Long id)
+    {
+        return labelMapper.selectById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long create(Long projectId, LabelDTO dto) {
-        Label label = new Label();
-        label.setProjectId(projectId);
-        label.setName(dto.getName());
-        label.setColor(dto.getColor());
-
-        labelMapper.insert(label);
-
-        log.info("创建标签: labelId={}, name={}", label.getId(), dto.getName());
-        return label.getId();
+    public int insertLabel(Label label)
+    {
+        return labelMapper.insert(label);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
+    public int deleteLabelById(Long id)
+    {
         Label label = labelMapper.selectById(id);
-        Assert.notNull(label, "LABEL_NOT_FOUND");
-
-        labelMapper.deleteById(id);
-        log.info("删除标签: labelId={}", id);
-    }
-
-    @Override
-    public List<LabelVO> getByProjectId(Long projectId) {
-        LambdaQueryWrapper<Label> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Label::getProjectId, projectId);
-        wrapper.orderByAsc(Label::getCreatedAt);
-
-        return labelMapper.selectList(wrapper).stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public LabelVO getById(Long id) {
-        Label label = labelMapper.selectById(id);
-        Assert.notNull(label, "LABEL_NOT_FOUND");
-        return convertToVO(label);
-    }
-
-    private LabelVO convertToVO(Label label) {
-        return LabelVO.builder()
-                .id(label.getId())
-                .projectId(label.getProjectId())
-                .name(label.getName())
-                .color(label.getColor())
-                .createdAt(label.getCreatedAt())
-                .build();
+        if (label == null)
+        {
+            throw new ServiceException("标签不存在");
+        }
+        return labelMapper.deleteById(id);
     }
 }

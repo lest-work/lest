@@ -1,3 +1,0 @@
-# Override Nacos auto-configuration to exclude incompatible classes
-org.springframework.boot.env.EnvironmentPostProcessorFactory=
-

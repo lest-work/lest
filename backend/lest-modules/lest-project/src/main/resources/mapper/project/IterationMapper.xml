@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.project.mapper.IterationMapper">
+
+    <resultMap type="com.lest.modules.project.domain.Iteration" id="IterationResult">
+        <id     property="id"          column="id"           />
+        <result property="projectId"   column="project_id"   />
+        <result property="name"        column="name"         />
+        <result property="goal"        column="goal"         />
+        <result property="status"      column="status"       />
+        <result property="startDate"   column="start_date"   />
+        <result property="endDate"     column="end_date"     />
+        <result property="completedAt" column="completed_at" />
+        <result property="createTime"  column="created_at"   />
+        <result property="updateTime"  column="updated_at"   />
+    </resultMap>
+
+    <sql id="selectIterationVo">
+        select id, project_id, name, goal, status, start_date, end_date, completed_at, created_at, updated_at
+        from iteration where deleted = 0
+    </sql>
+
+    <select id="selectById" resultMap="IterationResult">
+        <include refid="selectIterationVo"/> and id = #{id}
+    </select>
+
+    <select id="selectIterationList" resultMap="IterationResult">
+        <include refid="selectIterationVo"/>
+        and project_id = #{projectId}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        order by created_at desc
+    </select>
+
+    <insert id="insert" parameterType="com.lest.modules.project.domain.Iteration" useGeneratedKeys="true" keyProperty="id">
+        insert into iteration (project_id, name, goal, status, start_date, end_date, created_at, updated_at)
+        values (#{projectId}, #{name}, #{goal}, #{status}, #{startDate}, #{endDate}, now(), now())
+    </insert>
+
+    <update id="updateById" parameterType="com.lest.modules.project.domain.Iteration">
+        update iteration
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="goal != null">goal = #{goal},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="completedAt != null">completed_at = #{completedAt},</if>
+            updated_at = now()
+        </set>
+        where id = #{id} and deleted = 0
+    </update>
+
+    <update id="deleteById">
+        update iteration set deleted = 1 where id = #{id}
+    </update>
+
+    <select id="countDateConflicts" resultType="int">
+        select count(*) from iteration
+        where project_id = #{projectId} and deleted = 0 and id != #{excludeId}
+        and start_date &lt;= #{endDate} and end_date &gt;= #{startDate}
+    </select>
+
+    <select id="countByProjectId" resultType="int">
+        select count(*) from iteration where project_id = #{projectId} and deleted = 0
+    </select>
+
+</mapper>

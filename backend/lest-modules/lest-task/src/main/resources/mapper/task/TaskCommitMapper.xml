@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.task.mapper.TaskCommitMapper">
+
+    <resultMap type="com.lest.modules.task.domain.TaskCommit" id="TaskCommitResult">
+        <id     property="id"            column="id"             />
+        <result property="taskId"        column="task_id"        />
+        <result property="commitHash"    column="commit_hash"    />
+        <result property="commitMessage" column="commit_message" />
+        <result property="author"        column="author"         />
+        <result property="commitTime"    column="commit_time"    />
+        <result property="repoId"        column="repo_id"        />
+        <result property="mrId"          column="mr_id"          />
+        <result property="mrTitle"       column="mr_title"       />
+        <result property="mrStatus"      column="mr_status"      />
+        <result property="type"          column="type"           />
+        <result property="source"        column="source"         />
+        <result property="createTime"     column="created_at"     />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.modules.task.domain.TaskCommit" useGeneratedKeys="true" keyProperty="id">
+        insert into task_commit (task_id, commit_hash, commit_message, author, commit_time, repo_id,
+                                mr_id, mr_title, mr_status, type, source, created_at)
+        values (#{taskId}, #{commitHash}, #{commitMessage}, #{author}, #{commitTime}, #{repoId},
+                #{mrId}, #{mrTitle}, #{mrStatus}, #{type}, #{source}, now())
+    </insert>
+
+    <select id="selectCommitsByTaskId" resultMap="TaskCommitResult">
+        select * from task_commit where task_id = #{taskId} and type = 'commit' order by created_at desc
+    </select>
+
+    <select id="selectMRsByTaskId" resultMap="TaskCommitResult">
+        select * from task_commit where task_id = #{taskId} and type = 'mr' order by created_at desc
+    </select>
+
+    <select id="selectTaskIdByCommitHash" resultType="java.lang.Long">
+        select task_id from task_commit where commit_hash = #{commitHash} and type = 'commit' limit 1
+    </select>
+
+</mapper>

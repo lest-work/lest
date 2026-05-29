@@ -1,91 +1,95 @@
 package com.lest.modules.project.controller;
 
-import com.lest.common.base.PageResult;
-import com.lest.common.base.Result;
-import com.lest.modules.project.entity.dto.MilestoneDTO;
-import com.lest.modules.project.entity.dto.MilestoneIterationDTO;
-import com.lest.modules.project.entity.vo.MilestoneVO;
-import com.lest.modules.project.service.MilestoneService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.lest.common.core.web.controller.BaseController;
+import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.modules.project.domain.Milestone;
+import com.lest.modules.project.domain.MilestoneIteration;
+import com.lest.modules.project.service.IMilestoneService;
 
 /**
- * 里程碑控制器
+ * 里程碑管理
+ * 
+ * @author yshan2028
  */
-@Slf4j
 @RestController
-public class MilestoneController {
-
-    private final MilestoneService milestoneService;
-
-    public MilestoneController(MilestoneService milestoneService) {
-        this.milestoneService = milestoneService;
-    }
+public class MilestoneController extends BaseController
+{
+    @Autowired
+    private IMilestoneService milestoneService;
 
     /**
-     * 创建里程碑
+     * 查询里程碑列表
      */
-    @PostMapping("/project/{projectId}/milestone")
-    public Result<Long> create(@PathVariable Long projectId, @Valid @RequestBody MilestoneDTO dto) {
-        dto.setProjectId(projectId);
-        return Result.ok(milestoneService.create(dto));
-    }
-
-    /**
-     * 分页查询里程碑
-     */
-    @GetMapping("/project/{projectId}/milestone/page")
-    public Result<PageResult<MilestoneVO>> page(
-            @PathVariable Long projectId,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.ok(milestoneService.page(projectId, page, size));
+    @GetMapping("/project/{projectId}/milestone/list")
+    public TableDataInfo list(@PathVariable Long projectId)
+    {
+        startPage();
+        List<Milestone> list = milestoneService.selectMilestoneList(projectId);
+        return getDataTable(list);
     }
 
     /**
      * 获取里程碑详情
      */
     @GetMapping("/milestone/{id}")
-    public Result<MilestoneVO> getById(@PathVariable Long id) {
-        return Result.ok(milestoneService.getById(id));
+    public AjaxResult getInfo(@PathVariable Long id)
+    {
+        return success(milestoneService.selectMilestoneById(id));
     }
 
     /**
-     * 更新里程碑
+     * 新增里程碑
      */
-    @PutMapping("/milestone/{id}")
-    public Result<Void> update(@PathVariable Long id, @Valid @RequestBody MilestoneDTO dto) {
-        dto.setId(id);
-        milestoneService.update(dto);
-        return Result.ok();
+    @PostMapping("/project/{projectId}/milestone")
+    public AjaxResult add(@PathVariable Long projectId, @RequestBody Milestone milestone)
+    {
+        milestone.setProjectId(projectId);
+        return toAjax(milestoneService.insertMilestone(milestone));
+    }
+
+    /**
+     * 修改里程碑
+     */
+    @PutMapping("/milestone")
+    public AjaxResult edit(@RequestBody Milestone milestone)
+    {
+        return toAjax(milestoneService.updateMilestone(milestone));
     }
 
     /**
      * 删除里程碑
      */
     @DeleteMapping("/milestone/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
-        milestoneService.delete(id);
-        return Result.ok();
+    public AjaxResult remove(@PathVariable Long id)
+    {
+        return toAjax(milestoneService.deleteMilestoneById(id));
     }
 
     /**
      * 关联迭代到里程碑
      */
     @PostMapping("/milestone/{id}/iteration")
-    public Result<Void> addIteration(@PathVariable Long id, @Valid @RequestBody MilestoneIterationDTO dto) {
-        milestoneService.addIteration(id, dto);
-        return Result.ok();
+    public AjaxResult addIteration(@PathVariable Long id, @RequestBody MilestoneIteration relation)
+    {
+        return toAjax(milestoneService.addIteration(id, relation.getIterationId()));
     }
 
     /**
-     * 获取里程碑关联的迭代ID列表
+     * 查询里程碑关联的迭代
      */
-    @GetMapping("/milestone/{id}/iteration")
-    public Result<List<Long>> getIterations(@PathVariable Long id) {
-        return Result.ok(milestoneService.getIterationIds(id));
+    @GetMapping("/milestone/{id}/iteration/list")
+    public AjaxResult iterationList(@PathVariable Long id)
+    {
+        return success(milestoneService.selectIterationIds(id));
     }
 }

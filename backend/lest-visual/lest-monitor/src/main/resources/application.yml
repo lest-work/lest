@@ -1,0 +1,26 @@
+# Tomcat
+server:
+  port: ${SERVER_PORT:9100}
+
+# Spring
+spring:
+  application:
+    name: lest-monitor
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${NACOS_ENABLED:true}
+        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_APP_GROUP:DEFAULT_GROUP}
+      config:
+        enabled: ${NACOS_ENABLED:true}
+        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_APP_GROUP:DEFAULT_GROUP}
+        file-extension: yaml
+        refresh-enabled: true
+  security:
+    user:
+      name: lest
+      password: 123456

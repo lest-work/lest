@@ -1,0 +1,13 @@
+# Ignore everything
+**
+
+# Allow only target jar files
+!lest-auth/target/*.jar
+!lest-gateway/target/*.jar
+!lest-modules/lest-system/target/*.jar
+!lest-modules/lest-project/target/*.jar
+!lest-modules/lest-task/target/*.jar
+!lest-modules/lest-release/target/*.jar
+!lest-modules/lest-file/target/*.jar
+!lest-modules/lest-job/target/*.jar
+!lest-visual/lest-monitor/target/*.jar

@@ -1,100 +1,94 @@
 package com.lest.modules.project.controller;
 
-import com.lest.common.base.PageResult;
-import com.lest.common.base.Result;
-import com.lest.modules.project.entity.dto.IterationDTO;
-import com.lest.modules.project.entity.vo.IterationVO;
-import com.lest.modules.project.service.IterationService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.lest.common.core.web.controller.BaseController;
+import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.modules.project.domain.Iteration;
+import com.lest.modules.project.service.IIterationService;
 
 /**
- * 迭代控制器
+ * 迭代管理
+ * 
+ * @author yshan2028
  */
-@Slf4j
 @RestController
-public class IterationController {
-
-    private final IterationService iterationService;
-
-    public IterationController(IterationService iterationService) {
-        this.iterationService = iterationService;
-    }
+public class IterationController extends BaseController
+{
+    @Autowired
+    private IIterationService iterationService;
 
     /**
-     * 创建迭代
+     * 查询迭代列表
      */
-    @PostMapping("/project/{projectId}/iteration")
-    public Result<Long> create(@PathVariable Long projectId, @Valid @RequestBody IterationDTO dto) {
-        dto.setProjectId(projectId);
-        return Result.ok(iterationService.create(dto));
-    }
-
-    /**
-     * 分页查询迭代
-     */
-    @GetMapping("/project/{projectId}/iteration/page")
-    public Result<PageResult<IterationVO>> page(
-            @PathVariable Long projectId,
-            @RequestParam(required = false) Integer status,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.ok(iterationService.page(projectId, status, page, size));
+    @GetMapping("/project/{projectId}/iteration/list")
+    public TableDataInfo list(@PathVariable Long projectId, Iteration iteration)
+    {
+        startPage();
+        List<Iteration> list = iterationService.selectIterationList(projectId, iteration.getStatus());
+        return getDataTable(list);
     }
 
     /**
      * 获取迭代详情
      */
     @GetMapping("/iteration/{id}")
-    public Result<IterationVO> getById(@PathVariable Long id) {
-        return Result.ok(iterationService.getById(id));
+    public AjaxResult getInfo(@PathVariable Long id)
+    {
+        return success(iterationService.selectIterationById(id));
     }
 
     /**
-     * 更新迭代
+     * 新增迭代
      */
-    @PutMapping("/iteration/{id}")
-    public Result<Void> update(@PathVariable Long id, @Valid @RequestBody IterationDTO dto) {
-        dto.setId(id);
-        iterationService.update(dto);
-        return Result.ok();
+    @PostMapping("/project/{projectId}/iteration")
+    public AjaxResult add(@PathVariable Long projectId, @RequestBody Iteration iteration)
+    {
+        iteration.setProjectId(projectId);
+        return toAjax(iterationService.insertIteration(iteration));
+    }
+
+    /**
+     * 修改迭代
+     */
+    @PutMapping("/iteration")
+    public AjaxResult edit(@RequestBody Iteration iteration)
+    {
+        return toAjax(iterationService.updateIteration(iteration));
     }
 
     /**
      * 删除迭代
      */
     @DeleteMapping("/iteration/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
-        iterationService.delete(id);
-        return Result.ok();
+    public AjaxResult remove(@PathVariable Long id)
+    {
+        return toAjax(iterationService.deleteIterationById(id));
     }
 
     /**
      * 启动迭代
      */
     @PutMapping("/iteration/{id}/start")
-    public Result<Void> start(@PathVariable Long id) {
-        iterationService.start(id);
-        return Result.ok();
+    public AjaxResult start(@PathVariable Long id)
+    {
+        return toAjax(iterationService.startIteration(id));
     }
 
     /**
-     * 结束迭代
+     * 完成迭代
      */
     @PutMapping("/iteration/{id}/complete")
-    public Result<Void> complete(@PathVariable Long id) {
-        iterationService.complete(id);
-        return Result.ok();
-    }
-
-    /**
-     * 获取迭代任务列表
-     */
-    @GetMapping("/iteration/{id}/task")
-    public Result<List<Long>> getTasks(@PathVariable Long id) {
-        return Result.ok(iterationService.getTaskIds(id));
+    public AjaxResult complete(@PathVariable Long id)
+    {
+        return toAjax(iterationService.completeIteration(id));
     }
 }

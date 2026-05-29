@@ -1,250 +1,242 @@
 package com.lest.modules.task.controller;
 
-import com.lest.common.base.PageResult;
-import com.lest.common.base.Result;
-import com.lest.modules.task.entity.dto.*;
-import com.lest.modules.task.entity.vo.*;
-import com.lest.modules.task.service.TaskService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import com.lest.common.core.web.controller.BaseController;
+import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.modules.task.domain.Task;
+import com.lest.modules.task.domain.TaskCommit;
+import com.lest.modules.task.domain.TaskDependency;
+import com.lest.modules.task.domain.TaskWorklog;
+import com.lest.modules.task.service.ITaskService;
 
 /**
- * 任务控制器
- *
- * @author Lest
- * @since 2026-05-26
+ * 任务管理
+ * 
+ * @author yshan2028
  */
-@Slf4j
 @RestController
-@RequestMapping("/task")
-public class TaskController {
-
-    private final TaskService taskService;
-
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
+@RequestMapping("")
+public class TaskController extends BaseController
+{
+    @Autowired
+    private ITaskService taskService;
 
     /**
-     * 创建任务
+     * 查询任务列表
      */
-    @PostMapping
-    public Result<Long> create(@Valid @RequestBody TaskDTO dto) {
-        log.info("创建任务: title={}", dto.getTitle());
-        return Result.ok(taskService.create(dto));
-    }
-
-    /**
-     * 分页查询任务
-     */
-    @GetMapping("/page")
-    public Result<PageResult<TaskVO>> page(
-            @RequestParam(required = false) Long projectId,
-            @RequestParam(required = false) Long iterationId,
-            @RequestParam(required = false) Long assigneeId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String priority,
-            @RequestParam(required = false) List<Long> labels,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.ok(taskService.page(projectId, iterationId, assigneeId, status, priority, labels, keyword, page, size));
+    @GetMapping("/list")
+    public TableDataInfo list(Task task)
+    {
+        startPage();
+        List<Task> list = taskService.selectTaskList(task);
+        return getDataTable(list);
     }
 
     /**
      * 获取任务详情
      */
     @GetMapping("/{id}")
-    public Result<TaskVO> getById(@PathVariable Long id) {
-        return Result.ok(taskService.getById(id));
+    public AjaxResult getInfo(@PathVariable Long id)
+    {
+        return success(taskService.selectTaskById(id));
     }
 
     /**
-     * 更新任务
+     * 新增任务
      */
-    @PutMapping("/{id}")
-    public Result<Void> update(@PathVariable Long id, @Valid @RequestBody TaskDTO dto) {
-        dto.setId(id);
-        log.info("更新任务: taskId={}", id);
-        taskService.update(dto);
-        return Result.ok();
+    @PostMapping
+    public AjaxResult add(@RequestBody Task task)
+    {
+        return toAjax(taskService.insertTask(task));
+    }
+
+    /**
+     * 修改任务
+     */
+    @PutMapping
+    public AjaxResult edit(@RequestBody Task task)
+    {
+        return toAjax(taskService.updateTask(task));
     }
 
     /**
      * 删除任务
      */
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
-        log.info("删除任务: taskId={}", id);
-        taskService.delete(id);
-        return Result.ok();
+    public AjaxResult remove(@PathVariable Long id)
+    {
+        return toAjax(taskService.deleteTaskById(id));
     }
 
     /**
      * 更新任务状态
      */
     @PutMapping("/{id}/status")
-    public Result<Void> updateStatus(@PathVariable Long id, @RequestBody StatusDTO dto) {
-        log.info("更新任务状态: taskId={}, status={}", id, dto.getStatus());
-        taskService.updateStatus(id, dto.getStatus());
-        return Result.ok();
+    public AjaxResult updateStatus(@PathVariable Long id, @RequestBody Task task)
+    {
+        return toAjax(taskService.updateStatus(id, task.getStatus()));
     }
 
     /**
      * 分配任务
      */
     @PutMapping("/{id}/assign")
-    public Result<Void> assign(@PathVariable Long id, @Valid @RequestBody AssignDTO dto) {
-        log.info("分配任务: taskId={}, assigneeId={}", id, dto.getAssigneeId());
-        taskService.assign(id, dto);
-        return Result.ok();
+    public AjaxResult assign(@PathVariable Long id, @RequestBody Task task)
+    {
+        return toAjax(taskService.assignTask(id, task.getAssigneeId()));
     }
 
     /**
      * 认领任务
      */
     @PostMapping("/{id}/claim")
-    public Result<Void> claim(@PathVariable Long id) {
-        log.info("认领任务: taskId={}", id);
-        taskService.claim(id);
-        return Result.ok();
+    public AjaxResult claim(@PathVariable Long id)
+    {
+        return toAjax(taskService.claimTask(id));
     }
 
     /**
      * 获取看板视图
      */
     @GetMapping("/board")
-    public Result<List<BoardVO>> board(
-            @RequestParam Long projectId,
-            @RequestParam(required = false) Long iterationId) {
-        return Result.ok(taskService.getBoard(projectId, iterationId));
+    public AjaxResult board(@RequestParam Long projectId,
+                            @RequestParam(required = false) Long iterationId)
+    {
+        return success(taskService.getBoard(projectId, iterationId));
     }
 
     /**
      * 看板拖拽移动
      */
     @PutMapping("/{id}/move")
-    public Result<Void> move(@PathVariable Long id, @Valid @RequestBody MoveDTO dto) {
-        log.info("移动任务: taskId={}, to={}", id, dto.getTargetColumn());
-        taskService.move(id, dto);
-        return Result.ok();
+    public AjaxResult move(@PathVariable Long id, @RequestBody Map<String, Object> params)
+    {
+        String targetColumn = (String) params.get("targetColumn");
+        Integer targetPosition = params.get("targetPosition") != null
+                ? ((Number) params.get("targetPosition")).intValue() : null;
+        return toAjax(taskService.moveTask(id, targetColumn, targetPosition));
     }
 
     /**
      * 获取甘特图数据
      */
     @GetMapping("/gantt")
-    public Result<List<GanttVO>> gantt(
-            @RequestParam(required = false) Long projectId,
-            @RequestParam(required = false) Long iterationId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return Result.ok(taskService.getGantt(projectId, iterationId, startDate, endDate));
+    public AjaxResult gantt(@RequestParam(required = false) Long projectId,
+                            @RequestParam(required = false) Long iterationId)
+    {
+        return success(taskService.getGantt(projectId, iterationId, null, null));
     }
 
     /**
      * 添加子任务
      */
     @PostMapping("/{id}/subtask")
-    public Result<Long> createSubtask(@PathVariable Long id, @Valid @RequestBody TaskDTO dto) {
-        log.info("添加子任务: parentId={}", id);
-        return Result.ok(taskService.createSubtask(id, dto));
+    public AjaxResult addSubtask(@PathVariable Long id, @RequestBody Task task)
+    {
+        return toAjax(taskService.insertSubtask(id, task));
     }
 
     /**
      * 获取子任务列表
      */
-    @GetMapping("/{id}/subtask")
-    public Result<List<TaskVO>> getSubtasks(@PathVariable Long id) {
-        return Result.ok(taskService.getSubtasks(id));
+    @GetMapping("/{id}/subtask/list")
+    public AjaxResult subtaskList(@PathVariable Long id)
+    {
+        return success(taskService.selectSubtasks(id));
     }
 
     /**
      * 添加依赖
      */
     @PostMapping("/{id}/dependency")
-    public Result<Void> addDependency(@PathVariable Long id, @Valid @RequestBody DependencyDTO dto) {
-        log.info("添加依赖: taskId={}, depTaskId={}", id, dto.getDependencyTaskId());
-        taskService.addDependency(id, dto);
-        return Result.ok();
+    public AjaxResult addDependency(@PathVariable Long id, @RequestBody TaskDependency dependency)
+    {
+        return toAjax(taskService.addDependency(id, dependency));
     }
 
     /**
      * 获取依赖
      */
-    @GetMapping("/{id}/dependency")
-    public Result<List<TaskDependencyVO>> getDependencies(@PathVariable Long id) {
-        return Result.ok(taskService.getDependencies(id));
+    @GetMapping("/{id}/dependency/list")
+    public AjaxResult dependencyList(@PathVariable Long id)
+    {
+        return success(taskService.selectDependencies(id));
     }
 
     /**
      * 删除依赖
      */
     @DeleteMapping("/{id}/dependency/{depTaskId}")
-    public Result<Void> deleteDependency(@PathVariable Long id, @PathVariable Long depTaskId) {
-        log.info("删除依赖: taskId={}, depTaskId={}", id, depTaskId);
-        taskService.deleteDependency(id, depTaskId);
-        return Result.ok();
+    public AjaxResult removeDependency(@PathVariable Long id, @PathVariable Long depTaskId)
+    {
+        return toAjax(taskService.deleteDependency(id, depTaskId));
     }
 
     /**
      * 添加工时
      */
     @PostMapping("/{id}/worklog")
-    public Result<Long> addWorklog(@PathVariable Long id, @Valid @RequestBody WorklogDTO dto) {
-        log.info("添加工时: taskId={}, hours={}", id, dto.getHours());
-        return Result.ok(taskService.addWorklog(id, dto));
+    public AjaxResult addWorklog(@PathVariable Long id, @RequestBody TaskWorklog worklog)
+    {
+        return toAjax(taskService.addWorklog(id, worklog));
     }
 
     /**
      * 获取工时记录
      */
-    @GetMapping("/{id}/worklog")
-    public Result<PageResult<WorklogVO>> getWorklogs(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.ok(taskService.getWorklogs(id, page, size));
+    @GetMapping("/{id}/worklog/list")
+    public TableDataInfo worklogList(@PathVariable Long id)
+    {
+        startPage();
+        List<TaskWorklog> list = taskService.selectWorklogs(id);
+        return getDataTable(list);
     }
 
     /**
      * 获取关联提交
      */
-    @GetMapping("/{id}/commits")
-    public Result<List<CommitVO>> getCommits(@PathVariable Long id) {
-        return Result.ok(taskService.getCommits(id));
+    @GetMapping("/{id}/commit/list")
+    public AjaxResult commitList(@PathVariable Long id)
+    {
+        return success(taskService.selectCommits(id));
     }
 
     /**
      * 获取关联MR
      */
-    @GetMapping("/{id}/merge-requests")
-    public Result<List<MergeRequestVO>> getMergeRequests(@PathVariable Long id) {
-        return Result.ok(taskService.getMergeRequests(id));
+    @GetMapping("/{id}/merge-request/list")
+    public AjaxResult mergeRequestList(@PathVariable Long id)
+    {
+        return success(taskService.selectMergeRequests(id));
     }
 
     /**
      * 手动关联提交
      */
     @PostMapping("/{id}/commit")
-    public Result<Void> addCommit(@PathVariable Long id, @Valid @RequestBody CommitDTO dto) {
-        log.info("手动关联提交: taskId={}, commitHash={}", id, dto.getCommitHash());
-        taskService.addCommit(id, dto);
-        return Result.ok();
+    public AjaxResult addCommit(@PathVariable Long id, @RequestBody TaskCommit commit)
+    {
+        return toAjax(taskService.addCommit(id, commit));
     }
 
     /**
      * 手动关联MR
      */
     @PostMapping("/{id}/merge-request")
-    public Result<Void> addMergeRequest(@PathVariable Long id, @Valid @RequestBody MergeRequestDTO dto) {
-        log.info("手动关联MR: taskId={}, mrId={}", id, dto.getMrId());
-        taskService.addMergeRequest(id, dto);
-        return Result.ok();
+    public AjaxResult addMergeRequest(@PathVariable Long id, @RequestBody TaskCommit mr)
+    {
+        return toAjax(taskService.addMergeRequest(id, mr));
     }
 }

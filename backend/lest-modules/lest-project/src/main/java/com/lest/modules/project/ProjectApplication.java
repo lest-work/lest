@@ -1,14 +1,16 @@
 package com.lest.modules.project;
 
-import org.mybatis.spring.annotation.MapperScan;
+import com.lest.common.security.annotation.EnableCustomConfig;
+import com.lest.common.security.annotation.EnableLestFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * 项目管理模块启动类
  */
-@SpringBootApplication(scanBasePackages = {"com.lest.modules.project", "com.lest.common"})
-@MapperScan("com.lest.modules.project.mapper")
+@EnableCustomConfig
+@EnableLestFeignClients
+@SpringBootApplication
 public class ProjectApplication {
 
     public static void main(String[] args) {

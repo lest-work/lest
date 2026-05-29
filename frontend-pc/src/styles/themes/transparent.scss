@@ -1,0 +1,6 @@
+/** 透明主题(css-var) */
+@use 'ele-admin-plus/es/style/themes/transparent-css-var.scss' as *;
+
+html.is-transparent div.login-wrapper {
+  background: none;
+}

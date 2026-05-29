@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.task.mapper.TaskMapper">
+
+    <resultMap type="com.lest.modules.task.domain.Task" id="TaskResult">
+        <id     property="id"             column="id"              />
+        <result property="title"          column="title"           />
+        <result property="description"    column="description"     />
+        <result property="projectId"      column="project_id"      />
+        <result property="iterationId"    column="iteration_id"    />
+        <result property="parentId"       column="parent_id"       />
+        <result property="taskType"       column="task_type"       />
+        <result property="priority"       column="priority"        />
+        <result property="status"         column="status"          />
+        <result property="assigneeId"     column="assignee_id"     />
+        <result property="startTime"      column="start_time"      />
+        <result property="completedAt"    column="completed_at"    />
+        <result property="estimatedHours" column="estimated_hours" />
+        <result property="actualHours"    column="actual_hours"    />
+        <result property="dueDate"        column="due_date"        />
+        <result property="sort"           column="sort"            />
+        <result property="createTime"      column="created_at"      />
+        <result property="updateTime"      column="updated_at"      />
+        <result property="deleted"        column="deleted"         />
+    </resultMap>
+
+    <sql id="selectTaskVo">
+        select id, title, description, project_id, iteration_id, parent_id, task_type, priority, status,
+               assignee_id, start_time, completed_at, estimated_hours, actual_hours, due_date, sort,
+               created_at, updated_at, deleted
+        from task where deleted = 0
+    </sql>
+
+    <select id="selectById" resultMap="TaskResult">
+        <include refid="selectTaskVo"/> and id = #{id}
+    </select>
+
+    <select id="selectTaskList" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        <if test="projectId != null">and project_id = #{projectId}</if>
+        <if test="iterationId != null">and iteration_id = #{iterationId}</if>
+        <if test="assigneeId != null">and assignee_id = #{assigneeId}</if>
+        <if test="status != null and status != ''">and status = #{status}</if>
+        <if test="priority != null and priority != ''">and priority = #{priority}</if>
+        <if test="keyword != null and keyword != ''">
+            and (title like concat('%', #{keyword}, '%') or description like concat('%', #{keyword}, '%'))
+        </if>
+        order by sort desc, created_at desc
+    </select>
+
+    <select id="selectBoardTasks" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        and parent_id is null
+        <if test="projectId != null">and project_id = #{projectId}</if>
+        <if test="iterationId != null">and iteration_id = #{iterationId}</if>
+        order by sort desc
+    </select>
+
+    <select id="selectGanttTasks" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        <if test="projectId != null">and project_id = #{projectId}</if>
+        <if test="iterationId != null">and iteration_id = #{iterationId}</if>
+        <if test="startDate != null">and due_date &gt;= #{startDate}</if>
+        <if test="endDate != null">and due_date &lt;= #{endDate}</if>
+    </select>
+
+    <select id="selectByParentId" resultMap="TaskResult">
+        <include refid="selectTaskVo"/> and parent_id = #{parentId} order by sort desc
+    </select>
+
+    <select id="selectByIds" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        and id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.lest.modules.task.domain.Task" useGeneratedKeys="true" keyProperty="id">
+        insert into task (title, description, project_id, iteration_id, parent_id, task_type, priority,
+                         status, assignee_id, start_time, estimated_hours, due_date, sort, created_at, updated_at)
+        values (#{title}, #{description}, #{projectId}, #{iterationId}, #{parentId}, #{taskType}, #{priority},
+                #{status}, #{assigneeId}, #{startTime}, #{estimatedHours}, #{dueDate}, #{sort}, now(), now())
+    </insert>
+
+    <update id="updateById" parameterType="com.lest.modules.task.domain.Task">
+        update task
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="iterationId != null">iteration_id = #{iterationId},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="assigneeId != null">assignee_id = #{assigneeId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="completedAt != null">completed_at = #{completedAt},</if>
+            <if test="estimatedHours != null">estimated_hours = #{estimatedHours},</if>
+            <if test="actualHours != null">actual_hours = #{actualHours},</if>
+            <if test="dueDate != null">due_date = #{dueDate},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            updated_at = now()
+        </set>
+        where id = #{id} and deleted = 0
+    </update>
+
+    <update id="deleteById">
+        update task set deleted = 1 where id = #{id}
+    </update>
+
+    <select id="countByParentId" resultType="int">
+        select count(*) from task where parent_id = #{parentId} and deleted = 0
+    </select>
+
+    <select id="getMaxSortByProjectId" resultType="java.lang.Integer">
+        select max(sort) from task where project_id = #{projectId} and deleted = 0
+    </select>
+
+    <select id="getMaxSortByParentId" resultType="java.lang.Integer">
+        select max(sort) from task where parent_id = #{parentId} and deleted = 0
+    </select>
+
+</mapper>

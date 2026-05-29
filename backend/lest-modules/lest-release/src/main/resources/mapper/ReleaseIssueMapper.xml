@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.release.mapper.ReleaseIssueMapper">
+
+    <resultMap type="com.lest.modules.release.domain.ReleaseIssue" id="ReleaseIssueResult">
+        <id     property="id"           column="id"            />
+        <result property="releaseId"    column="release_id"    />
+        <result property="issueId"      column="issue_id"      />
+        <result property="taskId"       column="task_id"       />
+        <result property="category"     column="category"      />
+        <result property="notes"        column="notes"         />
+        <result property="addedBy"      column="added_by"      />
+        <result property="addedAt"      column="added_at"      />
+        <result property="releaseName"  column="release_name"  />
+        <result property="addedByName" column="added_by_name" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.modules.release.domain.ReleaseIssue" useGeneratedKeys="true" keyProperty="id">
+        insert into release_issue (release_id, issue_id, task_id, category, notes, added_by, added_at)
+        values (#{releaseId}, #{issueId}, #{taskId}, #{category}, #{notes}, #{addedBy}, #{addedAt})
+    </insert>
+
+    <update id="deleteById">
+        update release_issue set deleted = 1 where id = #{id}
+    </update>
+
+    <select id="selectIssueList" resultMap="ReleaseIssueResult">
+        SELECT ri.id, ri.release_id, ri.issue_id, ri.task_id, ri.category, ri.notes,
+               ri.added_by, ri.added_at,
+               rp.name AS release_name, su.username AS added_by_name
+        FROM release_issue ri
+        LEFT JOIN release_plan rp ON ri.release_id = rp.id AND rp.deleted = 0
+        LEFT JOIN sys_user su ON ri.added_by = su.id AND su.deleted = 0
+        WHERE ri.deleted = 0
+        <if test="releaseId != null">AND ri.release_id = #{releaseId}</if>
+        <if test="issueId != null">AND ri.issue_id = #{issueId}</if>
+        <if test="taskId != null">AND ri.task_id = #{taskId}</if>
+        <if test="category != null">AND ri.category = #{category}</if>
+        ORDER BY ri.added_at DESC
+    </select>
+
+    <select id="countByReleaseId" resultType="int">
+        select count(*) from release_issue where release_id = #{releaseId} and deleted = 0
+    </select>
+
+</mapper>

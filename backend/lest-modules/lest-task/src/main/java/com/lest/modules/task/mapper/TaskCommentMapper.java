@@ -1,20 +1,29 @@
 package com.lest.modules.task.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lest.modules.task.entity.domain.TaskComment;
+import com.lest.modules.task.domain.TaskComment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 任务评论Mapper
  *
- * @author Lest
+ * @author yshan2028
  * @since 2026-05-26
  */
 @Mapper
-public interface TaskCommentMapper extends BaseMapper<TaskComment> {
+public interface TaskCommentMapper
+{
+    TaskComment selectById(@Param("id") Long id);
 
-    @Select("SELECT COUNT(*) FROM task_comment WHERE parent_id = #{parentId} AND deleted = 0")
+    List<TaskComment> selectByTaskId(@Param("taskId") Long taskId);
+
+    int insert(TaskComment comment);
+
+    int updateById(TaskComment comment);
+
+    int deleteById(@Param("id") Long id);
+
     int countByParentId(@Param("parentId") Long parentId);
 }

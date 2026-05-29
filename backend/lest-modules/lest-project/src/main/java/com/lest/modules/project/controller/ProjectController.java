@@ -1,132 +1,134 @@
 package com.lest.modules.project.controller;
 
-import com.lest.common.base.PageResult;
-import com.lest.common.base.Result;
-import com.lest.modules.project.entity.dto.ProjectDTO;
-import com.lest.modules.project.entity.dto.ProjectMemberDTO;
-import com.lest.modules.project.entity.vo.ProjectMemberVO;
-import com.lest.modules.project.entity.vo.ProjectVO;
-import com.lest.modules.project.service.ProjectService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.lest.common.core.web.controller.BaseController;
+import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.modules.project.domain.Project;
+import com.lest.modules.project.domain.ProjectMember;
+import com.lest.modules.project.service.IProjectService;
 
 /**
- * 项目控制器
+ * 项目管理
+ * 
+ * @author yshan2028
  */
-@Slf4j
 @RestController
-@RequestMapping("/project")
-public class ProjectController {
-
-    private final ProjectService projectService;
-
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
+@RequestMapping("")
+public class ProjectController extends BaseController
+{
+    @Autowired
+    private IProjectService projectService;
 
     /**
-     * 创建项目
+     * 查询项目列表
      */
-    @PostMapping
-    public Result<Long> create(@Valid @RequestBody ProjectDTO dto) {
-        return Result.ok(projectService.create(dto));
-    }
-
-    /**
-     * 分页查询项目
-     */
-    @GetMapping("/page")
-    public Result<PageResult<ProjectVO>> page(
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) Integer status) {
-        return Result.ok(projectService.page(page, size, name, status));
+    @GetMapping("/list")
+    public TableDataInfo list(Project project)
+    {
+        startPage();
+        List<Project> list = projectService.selectProjectList(project);
+        return getDataTable(list);
     }
 
     /**
      * 获取项目详情
      */
     @GetMapping("/{id}")
-    public Result<ProjectVO> getById(@PathVariable Long id) {
-        return Result.ok(projectService.getById(id));
+    public AjaxResult getInfo(@PathVariable Long id)
+    {
+        return success(projectService.selectProjectById(id));
     }
 
     /**
-     * 更新项目
+     * 新增项目
      */
-    @PutMapping("/{id}")
-    public Result<Void> update(@PathVariable Long id, @Valid @RequestBody ProjectDTO dto) {
-        dto.setId(id);
-        projectService.update(dto);
-        return Result.ok();
+    @PostMapping
+    public AjaxResult add(@RequestBody Project project)
+    {
+        return toAjax(projectService.insertProject(project));
+    }
+
+    /**
+     * 修改项目
+     */
+    @PutMapping
+    public AjaxResult edit(@RequestBody Project project)
+    {
+        return toAjax(projectService.updateProject(project));
     }
 
     /**
      * 删除项目
      */
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
-        projectService.delete(id);
-        return Result.ok();
+    public AjaxResult remove(@PathVariable Long id)
+    {
+        return toAjax(projectService.deleteProjectById(id));
     }
 
     /**
      * 归档项目
      */
     @PutMapping("/{id}/archive")
-    public Result<Void> archive(@PathVariable Long id) {
-        projectService.archive(id);
-        return Result.ok();
+    public AjaxResult archive(@PathVariable Long id)
+    {
+        return toAjax(projectService.archiveProject(id));
     }
 
     /**
      * 取消归档项目
      */
     @PutMapping("/{id}/unarchive")
-    public Result<Void> unarchive(@PathVariable Long id) {
-        projectService.unarchive(id);
-        return Result.ok();
+    public AjaxResult unarchive(@PathVariable Long id)
+    {
+        return toAjax(projectService.unarchiveProject(id));
     }
 
     /**
-     * 获取项目成员列表
+     * 查询项目成员列表
      */
-    @GetMapping("/{id}/member")
-    public Result<List<ProjectMemberVO>> listMembers(@PathVariable Long id) {
-        return Result.ok(projectService.listMembers(id));
+    @GetMapping("/{id}/member/list")
+    public AjaxResult memberList(@PathVariable Long id)
+    {
+        List<ProjectMember> list = projectService.selectMembersByProjectId(id);
+        return success(list);
     }
 
     /**
      * 添加项目成员
      */
     @PostMapping("/{id}/member")
-    public Result<Void> addMember(@PathVariable Long id, @Valid @RequestBody ProjectMemberDTO dto) {
-        projectService.addMember(id, dto);
-        return Result.ok();
+    public AjaxResult addMember(@PathVariable Long id, @RequestBody ProjectMember member)
+    {
+        member.setProjectId(id);
+        return toAjax(projectService.insertMember(member));
     }
 
     /**
      * 移除项目成员
      */
     @DeleteMapping("/{id}/member/{userId}")
-    public Result<Void> removeMember(@PathVariable Long id, @PathVariable Long userId) {
-        projectService.removeMember(id, userId);
-        return Result.ok();
+    public AjaxResult removeMember(@PathVariable Long id, @PathVariable Long userId)
+    {
+        return toAjax(projectService.deleteMember(id, userId));
     }
 
     /**
      * 修改项目成员角色
      */
     @PutMapping("/{id}/member/{userId}/role")
-    public Result<Void> updateMemberRole(
-            @PathVariable Long id,
-            @PathVariable Long userId,
-            @Valid @RequestBody com.lest.modules.project.entity.dto.MemberRoleDTO dto) {
-        projectService.updateMemberRole(id, userId, dto.getRole());
-        return Result.ok();
+    public AjaxResult updateMemberRole(@PathVariable Long id, @PathVariable Long userId, @RequestBody ProjectMember member)
+    {
+        return toAjax(projectService.updateMemberRole(id, userId, member.getRole()));
     }
 }

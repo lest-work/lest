@@ -1,23 +1,22 @@
 package com.lest.modules.task.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lest.modules.task.entity.domain.TaskLabel;
+import com.lest.modules.task.domain.TaskLabel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 /**
  * 任务标签Mapper
  *
- * @author Lest
+ * @author yshan2028
  * @since 2026-05-26
  */
 @Mapper
-public interface TaskLabelMapper extends BaseMapper<TaskLabel> {
+public interface TaskLabelMapper
+{
+    int insert(TaskLabel taskLabel);
 
-    @Select("SELECT label_id FROM task_label WHERE task_id = #{taskId}")
     List<Long> selectLabelIdsByTaskId(@Param("taskId") Long taskId);
 
     void deleteByTaskId(@Param("taskId") Long taskId);

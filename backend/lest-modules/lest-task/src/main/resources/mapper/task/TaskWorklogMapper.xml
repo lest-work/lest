@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.task.mapper.TaskWorklogMapper">
+
+    <resultMap type="com.lest.modules.task.domain.TaskWorklog" id="TaskWorklogResult">
+        <id     property="id"          column="id"           />
+        <result property="taskId"      column="task_id"      />
+        <result property="userId"      column="user_id"      />
+        <result property="hours"       column="hours"        />
+        <result property="description" column="description"  />
+        <result property="workDate"    column="work_date"    />
+        <result property="createTime"   column="created_at"   />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.modules.task.domain.TaskWorklog" useGeneratedKeys="true" keyProperty="id">
+        insert into task_worklog (task_id, user_id, hours, description, work_date, created_at)
+        values (#{taskId}, #{userId}, #{hours}, #{description}, #{workDate}, now())
+    </insert>
+
+    <select id="selectByTaskId" resultMap="TaskWorklogResult">
+        select id, task_id, user_id, hours, description, work_date, created_at
+        from task_worklog where task_id = #{taskId} order by work_date desc
+    </select>
+
+</mapper>

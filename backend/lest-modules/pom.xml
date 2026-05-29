@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.lest</groupId>
+        <artifactId>lest</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>lest-modules</artifactId>
+    <packaging>pom</packaging>
+
+    <name>lest-modules</name>
+    <description>业务模块父工程</description>
+
+    <modules>
+        <module>lest-system</module>
+        <module>lest-project</module>
+        <module>lest-task</module>
+        <module>lest-release</module>
+        <module>lest-job</module>
+        <module>lest-file</module>
+        <module>lest-ai</module>
+
+        <module>lest-meeting</module>
+        <module>lest-notification</module>
+        <module>lest-open</module>
+        <module>lest-performance</module>
+        <module>lest-plugin</module>
+        <module>lest-wakapi</module>
+    </modules>
+</project>

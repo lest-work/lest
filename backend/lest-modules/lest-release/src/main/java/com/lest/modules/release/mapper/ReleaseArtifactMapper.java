@@ -1,9 +1,19 @@
 package com.lest.modules.release.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lest.modules.release.entity.domain.ReleaseArtifact;
+import com.lest.modules.release.domain.ReleaseArtifact;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
-public interface ReleaseArtifactMapper extends BaseMapper<ReleaseArtifact> {
+public interface ReleaseArtifactMapper
+{
+    int insert(ReleaseArtifact artifact);
+
+    int deleteById(@Param("id") Long id);
+
+    List<ReleaseArtifact> selectByReleaseId(@Param("releaseId") Long releaseId);
+
+    int countByReleaseId(@Param("releaseId") Long releaseId);
 }

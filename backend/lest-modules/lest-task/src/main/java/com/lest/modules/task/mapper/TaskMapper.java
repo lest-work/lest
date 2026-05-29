@@ -1,26 +1,45 @@
 package com.lest.modules.task.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lest.modules.task.entity.domain.Task;
+import com.lest.modules.task.domain.Task;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 任务Mapper
  *
- * @author Lest
+ * @author yshan2028
  * @since 2026-05-26
  */
 @Mapper
-public interface TaskMapper extends BaseMapper<Task> {
+public interface TaskMapper
+{
+    Task selectById(@Param("id") Long id);
 
-    @Select("SELECT COUNT(*) FROM task WHERE parent_id = #{parentId} AND deleted = 0")
+    List<Task> selectTaskList(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId,
+                              @Param("assigneeId") Long assigneeId, @Param("status") String status,
+                              @Param("priority") String priority, @Param("keyword") String keyword);
+
+    List<Task> selectBoardTasks(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId);
+
+    List<Task> selectGanttTasks(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId,
+                                @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    List<Task> selectByParentId(@Param("parentId") Long parentId);
+
+    List<Task> selectByIds(@Param("ids") List<Long> ids);
+
+    int insert(Task task);
+
+    int updateById(Task task);
+
+    int deleteById(@Param("id") Long id);
+
     int countByParentId(@Param("parentId") Long parentId);
 
-    @Select("SELECT MAX(sort) FROM task WHERE project_id = #{projectId} AND deleted = 0")
     Integer getMaxSortByProjectId(@Param("projectId") Long projectId);
 
-    @Select("SELECT MAX(sort) FROM task WHERE parent_id = #{parentId} AND deleted = 0")
     Integer getMaxSortByParentId(@Param("parentId") Long parentId);
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.modules.task.mapper.LabelMapper">
+
+    <resultMap type="com.lest.modules.task.domain.Label" id="LabelResult">
+        <id     property="id"        column="id"         />
+        <result property="projectId" column="project_id" />
+        <result property="name"      column="name"       />
+        <result property="color"     column="color"      />
+        <result property="createTime" column="created_at"  />
+    </resultMap>
+
+    <select id="selectById" resultMap="LabelResult">
+        select id, project_id, name, color, created_at from label where id = #{id}
+    </select>
+
+    <select id="selectByProjectId" resultMap="LabelResult">
+        select id, project_id, name, color, created_at from label where project_id = #{projectId} order by created_at asc
+    </select>
+
+    <insert id="insert" parameterType="com.lest.modules.task.domain.Label" useGeneratedKeys="true" keyProperty="id">
+        insert into label (project_id, name, color, created_at) values (#{projectId}, #{name}, #{color}, now())
+    </insert>
+
+    <delete id="deleteById">
+        delete from label where id = #{id}
+    </delete>
+
+</mapper>

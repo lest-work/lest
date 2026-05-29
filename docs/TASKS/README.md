@@ -25,13 +25,20 @@ docs/TASKS/
 
 | 关联 PRD 需求文档 | 对应开发任务白皮书 (Markdown 格式) | 负责微服务模块 | 当前整体完成度 | 状态 |
 | :--- | :--- | :--- | :--- | :--- |
-| **认证系统与系统管理 PRD** | [认证系统与系统管理_tasks.md](./V1.0/认证系统与系统管理_tasks.md) | `lest-auth` / `lest-system` | 0 / 4 | 🔴 待启动 |
-| **项目管理 PRD** | [项目管理_tasks.md](./V1.0/项目管理_tasks.md) | `lest-project` | 0 / 4 | 🔴 待启动 |
-| **任务管理 PRD** | [任务管理_tasks.md](./V1.0/任务管理_tasks.md) | `lest-task` | 0 / 5 | 🔴 待启动 |
-| **WakaTime 集成 PRD** | [WakaTime集成_tasks.md](./V1.0/WakaTime集成_tasks.md) | `lest-wakapi` | 0 / 4 | 🔴 待启动 |
-| **AI 服务 PRD** | [AI服务_tasks.md](./V1.0/AI服务_tasks.md) | `lest-ai` | 0 / 4 | 🔴 待启动 |
-| **通知与消息 PRD** | [通知与消息_tasks.md](./V1.0/通知与消息_tasks.md) | `lest-notification` | 0 / 4 | 🔴 待启动 |
-| **插件系统 PRD** | [插件系统_tasks.md](./V1.0/插件系统_tasks.md) | `lest-plugin` | 0 / 3 | 🔴 待启动 |
+| **认证系统与系统管理 PRD** | [认证系统与系统管理_tasks.md](./V1.0/认证系统与系统管理_tasks.md) | `lest-auth` / `lest-system` | DDL✅ 后端API✅ 前端✅ 仪表盘✅ | � 后端/数据库/前端基础已完成 |
+| **项目管理 PRD** | [项目管理_tasks.md](./V1.0/项目管理_tasks.md) | `lest-project` | DDL⚠️ 后端API🟡 前端API✅ 仪表盘✅ | � 后端+API层完成，DDL待补，前端页面待开发 |
+| **任务管理 PRD** | [任务管理_tasks.md](./V1.0/任务管理_tasks.md) | `lest-task` | DDL⚠️ 后端API🟡 前端API✅ 仪表盘✅ | 🟡 后端+API层完成，DDL待补，前端页面待开发 |
+| **系统设置 PRD** | [系统设置_tasks.md](./V1.0/系统设置_tasks.md) | `lest-system` | DDL✅ 后端API✅ 前端✅ | 🟢 已通过 sys_config/sys_dict 实现 |
+| **敏捷会议 PRD** | [敏捷会议_tasks.md](./V1.0/敏捷会议_tasks.md) | `lest-meeting` | — | 🔴 待启动 |
+| **发布管理 PRD** | [发布管理_tasks.md](./V1.0/发布管理_tasks.md) | `lest-release` | — | 🔴 待启动 |
+| **通知与消息 PRD** | [通知与消息_tasks.md](./V1.0/通知与消息_tasks.md) | `lest-notification` | — | 🔴 待启动 |
+| **CI 持续集成 PRD** | [CI持续集成_tasks.md](./V1.0/CI持续集成_tasks.md) | `lest-ci` | — | 🔴 待启动 |
+| **代码管理 PRD** | [代码管理_tasks.md](./V1.0/代码管理_tasks.md) | `lest-code` | — | 🔴 待启动 |
+| **WakaTime 集成 PRD** | [WakaTime集成_tasks.md](./V1.0/WakaTime集成_tasks.md) | `lest-wakapi` | — | 🔴 待启动 |
+| **团队绩效 PRD** | [团队绩效_tasks.md](./V1.0/团队绩效_tasks.md) | `lest-system` | — | 🔴 待启动 |
+| **AI 服务 PRD** | [AI服务_tasks.md](./V1.0/AI服务_tasks.md) | `lest-ai` | — | 🔴 待启动 |
+| **开放平台 PRD** | [开放平台_tasks.md](./V1.0/开放平台_tasks.md) | `lest-system` | — | 🔴 待启动 |
+| **插件系统 PRD** | [插件系统_tasks.md](./V1.0/插件系统_tasks.md) | `lest-plugin` | — | 🔴 待启动 |
 
 ---
 
