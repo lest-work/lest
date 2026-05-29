@@ -3,9 +3,69 @@
     <div class="login-main">
       <ele-card shadow="always" class="login-card">
         <div class="login-cover">
-          <img src="@/assets/logo.svg" class="login-logo" alt="Lest" />
-          <h1 class="login-title">Lest</h1>
-          <h4 class="login-subtitle">工程团队项目管理平台</h4>
+          <div class="login-cover-brand">
+            <img src="@/assets/logo.svg" class="login-logo" alt="Lest" />
+            <div>
+              <h1 class="login-title">Lest</h1>
+              <p class="login-tagline">企业级项目协作平台</p>
+            </div>
+          </div>
+          <div class="login-features">
+            <div class="login-feature-item">
+              <div class="login-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 7C3 5.9 3.9 5 5 5H10L12 7H19C20.1 7 21 7.9 21 9V17C21 18.1 20.1 19 19 19H5C3.9 19 3 18.1 3 17V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M9 13L11 15L15 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="login-feature-text">
+                <div class="login-feature-title">项目全生命周期管理</div>
+                <div class="login-feature-desc">从立项到交付，迭代与里程碑全程可追溯</div>
+              </div>
+            </div>
+            <div class="login-feature-item">
+              <div class="login-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.8"/>
+                  <rect x="10" y="5" width="4" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/>
+                  <rect x="17" y="5" width="4" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div class="login-feature-text">
+                <div class="login-feature-title">敏捷看板与任务追踪</div>
+                <div class="login-feature-desc">可视化工作流，实时掌握团队每日进度</div>
+              </div>
+            </div>
+            <div class="login-feature-item">
+              <div class="login-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 3.5C9.2 3 10.6 2.8 12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="login-feature-text">
+                <div class="login-feature-title">工时统计与数据洞察</div>
+                <div class="login-feature-desc">燃尽图、工时报告，多角色权限精细管控</div>
+              </div>
+            </div>
+          </div>
+          <div class="login-stats">
+            <div class="login-stat-item">
+              <div class="login-stat-num">多项目</div>
+              <div class="login-stat-label">并行管理</div>
+            </div>
+            <div class="login-stat-divider"></div>
+            <div class="login-stat-item">
+              <div class="login-stat-num">实时</div>
+              <div class="login-stat-label">协作同步</div>
+            </div>
+            <div class="login-stat-divider"></div>
+            <div class="login-stat-item">
+              <div class="login-stat-num">看板</div>
+              <div class="login-stat-label">敏捷开发</div>
+            </div>
+          </div>
         </div>
         <div class="login-body">
           <ele-text type="heading" style="font-size: 24px; margin-bottom: 18px">
@@ -233,21 +293,142 @@
       :deep(.ele-card-body) {
         display: flex;
         padding: 0;
-        height: 462px;
+        height: 520px;
       }
     }
   }
 
   .login-cover {
     flex: 1;
-    padding: 32px 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 40px 28px 40px;
     box-sizing: border-box;
-    background-color: #1681fd;
-    background-image: url('@/assets/login-img.png');
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: contain;
+    background: linear-gradient(150deg, #0f1e45 0%, #1a3a7a 50%, #1d5fc8 100%);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      top: -80px;
+      right: -80px;
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      bottom: 60px;
+      left: -60px;
+      pointer-events: none;
+    }
+  }
+
+  .login-cover-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .login-features {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .login-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.11);
+    }
+  }
+
+  .login-feature-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.90);
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .login-feature-text {
+    padding-top: 2px;
+  }
+
+  .login-feature-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .login-feature-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.60);
+    line-height: 1.6;
+  }
+
+  .login-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 24px;
+    padding: 16px 0 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .login-stat-item {
+    flex: 1;
     text-align: center;
+  }
+
+  .login-stat-num {
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: 0.5px;
+  }
+
+  .login-stat-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.50);
+    margin-top: 2px;
+  }
+
+  .login-stat-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .login-body {
@@ -308,29 +489,29 @@
 
   /* Logo */
   .login-logo {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 16px;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
   }
 
   /* 标题 */
   .login-title {
     color: rgba(255, 255, 255, 0.98);
-    font-size: 34px;
-    margin: 0 0 8px 0;
+    font-size: 26px;
+    margin: 0 0 4px 0;
     font-weight: 700;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
       'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   }
 
-  .login-subtitle {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 14px;
+  .login-tagline {
+    color: rgba(255, 255, 255, 0.60);
+    font-size: 12px;
     margin: 0;
     font-weight: normal;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
   }
 
   /* 二维码 */
@@ -373,12 +554,12 @@
     }
 
     .login-cover {
-      padding: 20px 12px 100px 12px;
-      background-size: auto 100px;
+      display: none;
     }
 
     .login-body {
       width: 100%;
+      padding: 32px 24px;
     }
   }
 </style>

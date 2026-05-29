@@ -234,7 +234,7 @@ spring.cloud.sentinel:
 security:
   captcha:
     enabled: true
-    type: math
+    type: char
   ignore:
     whites:
       - /auth/**
