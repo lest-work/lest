@@ -1,8 +1,12 @@
 package com.lest.gateway.filter;
 
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -12,14 +16,12 @@ import com.lest.common.core.utils.ServletUtils;
 import com.lest.common.core.utils.StringUtils;
 import com.lest.gateway.config.properties.CaptchaProperties;
 import com.lest.gateway.service.ValidateCodeService;
-import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
+import reactor.core.publisher.Flux;
 
 /**
  * 验证码过滤器
  *
- * @author yshan2028
+ * @author ruoyi
  */
 @Component
 public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object>
@@ -48,33 +50,31 @@ public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object>
                 return chain.filter(exchange);
             }
 
-            return DataBufferUtils.join(request.getBody())
-                .flatMap(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    String bodyStr = new String(bytes, StandardCharsets.UTF_8);
-                    try
-                    {
-                        JSONObject obj = JSON.parseObject(bodyStr);
-                        validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
-                    }
-                    catch (Exception e)
-                    {
-                        return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
-                    }
-                    // 重新包装请求体（因为已经被消费了）
-                    var factory = exchange.getResponse().bufferFactory();
-                    var newBuffer = factory.wrap(bytes);
-                    var decorator = new org.springframework.http.server.reactive.ServerHttpRequestDecorator(request) {
-                        @Override
-                        public reactor.core.publisher.Flux<org.springframework.core.io.buffer.DataBuffer> getBody() {
-                            return reactor.core.publisher.Flux.just(newBuffer);
-                        }
-                    };
-                    return chain.filter(exchange.mutate().request(decorator).build());
-                })
-                .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)));
+            try
+            {
+                String rspStr = resolveBodyFromRequest(request);
+                JSONObject obj = JSON.parseObject(rspStr);
+                validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
+            }
+            catch (Exception e)
+            {
+                return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
+            }
+            return chain.filter(exchange);
         };
+    }
+
+    @SuppressWarnings("deprecation")
+    private String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest)
+    {
+        // 获取请求体
+        Flux<DataBuffer> body = serverHttpRequest.getBody();
+        AtomicReference<String> bodyRef = new AtomicReference<>();
+        body.subscribe(buffer -> {
+            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());
+            DataBufferUtils.release(buffer);
+            bodyRef.set(charBuffer.toString());
+        });
+        return bodyRef.get();
     }
 }

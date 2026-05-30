@@ -9,8 +9,8 @@ import static com.google.code.kaptcha.Constants.*;
 
 /**
  * 验证码配置
- * 
- * @author yshan2028
+ *
+ * @author ruoyi
  */
 @Configuration
 public class CaptchaConfig
@@ -20,39 +20,29 @@ public class CaptchaConfig
     {
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         Properties properties = new Properties();
-        // 是否有边框
-        properties.setProperty(KAPTCHA_BORDER, "no");
-        // 验证码文本字符颜色
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "38,57,110");
-        // 验证码图片宽度
+        // 是否有边框 默认为true 我们可以自己设置yes，no
+        properties.setProperty(KAPTCHA_BORDER, "yes");
+        // 验证码文本字符颜色 默认为Color.BLACK
+        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "black");
+        // 验证码图片宽度 默认为200
         properties.setProperty(KAPTCHA_IMAGE_WIDTH, "160");
-        // 验证码图片高度
+        // 验证码图片高度 默认为50
         properties.setProperty(KAPTCHA_IMAGE_HEIGHT, "60");
-        // 验证码文本字符大小
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_SIZE, "40");
+        // 验证码文本字符大小 默认为40
+        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_SIZE, "38");
         // KAPTCHA_SESSION_KEY
         properties.setProperty(KAPTCHA_SESSION_CONFIG_KEY, "kaptchaCode");
-        // 验证码文本字符长度：4位
+        // 验证码文本字符长度 默认为5
         properties.setProperty(KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
-        // 字符集：大写字母+数字，去除易混淆字符 0/O/1/I/L
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_CHAR_STRING, "ABCDEFGHJKMNPQRSTUVWXYZ23456789");
-        // 字符间距
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_CHAR_SPACE, "6");
-        // 验证码文本字体样式
+        // 验证码文本字体样式 默认为new Font("Arial", 1, fontSize), new Font("Courier", 1, fontSize)
         properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_NAMES, "Arial,Courier");
-        // 背景渐变色（浅蓝到白）
-        properties.setProperty(KAPTCHA_BACKGROUND_CLR_FROM, "230,240,255");
-        properties.setProperty(KAPTCHA_BACKGROUND_CLR_TO, "255,255,255");
-        // 干扰线实现：少量干扰
-        properties.setProperty(KAPTCHA_NOISE_IMPL, "com.google.code.kaptcha.impl.DefaultNoise");
-        properties.setProperty(KAPTCHA_NOISE_COLOR, "180,180,200");
-        // 图片样式：阴影
+        // 图片样式 水纹com.google.code.kaptcha.impl.WaterRipple 鱼眼com.google.code.kaptcha.impl.FishEyeGimpy 阴影com.google.code.kaptcha.impl.ShadowGimpy
         properties.setProperty(KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.ShadowGimpy");
         Config config = new Config(properties);
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
     }
-    
+
     @Bean(name = "captchaProducerMath")
     public DefaultKaptcha getKaptchaBeanMath()
     {

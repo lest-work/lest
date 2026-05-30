@@ -25,9 +25,10 @@
         <lest.version>1.0.0</lest.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
 
         <!-- Spring 生态 -->
         <spring-boot.version>4.0.3</spring-boot.version>
@@ -247,6 +248,14 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
+
+        <!-- DevTools 热加载 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -259,6 +268,7 @@
                     <parameters>true</parameters>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <release>${maven.compiler.release}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -269,6 +279,9 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
+                    <configuration>
+                        <excludeDevtools>false</excludeDevtools>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>

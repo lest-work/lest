@@ -4,11 +4,6 @@ server:
 spring:
   application:
     name: lest-open
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:3306/${MYSQL_DB:lest_platform}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD:12345678}
   autoconfigure:
     exclude:
       - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
@@ -55,12 +50,6 @@ open-platform:
       window-seconds: 60
   oauth2:
     token-expiry: 7200
-
-# MyBatis-Plus
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # Actuator
 management:

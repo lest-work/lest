@@ -23,7 +23,7 @@ import com.lest.gateway.service.ValidateCodeService;
 /**
  * 验证码实现处理
  *
- * @author yshan2028
+ * @author ruoyi
  */
 @Service
 public class ValidateCodeServiceImpl implements ValidateCodeService
