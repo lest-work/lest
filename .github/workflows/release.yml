@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Release version (e.g. 1.0.0)'
+        required: true
+        type: string
       environment:
         description: 'Deployment environment'
         required: true
@@ -16,81 +20,299 @@ on:
           - production
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/lest-platform
+  GHCR_REGISTRY: ghcr.io/${{ github.repository_owner }}/lest-platform
+  DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/lest-platform
+  ALIYUN_REGISTRY: ${{ secrets.ALIYUN_REGISTRY }}/lest-platform
 
 jobs:
-  # ==================== 构建 ====================
-  build:
-    name: Build & Push Images
+  # ==================== 版本信息 ====================
+  info:
+    name: Release Info
     runs-on: ubuntu-24.04
     outputs:
-      backend-tag: ${{ steps.meta.outputs.tags['backend'] }}
-      frontend-tag: ${{ steps.meta.outputs.tags['frontend'] }}
-      wakapi-tag: ${{ steps.meta.outputs.tags['wakapi'] }}
+      version: ${{ steps.ver.outputs.version }}
+      short_sha: ${{ steps.ver.outputs.short_sha }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Calculate version
+        id: ver
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "short_sha=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION, SHA: $(echo $GITHUB_SHA | cut -c1-7)"
+
+  # ==================== 后端构建 ====================
+  backend-build:
+    name: Build Backend JARs
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build JARs
+        run: mvn clean package -DskipTests -q
+
+      - name: Prepare JAR directories
+        run: |
+          mkdir -p jar
+          # lest-gateway
+          mkdir -p lest-gateway/jar
+          cp lest-gateway/target/lest-gateway-*.jar lest-gateway/jar/lest-gateway.jar
+          # lest-auth
+          mkdir -p lest-auth/jar
+          cp lest-auth/target/lest-auth-*.jar lest-auth/jar/lest-auth.jar
+          # lest-modules-system
+          mkdir -p lest-modules/lest-system/jar
+          cp lest-modules/lest-system/target/lest-system-*.jar lest-modules/lest-system/jar/lest-modules-system.jar
+          # lest-modules-job
+          mkdir -p lest-modules/lest-job/jar
+          cp lest-modules/lest-job/target/lest-job-*.jar lest-modules/lest-job/jar/lest-modules-job.jar
+          # lest-modules-file
+          mkdir -p lest-modules/lest-file/jar
+          cp lest-modules/lest-file/target/lest-file-*.jar lest-modules/lest-file/jar/lest-modules-file.jar
+          # lest-modules-project
+          mkdir -p lest-modules/lest-project/jar
+          cp lest-modules/lest-project/target/lest-project-*.jar lest-modules/lest-project/jar/lest-modules-project.jar
+          # lest-modules-task
+          mkdir -p lest-modules/lest-task/jar
+          cp lest-modules/lest-task/target/lest-task-*.jar lest-modules/lest-task/jar/lest-modules-task.jar
+          # lest-modules-release
+          mkdir -p lest-modules/lest-release/jar
+          cp lest-modules/lest-release/target/lest-release-*.jar lest-modules/lest-release/jar/lest-modules-release.jar
+          # lest-visual-monitor
+          mkdir -p lest-visual/lest-monitor/jar
+          cp lest-visual/lest-monitor/target/lest-monitor-*.jar lest-visual/lest-monitor/jar/lest-visual-monitor.jar
+
+      - name: Upload JAR artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jars
+          path: backend/jar/
+          retention-days: 2
+
+  # ==================== 前端构建 ====================
+  frontend-build:
+    name: Build Frontend
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend-pc
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend-pc/package-lock.json
+
+      - name: Install & Build
+        run: npm ci && npm run build
+
+      - name: Prepare nginx directory
+        run: |
+          mkdir -p ../backend/docker/nginx/html/dist
+          cp -r dist/* ../backend/docker/nginx/html/dist/
+
+      - name: Upload frontend dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/
+          retention-days: 2
+
+  # ==================== Docker 多架构镜像构建 ====================
+  docker-build:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-24.04
+    needs: [backend-build, frontend-build, info]
+    strategy:
+      matrix:
+        service:
+          - name: gateway
+            path: lest/gateway
+            port: 8080
+            dockerfile: ../docker-dev.Dockerfile
+          - name: auth
+            path: lest/auth
+            port: 8096
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-system
+            path: lest/modules/system
+            port: 9201
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-job
+            path: lest/modules/job
+            port: 9203
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-file
+            path: lest/modules/file
+            port: 9300
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-project
+            path: lest/modules/project
+            port: 9400
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-task
+            path: lest/modules/task
+            port: 9401
+            dockerfile: ../docker-dev.Dockerfile
+          - name: modules-release
+            path: lest/modules/release
+            port: 9402
+            dockerfile: ../docker-dev.Dockerfile
+          - name: visual-monitor
+            path: lest/visual/monitor
+            port: 9100
+            dockerfile: ../docker-dev.Dockerfile
+          - name: nginx
+            path: nginx
+            port: 80
+            dockerfile: nginx/dockerfile
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Download backend JARs
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jars
+          path: jar/
+
+      - name: Download frontend dist
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: html/dist/
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Container Registry
-        if: github.event_name != 'workflow_dispatch'
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to Aliyun ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+
+      - name: Extract metadata for ${{ matrix.service.name }}
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/backend
-            ${{ env.REGISTRY }}/${{ github.repository }}/frontend
-            ${{ env.REGISTRY }}/${{ github.repository }}/wakapi
+            ${{ env.GHCR_REGISTRY }}/${{ matrix.service.name }}
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ matrix.service.name }}
+            ${{ env.ALIYUN_REGISTRY }}/${{ matrix.service.name }}
           tags: |
-            type=sha,prefix=
-            type=semver,pattern={{version}}
-            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}},value=${{ needs.info.outputs.version }}
+            type=sha,prefix=,suffix=-${{ needs.info.outputs.short_sha }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
-      - name: Build and push backend
+      - name: Build and push to all registries (${{ matrix.service.name }})
         uses: docker/build-push-action@v6
         with:
-          context: ./backend-new
-          push: ${{ github.event_name != 'workflow_dispatch' }}
-          tags: ${{ steps.meta.outputs.tags['backend'] }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend-new
-          push: ${{ github.event_name != 'workflow_dispatch' }}
-          tags: ${{ steps.meta.outputs.tags['frontend'] }}
+          context: backend
           build-args: |
-            VITE_API_URL=/api
-            VITE_WAKAPI_BASE_URL=/api
+            MODULE=${{ matrix.service.path }}
+            SERVICE_PORT=${{ matrix.service.port }}
+          dockerfile: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+        if: matrix.service.dockerfile == '../docker-dev.Dockerfile'
 
-      - name: Build and push wakapi
+      - name: Build and push nginx image
         uses: docker/build-push-action@v6
         with:
-          context: ./wakapi
-          push: ${{ github.event_name != 'workflow_dispatch' }}
-          tags: ${{ steps.meta.outputs.tags['wakapi'] }}
+          context: backend
+          dockerfile: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+        if: matrix.service.dockerfile != '../docker-dev.Dockerfile'
+
+  # ==================== 生成变更日志 ====================
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-24.04
+    needs: [info]
+    outputs:
+      body: ${{ steps.cl.outputs.changelog }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: cl
+        run: |
+          CHANGELOG=$(git log --pretty=format:'%h %s (%an)' \
+            ${{ github.event.inputs.version != '' && github.event.inputs.version || 'HEAD~10' }}..HEAD 2>/dev/null \
+            | head -20)
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "## What's Changed" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create or update GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.info.outputs.version }}
+          name: Release ${{ needs.info.outputs.version }}
+          body_path: CHANGELOG.md
+          generate_release_notes: true
+          draft: true
+        continue-on-error: true
 
   # ==================== 部署到 Staging ====================
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-24.04
-    needs: build
+    needs: [docker-build, info]
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
     environment: staging
     steps:
@@ -102,15 +324,17 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
             cd /opt/lest-platform
-            docker compose -f docker/production/docker-compose.prod.yml pull
-            docker compose -f docker/production/docker-compose.prod.yml up -d --remove-orphans
+            git pull origin main
+            docker compose pull
+            docker compose up -d --remove-orphans
             docker image prune -f
+            echo "Staging deployed: ${{ needs.info.outputs.version }}"
 
   # ==================== 部署到 Production ====================
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-24.04
-    needs: build
+    needs: [docker-build, info]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     environment: production
     steps:
@@ -122,11 +346,13 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           script: |
             cd /opt/lest-platform
-            docker compose -f docker/production/docker-compose.prod.yml pull
-            docker compose -f docker/production/docker-compose.prod.yml up -d --remove-orphans
+            git pull origin main
+            docker compose pull
+            docker compose up -d --remove-orphans
             docker image prune -f
+            echo "Production deployed: ${{ needs.info.outputs.version }}"
 
-      - name: Notify deployment
+      - name: Notify completion
         if: always()
         run: |
-          echo "Deployment status: ${{ job.status }}"
+          echo "Release ${{ needs.info.outputs.version }} deployment: ${{ job.status }}"
