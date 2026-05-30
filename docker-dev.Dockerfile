@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jre-noble
+FROM eclipse-temurin:21-jre-noble
 
 ARG MODULE=lest-auth
 ARG SERVICE_PORT=8080

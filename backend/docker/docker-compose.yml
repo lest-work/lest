@@ -7,15 +7,16 @@ services:
       context: ./nacos
     environment:
       - MODE=standalone
-      - NACOS_AUTH_TOKEN=your_auth_token
+      - NACOS_AUTH_TOKEN=TGVzdFBsYXRmb3JtTmFjb3NBdXRoU2VjcmV0S2V5MjAyNg==
       - NACOS_AUTH_IDENTITY_KEY=your_identity_key
       - NACOS_AUTH_IDENTITY_VALUE=your_identity_value
     volumes:
       - ./nacos/logs/:/home/nacos/logs
+      - ./nacos/conf/application.properties:/home/nacos/conf/application.properties
     ports:
-      - "18848:8848"
-      - "19848:9848"
-      - "19849:9849"
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
     depends_on:
       - lest-mysql
   lest-mysql:
@@ -24,7 +25,7 @@ services:
     build:
       context: ./mysql
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - ./mysql/conf:/etc/mysql/conf.d
       - ./mysql/logs:/logs
@@ -39,14 +40,14 @@ services:
         ]
     environment:
       MYSQL_DATABASE: 'lest_platform'
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: '12345678'
   lest-redis:
     container_name: lest-redis
     image: redis
     build:
       context: ./redis
     ports:
-      - "6380:6379"
+      - "6379:6379"
     volumes:
       - ./redis/conf/redis.conf:/home/lest/redis/redis.conf
       - ./redis/data:/data
@@ -76,6 +77,8 @@ services:
       - "18080:8080"
     environment:
       - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
       - NACOS_HOST=lest-nacos
       - NACOS_PORT=8848
       - NACOS_USERNAME=nacos
@@ -92,23 +95,40 @@ services:
       dockerfile: dockerfile
     ports:
       - "9200:9200"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
     depends_on:
       - lest-redis
+      - lest-mysql
+      - lest-nacos
     links:
       - lest-redis
+      - lest-mysql
   lest-modules-system:
     container_name: lest-modules-system
     build:
       context: ./lest/modules/system
       dockerfile: dockerfile
     ports:
-      - "18081:8081"
+      - "9201:9201"
     environment:
       - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
       - MYSQL_DB=lest_platform
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=password
+      - MYSQL_PASSWORD=12345678
       - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
       - NACOS_HOST=lest-nacos
       - NACOS_PORT=8848
     depends_on:
@@ -125,10 +145,24 @@ services:
       dockerfile: dockerfile
     ports:
       - "9203:9203"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
     depends_on:
       - lest-mysql
+      - lest-redis
+      - lest-nacos
     links:
       - lest-mysql
+      - lest-redis
   lest-modules-file:
     container_name: lest-modules-file
     build:
@@ -136,8 +170,26 @@ services:
       dockerfile: dockerfile
     ports:
       - "9300:9300"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
+    depends_on:
+      - lest-mysql
+      - lest-redis
+      - lest-nacos
+    links:
+      - lest-mysql
+      - lest-redis
     volumes:
-    - ./lest/uploadPath:/home/lest/uploadPath
+      - ./lest/uploadPath:/home/lest/uploadPath
   lest-modules-project:
     container_name: lest-modules-project
     build:
@@ -145,9 +197,21 @@ services:
       dockerfile: dockerfile
     ports:
       - "9400:9400"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
     depends_on:
       - lest-mysql
       - lest-redis
+      - lest-nacos
     links:
       - lest-mysql
       - lest-redis
@@ -158,9 +222,21 @@ services:
       dockerfile: dockerfile
     ports:
       - "9401:9401"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
     depends_on:
       - lest-mysql
       - lest-redis
+      - lest-nacos
     links:
       - lest-mysql
       - lest-redis
@@ -171,9 +247,21 @@ services:
       dockerfile: dockerfile
     ports:
       - "9402:9402"
+    environment:
+      - MYSQL_HOST=lest-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DB=lest_platform
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=12345678
+      - REDIS_HOST=lest-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=12345678
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
     depends_on:
       - lest-mysql
       - lest-redis
+      - lest-nacos
     links:
       - lest-mysql
       - lest-redis
@@ -184,3 +272,8 @@ services:
       dockerfile: dockerfile
     ports:
       - "9100:9100"
+    environment:
+      - NACOS_HOST=lest-nacos
+      - NACOS_PORT=8848
+    depends_on:
+      - lest-nacos

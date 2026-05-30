@@ -89,3 +89,13 @@ env/
 # Test output
 test-output/
 surefire-reports/
+
+# Docker - runtime data (never commit these)
+backend/docker/mysql/data/
+backend/docker/mysql/logs/
+backend/docker/redis/data/
+backend/docker/redis/logs/
+backend/docker/nacos/logs/
+backend/docker/nginx/html/
+backend/docker/nginx/logs/
+backend/docker/lest/uploadPath/
