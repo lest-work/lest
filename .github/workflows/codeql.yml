@@ -83,13 +83,25 @@ jobs:
           languages: javascript-typescript
           queries: security-extended
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend-pc/package-lock.json
+
+      - name: Install dependencies & Type check
+        run: |
+          npm ci
+          npx vue-tsc --noEmit
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:javascript-typescript'
 
-  codeql-build-artifacts:
-    name: CodeQL Upload
+  codeql-summary:
+    name: CodeQL Summary
     needs: [codeql-java, codeql-javascript]
     runs-on: ubuntu-24.04
     if: always()

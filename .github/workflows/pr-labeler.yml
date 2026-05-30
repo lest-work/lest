@@ -34,15 +34,15 @@ jobs:
             if (head.startsWith('perf/')) labels.push('performance');
             if (head.startsWith('test/')) labels.push('testing');
 
-            for (const label of labels) {
+            if (labels.length > 0) {
               try {
                 await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.payload.pull_request.number,
-                  labels: [label]
+                  labels: labels
                 });
               } catch (e) {
-                // label already exists, skip
+                console.error(`Failed to add labels: ${e.message}`);
               }
             }

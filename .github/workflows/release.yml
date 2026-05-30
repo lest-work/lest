@@ -105,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-jars
-          path: backend/jar/
+          path: jar/
           retention-days: 2
 
   # ==================== 前端构建 ====================
@@ -129,10 +129,6 @@ jobs:
       - name: Install & Build
         run: npm ci && npm run build
 
-      - name: Prepare nginx directory
-        run: |
-          mkdir -p ../backend/docker/nginx/html/dist
-          cp -r dist/* ../backend/docker/nginx/html/dist/
 
       - name: Upload frontend dist
         uses: actions/upload-artifact@v4
@@ -150,60 +146,60 @@ jobs:
       matrix:
         service:
           - name: gateway
-            path: lest/gateway
+            path: lest-gateway
             port: 8080
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: auth
-            path: lest/auth
+            path: lest-auth
             port: 8096
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-system
-            path: lest/modules/system
+            path: lest-modules/lest-system
             port: 9201
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-job
-            path: lest/modules/job
+            path: lest-modules/lest-job
             port: 9203
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-file
-            path: lest/modules/file
+            path: lest-modules/lest-file
             port: 9300
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-project
-            path: lest/modules/project
+            path: lest-modules/lest-project
             port: 9400
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-task
-            path: lest/modules/task
+            path: lest-modules/lest-task
             port: 9401
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: modules-release
-            path: lest/modules/release
+            path: lest-modules/lest-release
             port: 9402
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: visual-monitor
-            path: lest/visual/monitor
+            path: lest-visual/lest-monitor
             port: 9100
-            dockerfile: ../docker-dev.Dockerfile
+            dockerfile: docker-dev.Dockerfile
           - name: nginx
             path: nginx
             port: 80
-            dockerfile: nginx/dockerfile
+            dockerfile: backend/docker/nginx/dockerfile
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Download backend JARs
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          name: backend-jars
-          path: jar/
+          path: artifacts
 
-      - name: Download frontend dist
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: html/dist/
+      - name: Prepare artifacts for Docker build
+        run: |
+          mkdir -p backend/jar
+          cp -r artifacts/backend-jars/* backend/jar/
+          mkdir -p backend/docker/nginx/html
+          cp -r artifacts/frontend-dist/* backend/docker/nginx/html/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -242,34 +238,20 @@ jobs:
             type=sha,prefix=,suffix=-${{ needs.info.outputs.short_sha }}
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
-      - name: Build and push to all registries (${{ matrix.service.name }})
+      - name: Build and push images
         uses: docker/build-push-action@v6
         with:
-          context: backend
+          context: .
+          file: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             MODULE=${{ matrix.service.path }}
             SERVICE_PORT=${{ matrix.service.port }}
-          dockerfile: ${{ matrix.service.dockerfile }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
-        if: matrix.service.dockerfile == '../docker-dev.Dockerfile'
-
-      - name: Build and push nginx image
-        uses: docker/build-push-action@v6
-        with:
-          context: backend
-          dockerfile: ${{ matrix.service.dockerfile }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
-        if: matrix.service.dockerfile != '../docker-dev.Dockerfile'
 
   # ==================== 生成变更日志 ====================
   changelog:
@@ -298,14 +280,20 @@ jobs:
           echo '```' >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+
+  # ==================== 创建 GitHub Release ====================
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-24.04
+    needs: [info, changelog]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
       - name: Create or update GitHub Release
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.info.outputs.version }}
           name: Release ${{ needs.info.outputs.version }}
-          body_path: CHANGELOG.md
-          generate_release_notes: true
+          body: ${{ needs.changelog.outputs.body }}
           draft: true
         continue-on-error: true
 

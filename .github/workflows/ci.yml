@@ -35,7 +35,7 @@ env:
 jobs:
   # ==================== 后端构建 & 测试 ====================
   backend-build:
-    name: Backend Build (JDK ${{ env.JAVA_VERSION }})
+    name: Backend Build
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -59,24 +59,16 @@ jobs:
         with:
           name: backend-jars
           path: |
-            backend/lest-gateway/target/lest-gateway-*.jar
-            backend/lest-auth/target/lest-auth-*.jar
-            backend/lest-modules/lest-system/target/lest-system-*.jar
-            backend/lest-modules/lest-job/target/lest-job-*.jar
-            backend/lest-modules/lest-file/target/lest-file-*.jar
-            backend/lest-modules/lest-project/target/lest-project-*.jar
-            backend/lest-modules/lest-task/target/lest-task-*.jar
-            backend/lest-modules/lest-release/target/lest-release-*.jar
-            backend/lest-visual/lest-monitor/target/lest-monitor-*.jar
+            lest-gateway/target/lest-gateway-*.jar
+            lest-auth/target/lest-auth-*.jar
+            lest-modules/lest-system/target/lest-system-*.jar
+            lest-modules/lest-job/target/lest-job-*.jar
+            lest-modules/lest-file/target/lest-file-*.jar
+            lest-modules/lest-project/target/lest-project-*.jar
+            lest-modules/lest-task/target/lest-task-*.jar
+            lest-modules/lest-release/target/lest-release-*.jar
+            lest-visual/lest-monitor/target/lest-monitor-*.jar
           retention-days: 1
-
-      - name: Upload Maven cache
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-maven-cache
-          path: ~/.m2/repository
-          retention-days: 3
 
   backend-test:
     name: Backend Test
@@ -104,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-results
-          path: backend/**/target/surefire-reports/
+          path: '**/target/surefire-reports/'
           retention-days: 7
           ignore-no-files: true
 
@@ -113,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
-          path: backend/**/target/site/jacoco/
+          path: '**/target/site/jacoco/'
           retention-days: 7
           ignore-no-files: true
 
@@ -166,72 +158,74 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Download backend JARs
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          name: backend-jars
-          path: backend/lest-gateway/target/
-        # Download all other service jars
-      - name: Download frontend dist
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: frontend-pc/dist/
+          path: artifacts
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Prepare JAR directory structure for Docker
+      - name: Prepare artifacts for Docker build
         run: |
-          mkdir -p backend/lest-gateway/jar
-          mkdir -p backend/lest-auth/jar
-          mkdir -p backend/lest-modules/lest-system/jar
-          mkdir -p backend/lest-modules/lest-job/jar
-          mkdir -p backend/lest-modules/lest-file/jar
-          mkdir -p backend/lest-modules/lest-project/jar
-          mkdir -p backend/lest-modules/lest-task/jar
-          mkdir -p backend/lest-modules/lest-release/jar
-          mkdir -p backend/lest-visual/lest-monitor/jar
-          # Copy JARs
-          cp backend/lest-gateway/target/lest-gateway-*.jar backend/lest-gateway/jar/lest-gateway.jar
-          cp backend/lest-auth/target/lest-auth-*.jar backend/lest-auth/jar/lest-auth.jar
-          cp backend/lest-modules/lest-system/target/lest-system-*.jar backend/lest-modules/lest-system/jar/lest-modules-system.jar
-          cp backend/lest-modules/lest-job/target/lest-job-*.jar backend/lest-modules/lest-job/jar/lest-modules-job.jar
-          cp backend/lest-modules/lest-file/target/lest-file-*.jar backend/lest-modules/lest-file/jar/lest-modules-file.jar
-          cp backend/lest-modules/lest-project/target/lest-project-*.jar backend/lest-modules/lest-project/jar/lest-modules-project.jar
-          cp backend/lest-modules/lest-task/target/lest-task-*.jar backend/lest-modules/lest-task/jar/lest-modules-task.jar
-          cp backend/lest-modules/lest-release/target/lest-release-*.jar backend/lest-modules/lest-release/jar/lest-modules-release.jar
-          cp backend/lest-visual/lest-monitor/target/lest-monitor-*.jar backend/lest-visual/lest-monitor/jar/lest-visual-monitor.jar
+          # Recreate directory structure for backend JARs
+          mkdir -p backend/lest-gateway/target
+          cp artifacts/backend-jars/lest-gateway-*.jar backend/lest-gateway/target/
 
-      - name: Prepare frontend dist
-        run: |
-          mkdir -p backend/docker/nginx/html/dist
-          cp -r frontend-pc/dist/* backend/docker/nginx/html/dist/
+          mkdir -p backend/lest-auth/target
+          cp artifacts/backend-jars/lest-auth-*.jar backend/lest-auth/target/
 
-      - name: Build gateway image
+          MODULES_DIR="backend/lest-modules"
+          mkdir -p "${MODULES_DIR}/lest-system/target"
+          cp artifacts/backend-jars/lest-system-*.jar "${MODULES_DIR}/lest-system/target/"
+
+          mkdir -p "${MODULES_DIR}/lest-job/target"
+          cp artifacts/backend-jars/lest-job-*.jar "${MODULES_DIR}/lest-job/target/"
+
+          mkdir -p "${MODULES_DIR}/lest-file/target"
+          cp artifacts/backend-jars/lest-file-*.jar "${MODULES_DIR}/lest-file/target/"
+
+          mkdir -p "${MODULES_DIR}/lest-project/target"
+          cp artifacts/backend-jars/lest-project-*.jar "${MODULES_DIR}/lest-project/target/"
+
+          mkdir -p "${MODULES_DIR}/lest-task/target"
+          cp artifacts/backend-jars/lest-task-*.jar "${MODULES_DIR}/lest-task/target/"
+
+          mkdir -p "${MODULES_DIR}/lest-release/target"
+          cp artifacts/backend-jars/lest-release-*.jar "${MODULES_DIR}/lest-release/target/"
+
+          VISUAL_DIR="backend/lest-visual"
+          mkdir -p "${VISUAL_DIR}/lest-monitor/target"
+          cp artifacts/backend-jars/lest-monitor-*.jar "${VISUAL_DIR}/lest-monitor/target/"
+
+          # Recreate directory structure for frontend dist
+          mkdir -p frontend-pc/dist
+          cp -r artifacts/frontend-dist/* frontend-pc/dist/
+
+      - name: Build backend images
         run: |
+          # Build gateway image
           docker build \
             --build-arg MODULE=lest-gateway \
             --build-arg SERVICE_PORT=8080 \
             -t lest-gateway:test \
             -f docker-dev.Dockerfile \
-            ./backend || echo "Gateway build failed"
+            ./backend
 
-      - name: Build auth image
-        run: |
+          # Build auth image
           docker build \
             --build-arg MODULE=lest-auth \
             --build-arg SERVICE_PORT=8096 \
             -t lest-auth:test \
             -f docker-dev.Dockerfile \
-            ./backend || echo "Auth build failed"
+            ./backend
 
       - name: Build nginx image
         run: |
           docker build \
             -t lest-nginx:test \
             -f backend/docker/nginx/dockerfile \
-            ./backend || echo "Nginx build failed"
+            ./backend/docker/nginx
 
       - name: Images manifest
         run: |
@@ -279,19 +273,24 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Backend: Checkstyle
-        run: |
-          cd backend && mvn checkstyle:check -q || true
+      - name: Backend - Checkstyle
+        working-directory: backend
         continue-on-error: true
+        run: mvn checkstyle:check -q
 
-      - name: Frontend: ESLint
+      - name: Frontend - Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend-pc/package-lock.json
+
+      - name: Frontend - Install & Lint
+        working-directory: frontend-pc
+        continue-on-error: true
         run: |
-          cd frontend-pc && npm ci && npm run lint:eslint -- --format stylish || true
+          npm ci
+          npm run lint:eslint -- --format stylish
 
   # ==================== CI 总结 ====================
   ci-summary:
