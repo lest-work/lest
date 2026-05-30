@@ -1,16 +1,17 @@
-# Add labels to PRs based on changed files
-backend/**:
-  - label: backend
-    color: '0052cc'
-frontend-pc/**:
-  - label: frontend
-    color: '1a7f37'
-docker/**:
-  - label: infrastructure
-    color: '7d4e2a'
-.github/**:
-  - label: ci/cd
-    color: '7d4e2a'
-docs/**:
-  - label: documentation
-    color: '0366d6'
+# PR auto-labeler: labels PRs based on changed files
+# Syntax for actions/labeler@v5
+backend:
+  - changed-files:
+      - any-glob: ['backend/**']
+frontend:
+  - changed-files:
+      - any-glob: ['frontend-pc/**']
+infrastructure:
+  - changed-files:
+      - any-glob: ['backend/docker/**']
+ci-cd:
+  - changed-files:
+      - any-glob: ['.github/**']
+docs:
+  - changed-files:
+      - any-glob: ['docs/**']

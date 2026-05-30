@@ -23,21 +23,21 @@ jobs:
           fail-on-severity: high
           license-check: true
           # Allow known open-source licenses
-          allow-licenses: |
-            Apache-2.0
-            MIT
-            BSD-2-Clause
-            BSD-3-Clause
-            MPL-2.0
-            ISC
-            Python-2.0
-            Unlicense
-            CC0-1.0
-          deny-licenses: |
-            GPL-1.0
-            GPL-2.0
-            AGPL-1.0
-            AGPL-3.0
-            LPPL-1.0
-            OSL-1.0
-            Sleepycat
+          allow-licenses:
+            - Apache-2.0
+            - MIT
+            - BSD-2-Clause
+            - BSD-3-Clause
+            - MPL-2.0
+            - ISC
+            - Python-2.0
+            - Unlicense
+            - CC0-1.0
+          deny-licenses:
+            - GPL-1.0
+            - GPL-2.0
+            - AGPL-1.0
+            - AGPL-3.0
+            - LPPL-1.0
+            - OSL-1.0
+            - Sleepycat
