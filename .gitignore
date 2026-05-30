@@ -40,6 +40,14 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Editor-specific (Cursor, WindSurf, VSCode, etc.)
+.cursor/
+.windsurf/
+*.cursor
+*.windsurf
+.cursorignore
+.windsurfrc
+
 # Java
 *.class
 *.jar
