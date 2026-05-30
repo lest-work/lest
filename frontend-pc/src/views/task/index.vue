@@ -224,7 +224,7 @@
   import { useRouter } from 'vue-router';
   import { ElMessageBox } from 'element-plus';
   import { EleMessage } from 'ele-admin-plus';
-  import { SearchOutlined, PlusOutlined, ReloadOutlined, PictureOutlined as KanbanIcon } from '@/components/icons';
+  import { SearchOutlined, PlusOutlined, ReloadOutlined, AppstoreOutlined as KanbanIcon } from '@/components/icons';
   import { pageTasks, addTask, updateTask, removeTask, updateTaskStatus } from '@/api/task';
   import { pageProjects, listIterations } from '@/api/project';
 

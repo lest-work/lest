@@ -213,7 +213,7 @@
   import { ref, reactive, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { EleMessage } from 'ele-admin-plus';
-  import { ReloadOutlined, UnorderedListOutlined as ListIcon, PlusOutlined } from '@/components/icons';
+  import { ReloadOutlined, TableOutlined as ListIcon, PlusOutlined } from '@/components/icons';
   import { getBoard, updateTaskStatus, addTask } from '@/api/task';
   import { pageProjects, listIterations } from '@/api/project';
 
