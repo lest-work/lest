@@ -333,7 +333,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { ElMessageBox } from 'element-plus';
   import { EleMessage } from 'ele-admin-plus';
-  import { ArrowLeftOutlined, PlusOutlined, PictureOutlined as KanbanIcon } from '@/components/icons';
+  import { ArrowLeftOutlined, PlusOutlined, AppstoreOutlined as KanbanIcon } from '@/components/icons';
   import {
     getProject,
     getProjectMembers,
