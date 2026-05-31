@@ -12,7 +12,7 @@
 
 <!-- Badges row 1 -->
 <a href="https://github.com/lest-work/lest/releases/latest"><img src="https://img.shields.io/github/v/release/lest-work/lest?style=flat-square" alt="GitHub release"></a>
-<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
+<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest/Apache-2.0?style=flat-square" alt="License"></a>
 <a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
 <a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
 <a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/Lest?style=flat-square" alt="Stars"></a>
@@ -323,7 +323,7 @@ This project stands on the shoulders of giants. We sincerely thank:
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** — see the [LICENSE](./LICENSE) file for details.
 
-> The MIT License applies to the LEST Platform source code itself. Please respect the individual licenses of third-party dependencies, particularly the commercial components listed in the Acknowledgements section above.
+> The Apache License 2.0 applies to the LEST Platform source code itself. Please respect the individual licenses of third-party dependencies, particularly the commercial components listed in the Acknowledgements section above.
 

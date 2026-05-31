@@ -12,7 +12,7 @@
 
 <!-- Badges row 1 -->
 <a href="https://github.com/lest-work/lest/releases/latest"><img src="https://img.shields.io/github/v/release/lest-work/lest?style=flat-square" alt="GitHub release"></a>
-<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
+<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest/Apache-2.0?style=flat-square" alt="License"></a>
 <a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
 <a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
 <a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/Lest?style=flat-square" alt="Stars"></a>
@@ -322,6 +322,6 @@ git push origin feature/your-feature-name
 
 ## 📄 许可证
 
-本项目基于 **MIT 许可证** 开源，详见 [LICENSE](./LICENSE) 文件。
+本项目基于 **Apache License 2.0** 开源，详见 [LICENSE](./LICENSE) 文件。
 
-> MIT 许可证仅适用于 LEST Platform 本身的源代码。请遵守各第三方依赖的独立许可协议，特别是上述致谢中涉及商业授权的组件。
+> Apache License 2.0 仅适用于 LEST Platform 本身的源代码。请遵守各第三方依赖的独立许可协议，特别是上述致谢中涉及商业授权的组件。
