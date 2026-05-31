@@ -29,7 +29,10 @@
 | [DATABASE.md](./DATABASE.md) | 数据库设计文档（Schema、DDL） | ✅ 已完成 |
 | [API.md](./API.md) | API 接口文档 | ✅ 已完成 |
 | [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） | ✅ 已完成 |
-| [MILESTONES.md](./MILESTONES.md) | 里程碑规划与版本路线图 | ✅ 已完成 |
+| [MILESTONES.md](./MILESTONES.md) | Milestone roadmap (English) | ✅ Done |
+| [MILESTONES.zh-CN.md](./MILESTONES.zh-CN.md) | 里程碑规划（中文版）| ✅ 已完成 |
+| [API.en.md](./API.en.md) | API Reference (English) | ✅ Done |
+| [API.md](./API.md) | API 接口文档 | ✅ 已完成 |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | 生产部署指南 | ✅ 已完成 |
 | [BRANCHING.md](./BRANCHING.md) | 分支管理规范与 Git Flow 工作流 | ✅ 已完成 |
 | [DOMAIN_PLAN.md](./DOMAIN_PLAN.md) | 域名规划与本地/生产环境配置 | ✅ 已完成 |

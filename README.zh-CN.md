@@ -218,7 +218,7 @@ npm run dev
 
 ## 📋 版本规划
 
-> 追踪项目进度。详细里程碑见 [docs/MILESTONES.md](./docs/MILESTONES.md)。
+> 追踪项目进度。详细里程碑见 [docs/MILESTONES.zh-CN.md](./docs/MILESTONES.zh-CN.md)。
 
 ```
 v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          v1.0.0
@@ -258,7 +258,7 @@ v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          
 | **v0.6.0–v0.9.0** | 高级模块 — AI、插件、开放平台 | 2026-07 | 🔵 计划中 |
 | **v1.0.0** | 正式版 — 全功能集、移动端、完整文档 | 2026-08-07 | 🔵 计划中 |
 
-完整更新记录见 [CHANGELOG.md](./CHANGELOG.md)，里程碑规划见 [docs/MILESTONES.md](./docs/MILESTONES.md)。
+完整更新记录见 [CHANGELOG.zh-CN.md](./CHANGELOG.zh-CN.md)，里程碑规划见 [docs/MILESTONES.zh-CN.md](./docs/MILESTONES.zh-CN.md)。
 
 ---
 
@@ -270,8 +270,8 @@ v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          
 |------|------|
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 贡献指南、代码规范、提交规范 |
 | [docs/BRANCHING.md](./docs/BRANCHING.md) | 分支命名、Git Flow 工作流、Commit 格式 |
-| [CHANGELOG.md](./CHANGELOG.md) | 版本历史和版本号规范 |
-| [docs/MILESTONES.md](./docs/MILESTONES.md) | 功能路线图和里程碑规划 |
+| [CHANGELOG.zh-CN.md](./CHANGELOG.zh-CN.md) | 版本历史和版本号规范 |
+| [docs/MILESTONES.zh-CN.md](./docs/MILESTONES.zh-CN.md) | 功能路线图和里程碑规划 |
 
 ### 快速开始
 
