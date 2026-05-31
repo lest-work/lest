@@ -52,28 +52,64 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests -q
 
+      - name: Prepare JAR artifacts for Docker
+        run: |
+          # Rearrange JARs into the structure Dockerfiles expect (relative to backend/)
+          mkdir -p jar
+          cp lest-gateway/target/lest-gateway-*.jar              jar/lest-gateway.jar
+          mkdir -p lest-auth/jar
+          cp lest-auth/target/lest-auth-*.jar                   lest-auth/jar/lest-auth.jar
+          mkdir -p lest-modules/lest-system/jar
+          cp lest-modules/lest-system/target/lest-system-*.jar           lest-modules/lest-system/jar/lest-system.jar
+          mkdir -p lest-modules/lest-project/jar
+          cp lest-modules/lest-project/target/lest-project-*.jar          lest-modules/lest-project/jar/lest-project.jar
+          mkdir -p lest-modules/lest-task/jar
+          cp lest-modules/lest-task/target/lest-task-*.jar              lest-modules/lest-task/jar/lest-task.jar
+          mkdir -p lest-modules/lest-release/jar
+          cp lest-modules/lest-release/target/lest-release-*.jar          lest-modules/lest-release/jar/lest-release.jar
+          mkdir -p lest-modules/lest-job/jar
+          cp lest-modules/lest-job/target/lest-job-*.jar                lest-modules/lest-job/jar/lest-job.jar
+          mkdir -p lest-modules/lest-file/jar
+          cp lest-modules/lest-file/target/lest-file-*.jar              lest-modules/lest-file/jar/lest-file.jar
+          mkdir -p lest-modules/lest-meeting/jar
+          cp lest-modules/lest-meeting/target/lest-meeting-*.jar        lest-modules/lest-meeting/jar/lest-meeting.jar
+          mkdir -p lest-modules/lest-notification/jar
+          cp lest-modules/lest-notification/target/lest-notification-*.jar lest-modules/lest-notification/jar/lest-notification.jar
+          mkdir -p lest-modules/lest-ai/jar
+          cp lest-modules/lest-ai/target/lest-ai-*.jar                lest-modules/lest-ai/jar/lest-ai.jar
+          mkdir -p lest-modules/lest-open/jar
+          cp lest-modules/lest-open/target/lest-open-*.jar              lest-modules/lest-open/jar/lest-open.jar
+          mkdir -p lest-modules/lest-performance/jar
+          cp lest-modules/lest-performance/target/lest-performance-*.jar lest-modules/lest-performance/jar/lest-performance.jar
+          mkdir -p lest-modules/lest-plugin/jar
+          cp lest-modules/lest-plugin/target/lest-plugin-*.jar            lest-modules/lest-plugin/jar/lest-plugin.jar
+          mkdir -p lest-modules/lest-wakapi/jar
+          cp lest-modules/lest-wakapi/target/lest-wakapi-*.jar          lest-modules/lest-wakapi/jar/lest-wakapi.jar
+          mkdir -p lest-visual/lest-monitor/jar
+          cp lest-visual/lest-monitor/target/lest-monitor-*.jar         lest-visual/lest-monitor/jar/lest-monitor.jar
+
       - name: Upload backend JAR artifacts
+        working-directory: .
         uses: actions/upload-artifact@v4
         with:
           name: backend-jars
           path: |
-            backend/lest-gateway/target/lest-gateway-*.jar
-            backend/lest-auth/target/lest-auth-*.jar
-            backend/lest-modules/lest-system/target/lest-system-*.jar
-            backend/lest-modules/lest-project/target/lest-project-*.jar
-            backend/lest-modules/lest-task/target/lest-task-*.jar
-            backend/lest-modules/lest-release/target/lest-release-*.jar
-            backend/lest-modules/lest-job/target/lest-job-*.jar
-            backend/lest-modules/lest-file/target/lest-file-*.jar
-            backend/lest-modules/lest-meeting/target/lest-meeting-*.jar
-            backend/lest-modules/lest-notification/target/lest-notification-*.jar
-            backend/lest-modules/lest-ai/target/lest-ai-*.jar
-            backend/lest-modules/lest-open/target/lest-open-*.jar
-            backend/lest-modules/lest-performance/target/lest-performance-*.jar
-            backend/lest-modules/lest-plugin/target/lest-plugin-*.jar
-            backend/lest-modules/lest-wakapi/target/lest-wakapi-*.jar
-            backend/lest-visual/lest-monitor/target/lest-monitor-*.jar
-          retention-days: 1
+            backend/jar/
+            backend/lest-auth/jar/
+            backend/lest-modules/lest-system/jar/
+            backend/lest-modules/lest-project/jar/
+            backend/lest-modules/lest-task/jar/
+            backend/lest-modules/lest-release/jar/
+            backend/lest-modules/lest-job/jar/
+            backend/lest-modules/lest-file/jar/
+            backend/lest-modules/lest-meeting/jar/
+            backend/lest-modules/lest-notification/jar/
+            backend/lest-modules/lest-ai/jar/
+            backend/lest-modules/lest-open/jar/
+            backend/lest-modules/lest-performance/jar/
+            backend/lest-modules/lest-plugin/jar/
+            backend/lest-modules/lest-wakapi/jar/
+            backend/lest-visual/lest-monitor/jar/
 
   # ==================== 后端测试 ====================
   backend-test:
@@ -258,41 +294,25 @@ jobs:
 
       - name: Prepare artifacts for Docker build
         run: |
-          # All Dockerfiles expect JARs at ./jar/xxx.jar relative to build context ./backend
-          set -e  # fail fast if any artifact is missing
-          mkdir -p backend/jar
-          cp artifacts/backend-jars/lest-gateway*.jar backend/jar/lest-gateway.jar
-          mkdir -p backend/lest-auth/jar
-          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/jar/lest-auth.jar
-          mkdir -p backend/lest-modules/lest-system/jar
-          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/jar/lest-system.jar
-          mkdir -p backend/lest-modules/lest-project/jar
-          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/jar/lest-project.jar
-          mkdir -p backend/lest-modules/lest-task/jar
-          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/jar/lest-task.jar
-          mkdir -p backend/lest-modules/lest-release/jar
-          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/jar/lest-release.jar
-          mkdir -p backend/lest-modules/lest-job/jar
-          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/jar/lest-job.jar
-          mkdir -p backend/lest-modules/lest-file/jar
-          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/jar/lest-file.jar
-          mkdir -p backend/lest-modules/lest-meeting/jar
-          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/jar/lest-meeting.jar
-          mkdir -p backend/lest-modules/lest-notification/jar
-          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
-          mkdir -p backend/lest-modules/lest-ai/jar
-          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/jar/lest-ai.jar
-          mkdir -p backend/lest-modules/lest-open/jar
-          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/jar/lest-open.jar
-          mkdir -p backend/lest-modules/lest-performance/jar
-          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
-          mkdir -p backend/lest-modules/lest-plugin/jar
-          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/jar/lest-plugin.jar
-          mkdir -p backend/lest-modules/lest-wakapi/jar
-          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
-          mkdir -p backend/lest-visual/lest-monitor/jar
-          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/jar/lest-monitor.jar
-          # nginx/html: frontend via CDN; create placeholder to avoid empty-dir errors
+          set -e
+          # backend JARs: artifact contains backend/backend/jar/ structure
+          cp artifacts/backend-jars/backend/backend/jar/lest-gateway.jar backend/jar/lest-gateway.jar
+          cp artifacts/backend-jars/backend/backend/lest-auth/jar/lest-auth.jar backend/lest-auth/jar/lest-auth.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-system/jar/lest-system.jar     backend/lest-modules/lest-system/jar/lest-system.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-project/jar/lest-project.jar    backend/lest-modules/lest-project/jar/lest-project.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-task/jar/lest-task.jar          backend/lest-modules/lest-task/jar/lest-task.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-release/jar/lest-release.jar    backend/lest-modules/lest-release/jar/lest-release.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-job/jar/lest-job.jar            backend/lest-modules/lest-job/jar/lest-job.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-file/jar/lest-file.jar          backend/lest-modules/lest-file/jar/lest-file.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-meeting/jar/lest-meeting.jar    backend/lest-modules/lest-meeting/jar/lest-meeting.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-notification/jar/lest-notification.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-ai/jar/lest-ai.jar            backend/lest-modules/lest-ai/jar/lest-ai.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-open/jar/lest-open.jar          backend/lest-modules/lest-open/jar/lest-open.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-performance/jar/lest-performance.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-plugin/jar/lest-plugin.jar      backend/lest-modules/lest-plugin/jar/lest-plugin.jar
+          cp artifacts/backend-jars/backend/backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar      backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
+          cp artifacts/backend-jars/backend/backend/lest-visual/lest-monitor/jar/lest-monitor.jar   backend/lest-visual/lest-monitor/jar/lest-monitor.jar
+          # nginx/html: frontend via CDN; create placeholder
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
 
