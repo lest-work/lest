@@ -2,16 +2,16 @@
 # Syntax for actions/labeler@v5
 backend:
   - changed-files:
-      - any-glob: ['backend/**']
+      - any-path: ['backend/**']
 frontend:
   - changed-files:
-      - any-glob: ['frontend-pc/**']
+      - any-path: ['frontend-pc/**']
 infrastructure:
   - changed-files:
-      - any-glob: ['backend/docker/**']
+      - any-path: ['backend/docker/**']
 ci-cd:
   - changed-files:
-      - any-glob: ['.github/**']
+      - any-path: ['.github/**']
 docs:
   - changed-files:
-      - any-glob: ['docs/**']
+      - any-path: ['docs/**']

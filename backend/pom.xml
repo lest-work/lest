@@ -31,7 +31,7 @@
         <maven.compiler.release>21</maven.compiler.release>
 
         <!-- Spring 生态 -->
-        <spring-boot.version>4.0.3</spring-boot.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
         <spring-boot-admin.version>4.0.2</spring-boot-admin.version>
@@ -48,7 +48,7 @@
         <jjwt.version>0.12.7</jjwt.version>
         <commons.io.version>2.21.0</commons.io.version>
         <poi.version>4.1.2</poi.version>
-        <minio.version>8.2.2</minio.version>
+        <minio.version>8.6.0</minio.version>
         <kaptcha.version>2.3.3</kaptcha.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <hutool.version>5.8.40</hutool.version>

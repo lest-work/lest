@@ -243,7 +243,7 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-24.04
     needs: [backend-build, frontend-build]
-    if: github.event_name == 'push'
+    if: "github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group'"
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -259,41 +259,42 @@ jobs:
       - name: Prepare artifacts for Docker build
         run: |
           # All Dockerfiles expect JARs at ./jar/xxx.jar relative to build context ./backend
+          set -e  # fail fast if any artifact is missing
           mkdir -p backend/jar
-          cp artifacts/backend-jars/lest-gateway*.jar backend/jar/lest-gateway.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-gateway*.jar backend/jar/lest-gateway.jar
           mkdir -p backend/lest-auth/jar
-          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/jar/lest-auth.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/jar/lest-auth.jar
           mkdir -p backend/lest-modules/lest-system/jar
-          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/jar/lest-system.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/jar/lest-system.jar
           mkdir -p backend/lest-modules/lest-project/jar
-          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/jar/lest-project.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/jar/lest-project.jar
           mkdir -p backend/lest-modules/lest-task/jar
-          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/jar/lest-task.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/jar/lest-task.jar
           mkdir -p backend/lest-modules/lest-release/jar
-          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/jar/lest-release.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/jar/lest-release.jar
           mkdir -p backend/lest-modules/lest-job/jar
-          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/jar/lest-job.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/jar/lest-job.jar
           mkdir -p backend/lest-modules/lest-file/jar
-          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/jar/lest-file.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/jar/lest-file.jar
           mkdir -p backend/lest-modules/lest-meeting/jar
-          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/jar/lest-meeting.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/jar/lest-meeting.jar
           mkdir -p backend/lest-modules/lest-notification/jar
-          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/jar/lest-notification.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
           mkdir -p backend/lest-modules/lest-ai/jar
-          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/jar/lest-ai.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/jar/lest-ai.jar
           mkdir -p backend/lest-modules/lest-open/jar
-          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/jar/lest-open.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/jar/lest-open.jar
           mkdir -p backend/lest-modules/lest-performance/jar
-          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/jar/lest-performance.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
           mkdir -p backend/lest-modules/lest-plugin/jar
-          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/jar/lest-plugin.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/jar/lest-plugin.jar
           mkdir -p backend/lest-modules/lest-wakapi/jar
-          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar 2>/dev/null || true
+          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
           mkdir -p backend/lest-visual/lest-monitor/jar
-          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/jar/lest-monitor.jar 2>/dev/null || true
-          # nginx/html not used (frontend via CDN); placeholder only to avoid empty-dir errors
+          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/jar/lest-monitor.jar
+          # nginx/html: frontend via CDN; create placeholder to avoid empty-dir errors
           mkdir -p backend/docker/nginx/html
-          cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ 2>/dev/null || true
+          cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
 
       - name: Build gateway image
         run: |
