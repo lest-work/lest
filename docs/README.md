@@ -21,22 +21,34 @@
 | V1.0 | 插件系统 | 已完成 | V1.0 |
 | V1.0 | 开放平台 | 已完成 | V1.0 |
 
-### 开发文档
+### 开发指南 (Development Guide)
 
 | 文档 | 说明 | 状态 |
 |------|------|------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构设计（微服务、部署架构、服务通信） | ✅ 已完成 |
-| [DATABASE.md](./DATABASE.md) | 数据库设计文档（Schema、DDL） | ✅ 已完成 |
-| [API.md](./API.md) | API 接口文档 | ✅ 已完成 |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） | ✅ 已完成 |
-| [MILESTONES.md](./MILESTONES.md) | Milestone roadmap (English) | ✅ Done |
-| [MILESTONES.zh-CN.md](./MILESTONES.zh-CN.md) | 里程碑规划（中文版）| ✅ 已完成 |
-| [API.en.md](./API.en.md) | API Reference (English) | ✅ Done |
-| [API.md](./API.md) | API 接口文档 | ✅ 已完成 |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | 生产部署指南 | ✅ 已完成 |
-| [BRANCHING.md](./BRANCHING.md) | 分支管理规范与 Git Flow 工作流 | ✅ 已完成 |
-| [DOMAIN_PLAN.md](./DOMAIN_PLAN.md) | 域名规划与本地/生产环境配置 | ✅ 已完成 |
-| [TASKS/](./TASKS/) | 敏捷开发任务看板（按 PRD 分解） | ✅ 进行中 |
+| [guide/DEVELOPMENT.md](./guide/DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） | ✅ 已完成 |
+| [guide/DEPLOYMENT.md](./guide/DEPLOYMENT.md) | 生产部署指南 | ✅ 已完成 |
+| [guide/BRANCHING.md](./guide/BRANCHING.md) | 分支管理规范与 Git Flow 工作流 | ✅ 已完成 |
+| [guide/DOMAIN_PLAN.md](./guide/DOMAIN_PLAN.md) | 域名规划与本地/生产环境配置 | ✅ 已完成 |
+| [../SECURITY.md](../SECURITY.md) | 安全策略与漏洞报告 | ✅ 已完成 |
+
+### 技术参考 (Technical Reference)
+
+| 文档 | 说明 | 状态 |
+|------|------|------|
+| [reference/ARCHITECTURE.md](./reference/ARCHITECTURE.md) | 系统架构设计 | ✅ 已完成 |
+| [reference/DATABASE.md](./reference/DATABASE.md) | 数据库设计文档 | ✅ 已完成 |
+| [reference/api/API.md](./reference/api/API.md) | API 接口文档（中文） | ✅ 已完成 |
+| [reference/api/API.en.md](./reference/api/API.en.md) | API Reference (English) | ✅ Done |
+| [reference/api/API.zh-CN.md](./reference/api/API.zh-CN.md) | API 接口文档（中文版）| ✅ 已完成 |
+
+### 里程碑与变更 (Milestones & Changelog)
+
+| 文档 | 说明 | 状态 |
+|------|------|------|
+| [../MILESTONES.md](../MILESTONES.md) | 里程碑规划（英文） | ✅ Done |
+| [../MILESTONES.zh-CN.md](../MILESTONES.zh-CN.md) | 里程碑规划（中文） | ✅ 已完成 |
+| [../CHANGELOG.md](../CHANGELOG.md) | 版本变更记录（英文） | ✅ Done |
+| [../CHANGELOG.zh-CN.md](../CHANGELOG.zh-CN.md) | 版本变更记录（中文） | ✅ 已完成 |
 
 ### 核心架构文档
 

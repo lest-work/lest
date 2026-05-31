@@ -50,7 +50,7 @@ npm run dev
 
 ## Branching Strategy
 
-We follow a simplified Git Flow. See [docs/BRANCHING.md](./docs/BRANCHING.md) for the full guide.
+We follow a simplified Git Flow. See [docs/guide/BRANCHING.md](./docs/guide/BRANCHING.md) for the full guide.
 
 ```
 main           ← Production-ready code

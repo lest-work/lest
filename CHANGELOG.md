@@ -15,8 +15,8 @@
 
 ### Infrastructure
 
-- **New domain planning** — Registered `lest.work` (product platform) and `lest.top` (marketing site), establishing subdomain architecture. See [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md)
-- **New `docs/DOMAIN_PLAN.md`** — Domain planning document with production architecture, DNS config, and Nginx examples
+- **New domain planning** — Registered `lest.work` (product platform) and `lest.top` (marketing site), establishing subdomain architecture. See [docs/guide/DOMAIN_PLAN.md](./docs/guide/DOMAIN_PLAN.md)
+- **New `docs/guide/DOMAIN_PLAN.md`** — Domain planning document with production architecture, DNS config, and Nginx examples
 - **API domain update** — Staging/production API URL unified to `https://api.lest.work`
 - **CORS whitelist update** — Gateway allows cross-origin requests from `app.lest.work` and `lest.top`
 

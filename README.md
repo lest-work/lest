@@ -201,7 +201,7 @@ When developing locally, the Vite dev server proxies `/api/*` requests to `local
 
 ### Production Environment
 
-> The following endpoints are hosted on `lest.work`. See [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md) for full domain architecture.
+> The following endpoints are hosted on `lest.work`. See [docs/guide/DOMAIN_PLAN.md](./docs/guide/DOMAIN_PLAN.md) for full domain architecture.
 
 | Service | Production URL | Credentials |
 |---------|---------------|-------------|
@@ -268,7 +268,10 @@ We welcome contributions! Please read our guidelines before submitting any work.
 | Resource | Description |
 |----------|-------------|
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines, code style, commit conventions |
-| [docs/BRANCHING.md](./docs/BRANCHING.md) | Branch naming, Git Flow workflow, commit message format |
+| [docs/guide/DEVELOPMENT.md](./docs/guide/DEVELOPMENT.md) | Development guide (environment, standards, code style) |
+| [docs/reference/ARCHITECTURE.md](./docs/reference/ARCHITECTURE.md) | System architecture (microservices, deployment, service communication) |
+| [docs/reference/api/API.en.md](./docs/reference/api/API.en.md) | API reference (English) |
+| [docs/guide/BRANCHING.md](./docs/guide/BRANCHING.md) | Branch naming, Git Flow workflow, commit message format |
 | [CHANGELOG.md](./CHANGELOG.md) | Release history and version conventions |
 | [docs/MILESTONES.md](./docs/MILESTONES.md) | Feature roadmap and milestone planning |
 

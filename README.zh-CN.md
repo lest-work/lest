@@ -200,7 +200,7 @@ npm run dev
 
 ### 生产环境
 
-> 以下服务托管于 `lest.work` 域名。完整域名架构见 [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md)。
+> 以下服务托管于 `lest.work` 域名。完整域名架构见 [docs/guide/DOMAIN_PLAN.md](./docs/guide/DOMAIN_PLAN.md)。
 
 | 服务 | 生产环境地址 | 账号密码 |
 |------|------------|---------|
@@ -213,8 +213,6 @@ npm run dev
 > **官网** — 访问 [https://lest.top](https://lest.top) 了解产品介绍。
 
 ---
-
-## 📋 版本规划
 
 ## 📋 版本规划
 
@@ -269,7 +267,10 @@ v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          
 | 资源 | 说明 |
 |------|------|
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 贡献指南、代码规范、提交规范 |
-| [docs/BRANCHING.md](./docs/BRANCHING.md) | 分支命名、Git Flow 工作流、Commit 格式 |
+| [docs/guide/DEVELOPMENT.md](./docs/guide/DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） |
+| [docs/reference/ARCHITECTURE.md](./docs/reference/ARCHITECTURE.md) | 系统架构设计（微服务、部署架构、服务通信） |
+| [docs/reference/api/API.zh-CN.md](./docs/reference/api/API.zh-CN.md) | API 接口文档（中文） |
+| [docs/guide/BRANCHING.md](./docs/guide/BRANCHING.md) | 分支命名、Git Flow 工作流、Commit 格式 |
 | [CHANGELOG.zh-CN.md](./CHANGELOG.zh-CN.md) | 版本历史和版本号规范 |
 | [docs/MILESTONES.zh-CN.md](./docs/MILESTONES.zh-CN.md) | 功能路线图和里程碑规划 |
 

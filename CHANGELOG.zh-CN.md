@@ -15,8 +15,8 @@
 
 ### 基础设施
 
-- **新增域名规划** — 注册 `lest.work`（产品平台）和 `lest.top`（官网），建立子域名架构。详见 [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md)
-- **新增 `docs/DOMAIN_PLAN.md`** — 域名规划文档，含生产环境架构、DNS 配置、Nginx 示例
+- **新增域名规划** — 注册 `lest.work`（产品平台）和 `lest.top`（官网），建立子域名架构。详见 [docs/guide/DOMAIN_PLAN.md](./docs/guide/DOMAIN_PLAN.md)
+- **新增 `docs/guide/DOMAIN_PLAN.md`** — 域名规划文档，含生产环境架构、DNS 配置、Nginx 示例
 - **更新 API 域名** — staging/production 环境 API 地址统一指向 `https://api.lest.work`
 - **更新 CORS 白名单** — Gateway 允许 `app.lest.work` 和 `lest.top` 跨域请求
 

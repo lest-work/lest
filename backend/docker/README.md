@@ -556,7 +556,7 @@ Nginx (lest.work HTTPS)
 lest.work 生态 ─────────► lest.top (官网, 待开发)
 ```
 
-详细域名架构见 [docs/DOMAIN_PLAN.md](../docs/DOMAIN_PLAN.md)。
+详细域名架构见 [docs/guide/DOMAIN_PLAN.md](../docs/guide/DOMAIN_PLAN.md)。
 
 ## 相关文档
 
