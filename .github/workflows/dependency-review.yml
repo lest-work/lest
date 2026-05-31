@@ -3,7 +3,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   push:
-    branches: [main, develop]
+    branches: [main]
 
 permissions:
   contents: read
