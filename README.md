@@ -12,7 +12,7 @@
 
 <!-- Badges row 1 -->
 <a href="https://github.com/lest-work/lest/releases/latest"><img src="https://img.shields.io/github/v/release/lest-work/lest?style=flat-square" alt="GitHub release"></a>
-<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest/Apache-2.0?style=flat-square" alt="License"></a>
+<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
 <a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
 <a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
 <a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/Lest?style=flat-square" alt="Stars"></a>
