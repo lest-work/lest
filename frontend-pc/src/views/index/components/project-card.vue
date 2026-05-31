@@ -114,7 +114,7 @@
     try {
       const res = await pageProjects({ pageNum: 1, pageSize: 10 });
       projectList.value = (res.rows ?? []).map((p) => ({
-        id: p.id,
+        id: p.projectId,
         projectName: p.name,
         status: mapProjectStatus(p),
         startDate: p.startDate,

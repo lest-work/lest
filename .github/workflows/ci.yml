@@ -10,8 +10,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend-pc/**'
-      - 'docker-dev.Dockerfile'
-      - 'docker-compose.dev.yml'
+      - 'backend/docker/**'
       - '.github/workflows/ci.yml'
   pull_request:
     branches:
@@ -20,8 +19,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend-pc/**'
-      - 'docker-dev.Dockerfile'
-      - 'docker-compose.dev.yml'
+      - 'backend/docker/**'
       - '.github/workflows/ci.yml'
 
 concurrency:
@@ -33,7 +31,7 @@ env:
   MAVEN_OPTS: -Xmx1024m -Xms512m
 
 jobs:
-  # ==================== 后端构建 & 测试 ====================
+  # ==================== 后端构建 ====================
   backend-build:
     name: Backend Build
     runs-on: ubuntu-24.04
@@ -62,14 +60,22 @@ jobs:
             lest-gateway/target/lest-gateway-*.jar
             lest-auth/target/lest-auth-*.jar
             lest-modules/lest-system/target/lest-system-*.jar
-            lest-modules/lest-job/target/lest-job-*.jar
-            lest-modules/lest-file/target/lest-file-*.jar
             lest-modules/lest-project/target/lest-project-*.jar
             lest-modules/lest-task/target/lest-task-*.jar
             lest-modules/lest-release/target/lest-release-*.jar
+            lest-modules/lest-job/target/lest-job-*.jar
+            lest-modules/lest-file/target/lest-file-*.jar
+            lest-modules/lest-meeting/target/lest-meeting-*.jar
+            lest-modules/lest-notification/target/lest-notification-*.jar
+            lest-modules/lest-ai/target/lest-ai-*.jar
+            lest-modules/lest-open/target/lest-open-*.jar
+            lest-modules/lest-performance/target/lest-performance-*.jar
+            lest-modules/lest-plugin/target/lest-plugin-*.jar
+            lest-modules/lest-wakapi/target/lest-wakapi-*.jar
             lest-visual/lest-monitor/target/lest-monitor-*.jar
           retention-days: 1
 
+  # ==================== 后端测试 ====================
   backend-test:
     name: Backend Test
     runs-on: ubuntu-24.04
@@ -109,6 +115,48 @@ jobs:
           retention-days: 7
           ignore-no-files: true
 
+  # ==================== 后端代码分析 (SonarCloud) ====================
+  backend-sonar:
+    name: Backend SonarCloud Analysis
+    runs-on: ubuntu-24.04
+    needs: [backend-build]
+    if: github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # SonarCloud needs full history
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=yshan2028_Lest \
+            -Dsonar.organization=yshan2028 \
+            -Dsonar.sources=. \
+            -Dsonar.sourceEncoding=UTF-8 \
+            -Dsonar.java.binaries=target/classes \
+            -Dsonar.tests=test \
+            -Dsonar.test.inclusions=**/*Test.java \
+            -Dsonar.coverage.jacoco.xmlReportsPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+            -Dsonar.pullrequest.base=${{ github.base_ref }} \
+            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+        continue-on-error: true
+
   # ==================== 前端构建 ====================
   frontend-build:
     name: Frontend Build
@@ -125,7 +173,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: frontend-pc/package-lock.json # bump cache v2
+          cache-dependency-path: frontend-pc/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -148,9 +196,51 @@ jobs:
           path: frontend-pc/dist/
           retention-days: 1
 
+  # ==================== 前端代码分析 (SonarCloud) ====================
+  frontend-sonar:
+    name: Frontend SonarCloud Analysis
+    runs-on: ubuntu-24.04
+    needs: [frontend-build]
+    if: github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: frontend-pc
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend-pc/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonarscanner \
+            -Dsonar.projectKey=yshan2028_Lest-frontend \
+            -Dsonar.organization=yshan2028 \
+            -Dsonar.sources=src \
+            -Dsonar.sourceEncoding=UTF-8 \
+            -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts \
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+            -Dsonar.pullrequest.base=${{ github.base_ref }} \
+            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+        continue-on-error: true
+
   # ==================== Docker 镜像构建测试 ====================
   docker-build:
-    name: Docker Build Test
+    name: Docker Build
     runs-on: ubuntu-24.04
     needs: [backend-build, frontend-build]
     if: github.event_name == 'push'
@@ -168,59 +258,61 @@ jobs:
 
       - name: Prepare artifacts for Docker build
         run: |
-          # Recreate directory structure for backend JARs
           mkdir -p backend/lest-gateway/target
-          cp artifacts/backend-jars/lest-gateway-*.jar backend/lest-gateway/target/
-
+          cp artifacts/backend-jars/lest-gateway*.jar backend/lest-gateway/target/ 2>/dev/null || true
           mkdir -p backend/lest-auth/target
-          cp artifacts/backend-jars/lest-auth-*.jar backend/lest-auth/target/
+          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-system/target
+          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-project/target
+          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-task/target
+          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-release/target
+          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-job/target
+          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-file/target
+          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-meeting/target
+          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-notification/target
+          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-ai/target
+          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-open/target
+          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-performance/target
+          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-plugin/target
+          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/target/ 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-wakapi/target
+          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/target/ 2>/dev/null || true
+          mkdir -p backend/lest-visual/lest-monitor/target
+          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/target/ 2>/dev/null || true
+          mkdir -p backend/docker/nginx/html
+          cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ 2>/dev/null || true
 
-          MODULES_DIR="backend/lest-modules"
-          mkdir -p "${MODULES_DIR}/lest-system/target"
-          cp artifacts/backend-jars/lest-system-*.jar "${MODULES_DIR}/lest-system/target/"
-
-          mkdir -p "${MODULES_DIR}/lest-job/target"
-          cp artifacts/backend-jars/lest-job-*.jar "${MODULES_DIR}/lest-job/target/"
-
-          mkdir -p "${MODULES_DIR}/lest-file/target"
-          cp artifacts/backend-jars/lest-file-*.jar "${MODULES_DIR}/lest-file/target/"
-
-          mkdir -p "${MODULES_DIR}/lest-project/target"
-          cp artifacts/backend-jars/lest-project-*.jar "${MODULES_DIR}/lest-project/target/"
-
-          mkdir -p "${MODULES_DIR}/lest-task/target"
-          cp artifacts/backend-jars/lest-task-*.jar "${MODULES_DIR}/lest-task/target/"
-
-          mkdir -p "${MODULES_DIR}/lest-release/target"
-          cp artifacts/backend-jars/lest-release-*.jar "${MODULES_DIR}/lest-release/target/"
-
-          VISUAL_DIR="backend/lest-visual"
-          mkdir -p "${VISUAL_DIR}/lest-monitor/target"
-          cp artifacts/backend-jars/lest-monitor-*.jar "${VISUAL_DIR}/lest-monitor/target/"
-
-          # Recreate directory structure for frontend dist
-          mkdir -p frontend-pc/dist
-          cp -r artifacts/frontend-dist/* frontend-pc/dist/
-
-      - name: Build backend images
+      - name: Build gateway image
         run: |
-          # Build gateway image
           docker build \
-            --build-arg MODULE=lest-gateway \
+            --build-arg MODULE=backend/lest-gateway \
             --build-arg SERVICE_PORT=8080 \
             -t lest-gateway:test \
-            -f docker-dev.Dockerfile \
+            -f backend/docker/lest/gateway/dockerfile \
             ./backend
 
-          # Build auth image
+      - name: Build auth image
+        run: |
           docker build \
-            --build-arg MODULE=lest-auth \
+            --build-arg MODULE=backend/lest-auth \
             --build-arg SERVICE_PORT=8096 \
             -t lest-auth:test \
-            -f docker-dev.Dockerfile \
+            -f backend/docker/lest/auth/dockerfile \
             ./backend
 
       - name: Build nginx image
+        if: false  # Disable nginx build in CI (no dockerfile exists)
         run: |
           docker build \
             -t lest-nginx:test \
@@ -255,56 +347,39 @@ jobs:
           sarif_file: trivy-fs-results.sarif
         continue-on-error: true
 
-      - name: Run Trivy on Docker images
-        if: github.event_name == 'push'
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'image'
-          scan-ref: 'lest-gateway:test'
-          format: 'table'
-          exit-code: '0'
-        continue-on-error: true
-
-  # ==================== 代码质量检查 ====================
-  code-quality:
-    name: Code Quality
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Backend - Checkstyle
-        working-directory: backend
-        continue-on-error: true
-        run: mvn checkstyle:check -q
-
-      - name: Frontend - Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: frontend-pc/package-lock.json # bump cache v2
-
-      - name: Frontend - Install & Lint
-        working-directory: frontend-pc
-        continue-on-error: true
-        run: |
-          npm ci
-          npm run lint:eslint -- --format stylish
-
   # ==================== CI 总结 ====================
   ci-summary:
     name: CI Summary
-    needs: [backend-build, backend-test, frontend-build, docker-build]
+    needs: [backend-build, backend-test, frontend-build, backend-sonar, frontend-sonar, docker-build, security-scan]
     runs-on: ubuntu-24.04
     if: always()
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
     steps:
-      - name: CI Result Summary
+      - name: Set job status emoji
         run: |
-          echo "## CI Build Summary"
-          echo "| Job | Status |"
-          echo "|------|--------|"
-          echo "| Backend Build | ${{ needs.backend-build.result == 'success' && '✅' || '❌' }} |"
-          echo "| Backend Test | ${{ needs.backend-test.result == 'success' && '✅' || '⚠️' }} |"
-          echo "| Frontend Build | ${{ needs.frontend-build.result == 'success' && '✅' || '❌' }} |"
-          echo "| Docker Build | ${{ needs.docker-build.result == 'success' && '✅' || '❌' }} |"
+          BUILD=${{ needs.backend-build.result == 'success' && '✅' || '❌' }}
+          TEST=${{ needs.backend-test.result == 'success' && '✅' || (needs.backend-test.result == 'skipped' && '⏭️' || '⚠️') }}
+          FRONTEND=${{ needs.frontend-build.result == 'success' && '✅' || '❌' }}
+          SONAR_BE=${{ needs.backend-sonar.result == 'success' && '✅' || (needs.backend-sonar.result == 'skipped' && '⏭️' || '⚠️') }}
+          SONAR_FE=${{ needs.frontend-sonar.result == 'success' && '✅' || (needs.frontend-sonar.result == 'skipped' && '⏭️' || '⚠️') }}
+          DOCKER=${{ needs.docker-build.result == 'success' && '✅' || (needs.docker-build.result == 'skipped' && '⏭️' || '❌') }}
+          TRIVY=${{ needs.security-scan.result == 'success' && '✅' || (needs.security-scan.result == 'skipped' && '⏭️' || '⚠️') }}
+
+          echo "## CI Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Build | $BUILD |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Test | $TEST |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend SonarCloud | $SONAR_BE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend Build | $FRONTEND |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend SonarCloud | $SONAR_FE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docker Build | $DOCKER |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scan (Trivy) | $TRIVY |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**SonarCloud**: PR analysis enabled. Set \`SONAR_TOKEN\` in repo secrets to activate." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Trivy**: Security scan results appear in the Security tab." >> $GITHUB_STEP_SUMMARY

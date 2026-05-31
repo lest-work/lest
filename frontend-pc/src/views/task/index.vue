@@ -22,9 +22,9 @@
           >
             <el-option
               v-for="p in projectOptions"
-              :key="p.id"
+              :key="p.projectId"
               :label="p.name"
-              :value="p.id"
+              :value="p.projectId"
             />
           </el-select>
         </el-form-item>
@@ -65,7 +65,7 @@
         v-loading="loading"
         :data="list"
         stripe
-        row-key="id"
+        row-key="taskId"
         style="width: 100%"
       >
         <el-table-column prop="title" label="任务标题" min-width="200" show-overflow-tooltip>
@@ -125,7 +125,7 @@
     <!-- 新增/编辑弹窗 / Add/Edit dialog -->
     <el-dialog
       v-model="dialogVisible"
-      :title="formData.id ? '编辑任务' : '新建任务'"
+      :title="formData.taskId ? '编辑任务' : '新建任务'"
       width="560px"
       destroy-on-close
     >
@@ -135,12 +135,12 @@
         </el-form-item>
         <el-form-item label="所属项目" prop="projectId">
           <el-select v-model="formData.projectId" filterable placeholder="请选择项目" style="width: 100%">
-            <el-option v-for="p in projectOptions" :key="p.id" :label="p.name" :value="p.id" />
+            <el-option v-for="p in projectOptions" :key="p.projectId" :label="p.name" :value="p.projectId" />
           </el-select>
         </el-form-item>
         <el-form-item label="所属迭代">
           <el-select v-model="formData.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%" :disabled="!formData.projectId">
-            <el-option v-for="it in iterationOptions" :key="it.id" :label="it.name" :value="it.id" />
+            <el-option v-for="it in iterationOptions" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
           </el-select>
         </el-form-item>
         <el-form-item label="任务类型" prop="taskType">
@@ -259,7 +259,7 @@
   });
 
   const formData = reactive({
-    id: undefined,
+    taskId: undefined,
     title: '',
     projectId: undefined,
     iterationId: undefined,
@@ -322,7 +322,7 @@
 
   function openAddDialog() {
     Object.assign(formData, {
-      id: undefined,
+      taskId: undefined,
       title: '',
       projectId: undefined,
       iterationId: undefined,
@@ -355,7 +355,7 @@
     await formRef.value?.validate();
     submitLoading.value = true;
     try {
-      if (formData.id) {
+      if (formData.taskId) {
         await updateTask(formData);
         EleMessage.success({ message: '修改成功', plain: true });
       } else {
@@ -379,7 +379,7 @@
 
   function handleSubmitStatus() {
     submitLoading.value = true;
-    updateTaskStatus(currentTask.value.id, newStatus.value)
+    updateTaskStatus(currentTask.value.taskId, newStatus.value)
       .then(() => {
         EleMessage.success({ message: '状态已更新', plain: true });
         statusDialogVisible.value = false;
@@ -399,7 +399,7 @@
       draggable: true
     })
       .then(() => {
-        removeTask(row.id)
+        removeTask(row.taskId)
           .then(() => {
             EleMessage.success({ message: '删除成功', plain: true });
             fetchList();

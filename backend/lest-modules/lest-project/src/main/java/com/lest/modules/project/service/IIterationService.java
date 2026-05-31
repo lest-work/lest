@@ -5,43 +5,22 @@ import com.lest.modules.project.domain.Iteration;
 
 /**
  * 迭代 服务层
- * 
+ *
  * @author yshan2028
  */
 public interface IIterationService
 {
-    /**
-     * 查询迭代列表
-     */
     public List<Iteration> selectIterationList(Long projectId, Integer status);
 
-    /**
-     * 查询迭代详情
-     */
-    public Iteration selectIterationById(Long id);
+    public Iteration selectIterationById(Long iterationId);
 
-    /**
-     * 新增迭代
-     */
     public int insertIteration(Iteration iteration);
 
-    /**
-     * 修改迭代
-     */
     public int updateIteration(Iteration iteration);
 
-    /**
-     * 删除迭代
-     */
-    public int deleteIterationById(Long id);
+    public int deleteIterationById(Long iterationId);
 
-    /**
-     * 启动迭代
-     */
-    public int startIteration(Long id);
+    public int startIteration(Long iterationId);
 
-    /**
-     * 完成迭代
-     */
-    public int completeIteration(Long id);
+    public int completeIteration(Long iterationId);
 }

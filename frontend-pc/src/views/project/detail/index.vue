@@ -141,7 +141,7 @@
               <el-option label="P3" value="p3" />
             </el-select>
             <el-select v-model="taskQuery.iterationId" clearable placeholder="迭代" style="width: 140px" @change="fetchTasks">
-              <el-option v-for="it in iterations" :key="it.id" :label="it.name" :value="it.id" />
+              <el-option v-for="it in iterations" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
             </el-select>
           </div>
           <el-table v-loading="taskLoading" :data="taskList" stripe style="width: 100%">
@@ -208,7 +208,7 @@
           <el-timeline>
             <el-timeline-item
               v-for="m in milestones"
-              :key="m.id"
+              :key="m.milestoneId"
               :timestamp="m.targetDate"
               placement="top"
             >
@@ -240,7 +240,7 @@
     <!-- 新建迭代弹窗 / Iteration dialog -->
     <el-dialog
       v-model="iterationDialogVisible"
-      :title="iterForm.id ? '编辑迭代' : '新建迭代'"
+      :title="iterForm.iterationId ? '编辑迭代' : '新建迭代'"
       width="480px"
       destroy-on-close
     >
@@ -272,7 +272,7 @@
         </el-form-item>
         <el-form-item label="所属迭代">
           <el-select v-model="taskForm.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%">
-            <el-option v-for="it in iterations" :key="it.id" :label="it.name" :value="it.id" />
+            <el-option v-for="it in iterations" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
           </el-select>
         </el-form-item>
         <el-form-item label="任务类型">
@@ -407,7 +407,7 @@
   };
 
   const iterForm = reactive({
-    id: undefined,
+    iterationId: undefined,
     projectId: undefined,
     name: '',
     goal: '',
@@ -439,7 +439,7 @@
 
   function openIterationDialog(item) {
     Object.assign(iterForm, {
-      id: item ? item.id : undefined,
+      iterationId: item ? item.iterationId : undefined,
       projectId: getProjectId(),
       name: item ? item.name : '',
       goal: item ? item.goal : '',
@@ -453,7 +453,7 @@
     iterFormRef.value?.validate().then(() => {
       saveLoading.value = true;
       const projectId = getProjectId();
-      const fn = iterForm.id ? updateIteration(iterForm) : addIteration(projectId, iterForm);
+      const fn = iterForm.iterationId ? updateIteration(iterForm) : addIteration(projectId, iterForm);
       fn.then(() => {
         EleMessage.success({ message: '保存成功', plain: true });
         iterationDialogVisible.value = false;
@@ -471,9 +471,9 @@
   function handleDeleteIteration(row) {
     ElMessageBox.confirm(`确认删除迭代「${row.name}」？`, '提示', { type: 'warning', draggable: true })
       .then(() => {
-        removeIteration(row.id).then(() => {
+        removeIteration(row.iterationId).then(() => {
           EleMessage.success({ message: '删除成功', plain: true });
-          iterations.value = iterations.value.filter((i) => i.id !== row.id);
+          iterations.value = iterations.value.filter((i) => i.iterationId !== row.iterationId);
         });
       })
       .catch(() => {});
@@ -502,9 +502,9 @@
   function handleDeleteMilestone(m) {
     ElMessageBox.confirm(`确认删除里程碑「${m.name}」？`, '提示', { type: 'warning', draggable: true })
       .then(() => {
-        removeMilestone(m.id).then(() => {
+        removeMilestone(m.milestoneId).then(() => {
           EleMessage.success({ message: '删除成功', plain: true });
-          milestones.value = milestones.value.filter((x) => x.id !== m.id);
+          milestones.value = milestones.value.filter((x) => x.milestoneId !== m.milestoneId);
         });
       })
       .catch(() => {});
@@ -576,7 +576,7 @@
   function handleDeleteTask(row) {
     ElMessageBox.confirm(`确认删除任务「${row.title}」？`, '提示', { type: 'warning', draggable: true })
       .then(() => {
-        removeTask(row.id)
+        removeTask(row.taskId)
           .then(() => {
             EleMessage.success({ message: '删除成功', plain: true });
             fetchTasks();

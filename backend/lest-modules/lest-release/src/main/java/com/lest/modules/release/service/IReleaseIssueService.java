@@ -10,11 +10,11 @@ import com.lest.modules.release.domain.ReleaseIssue;
  */
 public interface IReleaseIssueService
 {
-    public List<ReleaseIssue> selectIssuesByReleaseId(Long releaseId);
+    public List<ReleaseIssue> selectIssuesByReleaseId(Long releasePlanId);
 
     public int insertIssue(ReleaseIssue issue);
 
-    public int deleteIssueById(Long id);
+    public int deleteIssueById(Long releaseIssueId);
 
-    public int batchAddIssues(Long releaseId, Long[] taskIds, Long[] issueIds, Integer category, String notes);
+    public int batchAddIssues(Long releasePlanId, Long[] taskIds, Long[] issueIds, Integer category, String notes);
 }

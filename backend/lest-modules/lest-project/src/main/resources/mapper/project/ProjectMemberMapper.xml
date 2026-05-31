@@ -3,33 +3,28 @@
 <mapper namespace="com.lest.modules.project.mapper.ProjectMemberMapper">
 
     <resultMap type="com.lest.modules.project.domain.ProjectMember" id="ProjectMemberResult">
-        <id     property="id"        column="id"         />
         <result property="projectId" column="project_id" />
-        <result property="userId"    column="user_id"    />
-        <result property="role"      column="role"       />
-        <result property="joinedAt"  column="joined_at"  />
+        <result property="userId"   column="user_id"   />
+        <result property="role"     column="role"      />
+        <result property="joinedAt" column="joined_at"  />
     </resultMap>
 
-    <select id="selectById" resultMap="ProjectMemberResult">
-        select id, project_id, user_id, role, joined_at from project_member where id = #{id} and deleted = 0
+    <select id="selectByProjectIdAndUserId" resultMap="ProjectMemberResult">
+        select project_id, user_id, role, joined_at from project_member
+        where project_id = #{projectId} and user_id = #{userId} limit 1
     </select>
 
     <select id="selectByProjectId" resultMap="ProjectMemberResult">
-        select id, project_id, user_id, role, joined_at from project_member where project_id = #{projectId} and deleted = 0
+        select project_id, user_id, role, joined_at from project_member where project_id = #{projectId}
     </select>
 
-    <select id="selectByProjectIdAndUserId" resultMap="ProjectMemberResult">
-        select id, project_id, user_id, role, joined_at from project_member
-        where project_id = #{projectId} and user_id = #{userId} and deleted = 0 limit 1
-    </select>
-
-    <insert id="insert" parameterType="com.lest.modules.project.domain.ProjectMember" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.lest.modules.project.domain.ProjectMember">
         insert into project_member (project_id, user_id, role, joined_at)
         values (#{projectId}, #{userId}, #{role}, now())
     </insert>
 
-    <update id="updateById" parameterType="com.lest.modules.project.domain.ProjectMember">
-        update project_member set role = #{role} where id = #{id} and deleted = 0
+    <update id="updateByProjectIdAndUserId" parameterType="com.lest.modules.project.domain.ProjectMember">
+        update project_member set role = #{role} where project_id = #{projectId} and user_id = #{userId}
     </update>
 
     <update id="deleteByProjectIdAndUserId">
@@ -37,11 +32,11 @@
     </update>
 
     <select id="countAdminsByProjectId" resultType="int">
-        select count(*) from project_member where project_id = #{projectId} and role = 'admin' and deleted = 0
+        select count(*) from project_member where project_id = #{projectId} and role = 'admin'
     </select>
 
     <select id="countMembersByProjectId" resultType="int">
-        select count(*) from project_member where project_id = #{projectId} and deleted = 0
+        select count(*) from project_member where project_id = #{projectId}
     </select>
 
 </mapper>

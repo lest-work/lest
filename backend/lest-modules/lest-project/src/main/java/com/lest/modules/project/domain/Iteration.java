@@ -6,15 +6,15 @@ import com.lest.common.core.web.domain.BaseEntity;
 
 /**
  * 迭代对象 iteration
- * 
+ *
  * @author yshan2028
  */
 public class Iteration extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
-    private Long id;
+    /** 迭代ID */
+    private Long iterationId;
 
     /** 所属项目ID */
     private Long projectId;
@@ -40,14 +40,14 @@ public class Iteration extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date completedAt;
 
-    public Long getId()
+    public Long getIterationId()
     {
-        return id;
+        return iterationId;
     }
 
-    public void setId(Long id)
+    public void setIterationId(Long iterationId)
     {
-        this.id = id;
+        this.iterationId = iterationId;
     }
 
     public Long getProjectId()

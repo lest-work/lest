@@ -9,18 +9,29 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/version-v0.2.0-brightgreen.svg" alt="version"></a>
-  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
-  <img src="https://img.shields.io/badge/JDK-21+-blue.svg" alt="jdk">
-  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green.svg" alt="spring boot">
-  <img src="https://img.shields.io/badge/Vue-3.x-42b883.svg" alt="vue">
-  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/文档-中文版-red.svg" alt="中文文档"></a>
+
+<!-- Badges row 1 -->
+<a href="https://github.com/yshan2028/Lest/releases/latest"><img src="https://img.shields.io/github/v/release/yshan2028/Lest?style=flat-square" alt="GitHub release"></a>
+<a href="https://github.com/yshan2028/Lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/yshan2028/Lest?style=flat-square" alt="License"></a>
+<a href="https://github.com/yshan2028/Lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yshan2028/Lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
+<a href="https://github.com/yshan2028/Lest/issues"><img src="https://img.shields.io/github/issues/yshan2028/Lest?style=flat-square" alt="Issues"></a>
+<a href="https://github.com/yshan2028/Lest/stargazers"><img src="https://img.shields.io/github/stars/yshan2028/Lest?style=flat-square" alt="Stars"></a>
+<a href="https://github.com/yshan2028/Lest/fork"><img src="https://img.shields.io/github/forks/yshan2028/Lest?style=flat-square" alt="Forks"></a>
+
+<!-- Badges row 2 -->
+<a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
+<a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring" alt="Spring Boot"></a>
+<a href="https://v3.vuejs.org"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue"></a>
+<a href="https://nestjs.com"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript" alt="TypeScript"></a>
+<a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-24.x-2496ED?style=flat-square&logo=docker" alt="Docker"></a>
+<a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/Discussions-Welcome-blueviolet?style=flat-square" alt="Discussions"></a>
 </p>
 
 <p align="center">
-  <a href="README.zh-CN.md">中文文档</a> ·
-  <a href="https://github.com/yshan2028/Lest/issues">Report Bug</a> ·
-  <a href="https://github.com/yshan2028/Lest/issues">Request Feature</a>
+  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/文档-中文版-red?style=flat-square" alt="中文文档"></a>
+  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/Releases-Changelog-brightgreen?style=flat-square" alt="Releases"></a>
+  <a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/Community-Discussions-blueviolet?style=flat-square" alt="Discussions"></a>
+  <a href="https://github.com/yshan2028/Lest/issues/new/choose"><img src="https://img.shields.io/badge/❮%20Issues-Report%20Bug-orange?style=flat-square" alt="Report Bug"></a>
 </p>
 
 ---
@@ -142,8 +153,11 @@ lest-platform/
 git clone https://github.com/yshan2028/Lest.git
 cd lest-platform
 
-# Start all infrastructure + services
-docker compose -f docker-compose.dev.yml up -d
+# Start infrastructure services (Nacos, MinIO)
+docker compose -f backend/docker/docker-compose.local.yaml up -d
+
+# Start backend services (each in its own terminal or via scripts in backend/docker/bin/)
+# See backend/docker/README.md for per-service startup scripts
 
 # The frontend dev server (hot-reload)
 cd frontend-pc
@@ -154,17 +168,15 @@ npm run dev
 ### Option 2 — Local Development
 
 ```bash
-# 1. Start infrastructure (MySQL, Redis, Nacos)
-docker compose -f docker-compose.dev.yml up mysql redis nacos -d
+# 1. Start infrastructure (Nacos, Sentinel, MinIO)
+docker compose -f backend/docker/docker-compose.local.yaml up -d
 
 # 2. Build backend
 cd backend
 mvn clean install -DskipTests
 
 # 3. Start services individually (in separate terminals)
-./bin/run-auth.sh
-./bin/run-gateway.sh
-./bin/run-system.sh
+# See backend/docker/bin/run-*.sh for per-service scripts
 
 # 4. Start frontend
 cd ../frontend-pc
@@ -175,25 +187,75 @@ npm run dev
 
 ## 🌐 Service Endpoints
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
+### Local Development
+
+When developing locally, the Vite dev server proxies `/api/*` requests to `localhost:8080` — **no domain or hosts file configuration needed**.
+
+| Service | Local URL | Credentials |
+|---------|-----------|-------------|
 | **Frontend** | http://localhost:5173 | admin / admin123 |
 | **API Gateway** | http://localhost:8080 | — |
-| **Swagger UI** | http://localhost:8080/doc.html | — |
+| **API Docs** | http://localhost:8080/doc.html | — |
 | **Nacos Console** | http://localhost:8848/nacos | nacos / nacos |
 | **MinIO Console** | http://localhost:9001 | minioadmin / minioadmin |
+
+### Production Environment
+
+> The following endpoints are hosted on `lest.work`. See [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md) for full domain architecture.
+
+| Service | Production URL | Credentials |
+|---------|---------------|-------------|
+| **Web App** | https://app.lest.work | admin / admin123 |
+| **API Gateway** | https://api.lest.work | — |
+| **API Docs** | https://doc.lest.work | — |
+| **Nacos Console** | https://nacos.lest.work | nacos / nacos |
+| **MinIO Console** | https://minio.lest.work | minioadmin / minioadmin |
+
+> **Official Website** — Visit [https://lest.top](https://lest.top) for product introduction.
 
 ---
 
 ## 📋 Roadmap
 
-| Version | Theme | Status |
-|---------|-------|--------|
-| **v0.1.0** | Foundation — Auth, System, Gateway, Dashboard | ✅ Released |
-| **v0.2.0** | Project & Task Frontend Pages, DDL, API completion | ✅ Released |
-| **v0.3.0** | Burndown charts, Task worklog/comment panel, Kanban DnD | 🔵 Planned |
-| **v0.4.0** | Release management UI, Webhook integration | 🔵 Planned |
-| **v1.0.0** | Stable release, mobile app, full documentation | 🔵 Planned |
+> Track progress at a glance. See full milestone details at [docs/MILESTONES.md](./docs/MILESTONES.md).
+
+```
+v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          v1.0.0
+  |               |               |               |               |               |
+  ●───────────────●───────────────○               ○               ○               ○  Foundation
+  ●───────────────●───────────────○               ○               ○               ○  Auth
+  ●───────────────●───────────────○               ○               ○               ○  System Mgmt
+  ●───────────────●───────────────○               ○               ○               ○  Gateway
+  ●───────────────●───────────────○               ○               ○               ○  Project BE
+  ●───────────────●───────────────○               ○               ○               ○  Task BE
+  ○───────────────●───────────────○               ○               ○               ○  Project UI
+  ○───────────────●───────────────○               ○               ○               ○  Task UI
+  ○───────────────●───────────────○               ○               ○               ○  Release BE
+  ○───────────────○───────────────●               ○               ○               ○  Burndown Chart
+  ○───────────────○───────────────●               ○               ○               ○  Kanban DnD
+  ○───────────────○───────────────●               ○               ○               ○  Worklog/Comment
+  ○───────────────○───────────────○               ●               ○               ○  Notification
+  ○───────────────○───────────────○               ●               ○               ○  Meeting
+  ○───────────────○───────────────○               ●               ○               ○  Release UI
+  ○───────────────○───────────────○               ○               ●               ○  CI Integration
+  ○───────────────○───────────────○               ○               ●               ○  WakaTime
+  ○───────────────○───────────────○               ○               ●               ○  Performance
+  ○───────────────○───────────────○               ○               ○               ●  AI Assistant
+  ○───────────────○───────────────○               ○               ○               ●  Mobile App
+  ○───────────────○───────────────○               ○               ○               ●  Plugin System
+
+  ✅ Released      ✅ Released      🔵 Planned      🔵 Planned      🔵 Planned      🔵 Planned
+```
+
+| Version | Theme | Target Date | Status |
+|---------|-------|------------|--------|
+| **v0.1.0** | Foundation — Auth, System, Gateway, Dashboard | 2026-05-29 | ✅ Released |
+| **v0.2.0** | Project & Task Frontend Pages, DDL, API completion | 2026-05-30 | ✅ Released |
+| **v0.3.0** | Burndown chart, Kanban DnD, Task worklog/comment panel | 2026-06-05 | 🔵 Planned |
+| **v0.4.0** | Notification (WebSocket), Meeting, Release UI | 2026-06-12 | 🔵 Planned |
+| **v0.5.0** | CI Integration, WakaTime, Performance dashboard | 2026-06-19 | 🔵 Planned |
+| **v0.6.0–v0.9.0** | Advanced modules — AI, Plugin, Open Platform | 2026-07 | 🔵 Planned |
+| **v1.0.0** | Stable release — full feature set, mobile app, docs | 2026-08-07 | 🔵 Planned |
 
 See the full changelog at [CHANGELOG.md](./CHANGELOG.md) and milestone roadmap at [docs/MILESTONES.md](./docs/MILESTONES.md).
 
@@ -201,15 +263,46 @@ See the full changelog at [CHANGELOG.md](./CHANGELOG.md) and milestone roadmap a
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+We welcome contributions! Please read our guidelines before submitting any work.
 
-1. Fork the repository
-2. Create your branch: `git checkout -b feat/your-feature`
-3. Commit your changes: `git commit -m 'feat: add some feature'`
-4. Push to the branch: `git push origin feat/your-feature`
-5. Open a Pull Request
+| Resource | Description |
+|----------|-------------|
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines, code style, commit conventions |
+| [docs/BRANCHING.md](./docs/BRANCHING.md) | Branch naming, Git Flow workflow, commit message format |
+| [CHANGELOG.md](./CHANGELOG.md) | Release history and version conventions |
+| [docs/MILESTONES.md](./docs/MILESTONES.md) | Feature roadmap and milestone planning |
 
-Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and submission process.
+### Quick Start
+
+```bash
+# 1. Fork the repository and clone your fork
+git clone https://github.com/YOUR_USERNAME/Lest.git
+cd lest-platform
+
+# 2. Add the upstream remote
+git remote add upstream https://github.com/yshan2028/Lest.git
+
+# 3. Create a feature branch from develop
+git checkout -b feature/your-feature-name
+
+# 4. Make your changes and commit (follow Conventional Commits)
+git commit -m "feat(project): add burndown chart component"
+
+# 5. Keep your fork in sync with upstream
+git fetch upstream
+git rebase upstream/develop
+
+# 6. Push and open a Pull Request
+git push origin feature/your-feature-name
+```
+
+> See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide including coding standards, testing requirements, and PR checklist.
+
+---
+
+## 🔒 Security
+
+If you discover a security vulnerability, please follow our [SECURITY.md](./SECURITY.md) for responsible disclosure. Do **not** open a public issue for security problems.
 
 ---
 

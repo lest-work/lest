@@ -1,0 +1,46 @@
+## Issue Description
+
+<!-- Briefly describe the problem in 1-2 sentences -->
+
+## Steps to Reproduce
+
+<!--
+1. Go to '...'
+2. Click on '...'
+3. Scroll down to '...'
+4. See error
+-->
+
+## Expected Behavior
+
+<!-- What you expected to happen -->
+
+## Actual Behavior
+
+<!-- What actually happened -->
+
+## Environment
+
+- **OS**: (e.g., macOS 14, Ubuntu 22.04, Windows 11)
+- **JDK Version**: (e.g., 21.0.2)
+- **Node.js Version**: (e.g., 22.4.0)
+- **Browser**: (e.g., Chrome 126, Safari 17)
+- **Version**: (e.g., v0.2.0)
+
+## Logs / Stack Trace
+
+```
+<!-- Paste error logs or stack trace here -->
+```
+
+## Screenshots
+
+<!-- If applicable, add screenshots to help explain the problem -->
+
+## Additional Context
+
+<!-- Add any other context about the problem here -->
+
+---
+
+**Attention**: This is a **bug report**. For feature requests, use the Feature Request template instead.

@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper
 public interface LabelMapper
 {
-    Label selectById(@Param("id") Long id);
+    Label selectById(@Param("labelId") Long labelId);
 
     List<Label> selectByProjectId(@Param("projectId") Long projectId);
 
     int insert(Label label);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("labelId") Long labelId);
 }

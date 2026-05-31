@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.lest.common.core.exception.ServiceException;
 import com.lest.common.core.utils.StringUtils;
+import com.lest.common.security.utils.SecurityUtils;
 import com.lest.modules.project.domain.Project;
 import com.lest.modules.project.domain.ProjectMember;
 import com.lest.modules.project.mapper.IterationMapper;
@@ -15,7 +16,7 @@ import com.lest.modules.project.service.IProjectService;
 
 /**
  * 项目 服务层实现
- * 
+ *
  * @author yshan2028
  */
 @Service
@@ -37,9 +38,9 @@ public class ProjectServiceImpl implements IProjectService
     }
 
     @Override
-    public Project selectProjectById(Long id)
+    public Project selectProjectById(Long projectId)
     {
-        return projectMapper.selectById(id);
+        return projectMapper.selectById(projectId);
     }
 
     @Override
@@ -53,10 +54,9 @@ public class ProjectServiceImpl implements IProjectService
         }
         project.setStatus(1);
         int rows = projectMapper.insert(project);
-        // 创建者自动成为管理员
         ProjectMember member = new ProjectMember();
-        member.setProjectId(project.getId());
-        member.setUserId(project.getOwnerId());
+        member.setProjectId(project.getProjectId());
+        member.setUserId(SecurityUtils.getUserId());
         member.setRole("admin");
         projectMemberMapper.insert(member);
         return rows;
@@ -66,7 +66,7 @@ public class ProjectServiceImpl implements IProjectService
     @Transactional(rollbackFor = Exception.class)
     public int updateProject(Project project)
     {
-        Project existing = projectMapper.selectById(project.getId());
+        Project existing = projectMapper.selectById(project.getProjectId());
         if (existing == null)
         {
             throw new ServiceException("项目不存在");
@@ -84,31 +84,31 @@ public class ProjectServiceImpl implements IProjectService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteProjectById(Long id)
+    public int deleteProjectById(Long projectId)
     {
-        Project project = projectMapper.selectById(id);
+        Project project = projectMapper.selectById(projectId);
         if (project == null)
         {
             throw new ServiceException("项目不存在");
         }
-        int iterationCount = iterationMapper.countByProjectId(id);
+        int iterationCount = iterationMapper.countByProjectId(projectId);
         if (iterationCount > 0)
         {
             throw new ServiceException("项目下存在迭代，无法删除");
         }
-        int memberCount = projectMemberMapper.countMembersByProjectId(id);
+        int memberCount = projectMemberMapper.countMembersByProjectId(projectId);
         if (memberCount > 0)
         {
             throw new ServiceException("项目下存在成员，无法删除");
         }
-        return projectMapper.deleteById(id);
+        return projectMapper.deleteById(projectId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int archiveProject(Long id)
+    public int archiveProject(Long projectId)
     {
-        Project project = projectMapper.selectById(id);
+        Project project = projectMapper.selectById(projectId);
         if (project == null)
         {
             throw new ServiceException("项目不存在");
@@ -123,9 +123,9 @@ public class ProjectServiceImpl implements IProjectService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int unarchiveProject(Long id)
+    public int unarchiveProject(Long projectId)
     {
-        Project project = projectMapper.selectById(id);
+        Project project = projectMapper.selectById(projectId);
         if (project == null)
         {
             throw new ServiceException("项目不存在");
@@ -194,6 +194,6 @@ public class ProjectServiceImpl implements IProjectService
             }
         }
         member.setRole(role);
-        return projectMemberMapper.updateById(member);
+        return projectMemberMapper.updateByProjectIdAndUserId(member);
     }
 }

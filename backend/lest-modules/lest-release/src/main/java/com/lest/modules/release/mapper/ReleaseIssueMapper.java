@@ -11,10 +11,10 @@ public interface ReleaseIssueMapper
 {
     int insert(ReleaseIssue issue);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("releaseIssueId") Long releaseIssueId);
 
-    List<ReleaseIssue> selectIssueList(@Param("releaseId") Long releaseId, @Param("issueId") Long issueId,
+    List<ReleaseIssue> selectIssueList(@Param("releasePlanId") Long releasePlanId, @Param("issueId") Long issueId,
                                        @Param("taskId") Long taskId, @Param("category") Integer category);
 
-    int countByReleaseId(@Param("releaseId") Long releaseId);
+    int countByReleaseId(@Param("releasePlanId") Long releasePlanId);
 }

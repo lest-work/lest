@@ -1,109 +1,37 @@
-# Project-specific - reference projects (not for commit / 参考项目，不提交)
-Old-旧项目用来参考-里面内容不需要开发和编辑/
-ele-admin-plus-ts 当前前端参考的模版/
-refe/
+# LEST Platform Pre-commit Hook Configuration
+#
+# Install:
+#   npm install --save-dev husky @commitlint/cli @commitlint/config-conventional
+#   npx husky install
+#   npx husky add .husky/commit-msg 'npx --no -- commitlint --edit ${1}'
+#   npx husky add .husky/pre-commit 'npx lint-staged'
+#
+# Note: This requires Node.js >= 18 and npm >= 9
 
-# Build outputs
-target/
+node_modules/
 dist/
-.output/
+target/
 *.class
 *.jar
-*.war
-!.mvn/wrapper/maven-wrapper.jar
-
-# Frontend
-node_modules/
-*.local
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
 # IDE
 .idea/
 *.iml
-*.ipr
-*.iws
-.project
-.classpath
-.settings/
 .vscode/
-!.vscode/extensions.json
-!.vscode/settings.json
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.swp
+*.swo
 .DS_Store
-Thumbs.db
-
-# Editor-specific (Cursor, WindSurf, VSCode, etc.)
-.cursor/
 .windsurf/
-*.cursor
-*.windsurf
-.cursorignore
-.windsurfrc
+.cursor/
+.cursor/rules/
 
-# Java
-*.class
-*.jar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-logs/
-*.log
+# Build artifacts
+backend/docker/lest/*/jar/*.jar
+frontend-pc/dist/
+frontend-h5/dist/
 
-# Spring Boot
-spring-boot-*.jar
-*.pid
-
-# Environment
-.env
-.env.local
-.env.*.local
-application-local.yml
-application-local.properties
-
-# Maven
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle/
-build/
-
-# Package files
-*.tar.gz
-*.rar
-
-# Virtual environments
-venv/
-ENV/
-env/
-.venv/
-
-# Test output
-test-output/
-surefire-reports/
-
-# Docker - runtime data (never commit these)
-backend/docker/mysql/data/
-backend/docker/mysql/logs/
-backend/docker/redis/data/
-backend/docker/redis/logs/
+# Runtime data
+backend/logs/
+backend/docker/minio/data/
 backend/docker/nacos/logs/
-backend/docker/nginx/html/
-backend/docker/nginx/logs/
-backend/docker/lest/uploadPath/

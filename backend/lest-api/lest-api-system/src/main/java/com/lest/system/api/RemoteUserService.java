@@ -1,5 +1,6 @@
 package com.lest.system.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +17,11 @@ import com.lest.system.api.model.LoginUser;
 
 /**
  * 用户服务
- * 
+ *
  * @author yshan2028
  */
-@FeignClient(contextId = "remoteUserService", value = ServiceNameConstants.SYSTEM_SERVICE, fallbackFactory = RemoteUserFallbackFactory.class)
+@FeignClient(contextId = "remoteUserService", value = ServiceNameConstants.SYSTEM_SERVICE,
+        url = "${feign.system.url:http://127.0.0.1:8081}", fallbackFactory = RemoteUserFallbackFactory.class)
 public interface RemoteUserService
 {
     /**

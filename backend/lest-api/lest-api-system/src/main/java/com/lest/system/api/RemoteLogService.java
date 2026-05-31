@@ -16,7 +16,8 @@ import com.lest.system.api.factory.RemoteLogFallbackFactory;
  * 
  * @author yshan2028
  */
-@FeignClient(contextId = "remoteLogService", value = ServiceNameConstants.SYSTEM_SERVICE, fallbackFactory = RemoteLogFallbackFactory.class)
+@FeignClient(contextId = "remoteLogService", value = ServiceNameConstants.SYSTEM_SERVICE,
+        url = "${feign.system.url:http://127.0.0.1:8081}", fallbackFactory = RemoteLogFallbackFactory.class)
 public interface RemoteLogService
 {
     /**

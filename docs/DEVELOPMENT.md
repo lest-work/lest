@@ -21,8 +21,8 @@
 
 | 层级 | 技术选型 | 说明 |
 |------|---------|------|
-| **后端框架** | Spring Boot 4.0.6 | Java 使用 Spring Boot 4.0.6 核心框架 |
-| **ORM** | MyBatis-Plus | Java 使用 MyBatis-Plus 作为 ORM 工具 |
+| **后端框架** | Spring Boot 4.0.3 | Java 使用 Spring Boot 4.0.3 核心框架 |
+| **ORM** | 原生 MyBatis + PageHelper | Java 使用原生 MyBatis（非 MyBatis-Plus）作为 ORM，配合 PageHelper 分页 |
 | **数据库** | MySQL 8.4.9 + Redis 8.6.3 | 主数据库 + 缓存 |
 | **消息队列** | Kafka 4.3.0 | 服务间异步通信 |
 | **前端框架** | Vue 3 + Element Plus | Composition API + Vite |
@@ -162,13 +162,13 @@ npm run dev
 
 ```bash
 # 启动 MySQL、Redis、Nacos 等依赖服务
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f backend/docker/docker-compose.local.yaml up -d
 
 # 查看服务状态
-docker-compose -f docker-compose.dev.yml ps
+docker-compose -f backend/docker/docker-compose.local.yaml ps
 
 # 查看日志
-docker-compose -f docker-compose.dev.yml logs -f
+docker-compose -f backend/docker/docker-compose.local.yaml logs -f
 ```
 
 ---
@@ -907,7 +907,7 @@ docker-compose up -d --force-recreate
 | Spring Boot 文档 | https://spring.io/projects/spring-boot |
 | Vue 3 文档 | https://vuejs.org/ |
 | Element Plus | https://element-plus.org/ |
-| MyBatis-Plus | https://baomidou.com/ |
+| MyBatis | https://mybatis.org/mybatis-3/ |
 | Docker 文档 | https://docs.docker.com/ |
 | Kubernetes 文档 | https://kubernetes.io/zh/docs/ |
 

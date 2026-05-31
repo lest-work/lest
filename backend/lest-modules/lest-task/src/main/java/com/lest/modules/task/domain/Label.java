@@ -4,7 +4,7 @@ import com.lest.common.core.web.domain.BaseEntity;
 
 /**
  * 标签对象 label
- * 
+ *
  * @author yshan2028
  */
 public class Label extends BaseEntity
@@ -12,7 +12,7 @@ public class Label extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 标签ID */
-    private Long id;
+    private Long labelId;
 
     /** 所属项目ID */
     private Long projectId;
@@ -23,14 +23,14 @@ public class Label extends BaseEntity
     /** 标签颜色 */
     private String color;
 
-    public Long getId()
+    public Long getLabelId()
     {
-        return id;
+        return labelId;
     }
 
-    public void setId(Long id)
+    public void setLabelId(Long labelId)
     {
-        this.id = id;
+        this.labelId = labelId;
     }
 
     public Long getProjectId()

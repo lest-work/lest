@@ -21,7 +21,7 @@ import com.lest.modules.project.service.IIterationService;
 
 /**
  * 迭代管理
- * 
+ *
  * @author yshan2028
  */
 @RestController
@@ -31,9 +31,6 @@ public class IterationController extends BaseController
     @Autowired
     private IIterationService iterationService;
 
-    /**
-     * 查询迭代列表
-     */
     @RequiresPermissions("project:iteration:list")
     @GetMapping("/{projectId}/iteration/list")
     public TableDataInfo list(@PathVariable Long projectId, Iteration iteration)
@@ -43,9 +40,6 @@ public class IterationController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 获取迭代详情
-     */
     @RequiresPermissions("project:iteration:query")
     @GetMapping("/iteration/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
@@ -53,9 +47,6 @@ public class IterationController extends BaseController
         return success(iterationService.selectIterationById(id));
     }
 
-    /**
-     * 新增迭代
-     */
     @RequiresPermissions("project:iteration:add")
     @Log(title = "迭代管理", businessType = BusinessType.INSERT)
     @PostMapping("/{projectId}/iteration")
@@ -65,21 +56,15 @@ public class IterationController extends BaseController
         return toAjax(iterationService.insertIteration(iteration));
     }
 
-    /**
-     * 修改迭代
-     */
     @RequiresPermissions("project:iteration:edit")
     @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}")
     public AjaxResult edit(@PathVariable Long id, @RequestBody Iteration iteration)
     {
-        iteration.setId(id);
+        iteration.setIterationId(id);
         return toAjax(iterationService.updateIteration(iteration));
     }
 
-    /**
-     * 删除迭代
-     */
     @RequiresPermissions("project:iteration:remove")
     @Log(title = "迭代管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/iteration/{id}")
@@ -88,9 +73,6 @@ public class IterationController extends BaseController
         return toAjax(iterationService.deleteIterationById(id));
     }
 
-    /**
-     * 启动迭代
-     */
     @RequiresPermissions("project:iteration:edit")
     @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}/start")
@@ -99,9 +81,6 @@ public class IterationController extends BaseController
         return toAjax(iterationService.startIteration(id));
     }
 
-    /**
-     * 完成迭代
-     */
     @RequiresPermissions("project:iteration:edit")
     @Log(title = "迭代管理", businessType = BusinessType.UPDATE)
     @PutMapping("/iteration/{id}/complete")

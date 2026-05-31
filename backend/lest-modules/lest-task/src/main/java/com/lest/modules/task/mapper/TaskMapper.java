@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface TaskMapper
 {
-    Task selectById(@Param("id") Long id);
+    Task selectById(@Param("taskId") Long taskId);
 
     List<Task> selectTaskList(@Param("projectId") Long projectId, @Param("iterationId") Long iterationId,
                               @Param("assigneeId") Long assigneeId, @Param("status") String status,
@@ -35,7 +35,7 @@ public interface TaskMapper
 
     int updateById(Task task);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("taskId") Long taskId);
 
     int countByParentId(@Param("parentId") Long parentId);
 

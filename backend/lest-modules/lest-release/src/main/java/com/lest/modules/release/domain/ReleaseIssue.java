@@ -13,8 +13,8 @@ public class ReleaseIssue extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private Long releaseId;
+    private Long releaseIssueId;
+    private Long releasePlanId;
     private Long issueId;
     private Long taskId;
     private Integer category;
@@ -28,10 +28,10 @@ public class ReleaseIssue extends BaseEntity
     private String addedByName;
     private Boolean deleted;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Long getReleaseId() { return releaseId; }
-    public void setReleaseId(Long releaseId) { this.releaseId = releaseId; }
+    public Long getReleaseIssueId() { return releaseIssueId; }
+    public void setReleaseIssueId(Long releaseIssueId) { this.releaseIssueId = releaseIssueId; }
+    public Long getReleasePlanId() { return releasePlanId; }
+    public void setReleasePlanId(Long releasePlanId) { this.releasePlanId = releasePlanId; }
     public Long getIssueId() { return issueId; }
     public void setIssueId(Long issueId) { this.issueId = issueId; }
     public Long getTaskId() { return taskId; }

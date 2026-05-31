@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 public interface IterationMapper
 {
-    Iteration selectById(@Param("id") Long id);
+    Iteration selectById(@Param("iterationId") Long iterationId);
 
     List<Iteration> selectIterationList(@Param("projectId") Long projectId, @Param("status") Integer status);
 
@@ -21,7 +21,7 @@ public interface IterationMapper
 
     int updateById(Iteration iteration);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("iterationId") Long iterationId);
 
     int countDateConflicts(@Param("projectId") Long projectId,
                            @Param("startDate") Date startDate,

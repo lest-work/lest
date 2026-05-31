@@ -25,12 +25,15 @@
 
 | 文档 | 说明 | 状态 |
 |------|------|------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构设计（15 个微服务、部署架构、服务通信） | ✅ 已完成 |
-| [DATABASE.md](./DATABASE.md) | 数据库设计文档（15 个 Schema、68 张表完整 SQL） | ✅ 已完成 |
-| [API.md](./API.md) | API 接口文档（18 个服务完整 API 定义） | ✅ 已完成 |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范、Git 规范） | ✅ 已完成 |
-| [AI_DEVELOPER_IMPLEMENTATION_SPEC.md](./AI_DEVELOPER_IMPLEMENTATION_SPEC.md) | AI 开发者低漂移高精度实现规范（状态机校验、双部署总线抽象、分布式内存聚合等具象落地指南） | ✅ 已完成 |
-| [DEVELOPMENT_TASKS.md](./DEVELOPMENT_TASKS.md) | 敏捷开发任务列表与进度追踪白皮书（逐个需求模块精细化分解、P0/P1/P2优先级、状态备注、测试结果跟踪等） | ✅ 已完成 |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构设计（微服务、部署架构、服务通信） | ✅ 已完成 |
+| [DATABASE.md](./DATABASE.md) | 数据库设计文档（Schema、DDL） | ✅ 已完成 |
+| [API.md](./API.md) | API 接口文档 | ✅ 已完成 |
+| [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） | ✅ 已完成 |
+| [MILESTONES.md](./MILESTONES.md) | 里程碑规划与版本路线图 | ✅ 已完成 |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | 生产部署指南 | ✅ 已完成 |
+| [BRANCHING.md](./BRANCHING.md) | 分支管理规范与 Git Flow 工作流 | ✅ 已完成 |
+| [DOMAIN_PLAN.md](./DOMAIN_PLAN.md) | 域名规划与本地/生产环境配置 | ✅ 已完成 |
+| [TASKS/](./TASKS/) | 敏捷开发任务看板（按 PRD 分解） | ✅ 进行中 |
 
 ### 核心架构文档
 

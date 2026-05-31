@@ -124,7 +124,7 @@
         pageSize: 20
       });
       taskList.value = (res.rows ?? []).map((t) => ({
-        id: t.id,
+        id: t.taskId,
         priority: PRIORITY_MAP[t.priority] ?? 3,
         taskName: t.title,
         status: STATUS_MAP[t.status] ?? 0

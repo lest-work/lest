@@ -11,7 +11,7 @@
           style="width: 200px"
           @change="handleProjectChange"
         >
-          <el-option v-for="p in projectOptions" :key="p.id" :label="p.name" :value="p.id" />
+          <el-option v-for="p in projectOptions" :key="p.projectId" :label="p.name" :value="p.projectId" />
         </el-select>
         <el-select
           v-model="iterationId"
@@ -20,7 +20,7 @@
           style="width: 160px"
           @change="loadBoard"
         >
-          <el-option v-for="it in iterationOptions" :key="it.id" :label="it.name" :value="it.id" />
+          <el-option v-for="it in iterationOptions" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
         </el-select>
         <el-button :icon="ReloadOutlined" @click="loadBoard">刷新</el-button>
         <el-button :icon="ListIcon" @click="$router.push('/task/index')">列表视图</el-button>
@@ -74,7 +74,7 @@
           >
             <div
               v-for="task in col.tasks"
-              :key="task.id"
+              :key="task.taskId"
               style="
                 background: #fff;
                 border-radius: 6px;
@@ -150,7 +150,7 @@
         </el-form-item>
         <el-form-item label="所属迭代">
           <el-select v-model="newTaskForm.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%">
-            <el-option v-for="it in iterationOptions" :key="it.id" :label="it.name" :value="it.id" />
+            <el-option v-for="it in iterationOptions" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
           </el-select>
         </el-form-item>
         <el-form-item label="任务类型">
@@ -299,7 +299,7 @@
   }
 
   function moveTask(task, targetStatus) {
-    updateTaskStatus(task.id, targetStatus)
+    updateTaskStatus(task.taskId, targetStatus)
       .then(() => {
         EleMessage.success({ message: '状态已更新', plain: true });
         loadBoard();

@@ -22,7 +22,7 @@ import com.lest.modules.project.service.IMilestoneService;
 
 /**
  * 里程碑管理
- * 
+ *
  * @author yshan2028
  */
 @RestController
@@ -32,9 +32,6 @@ public class MilestoneController extends BaseController
     @Autowired
     private IMilestoneService milestoneService;
 
-    /**
-     * 查询里程碑列表
-     */
     @RequiresPermissions("project:milestone:list")
     @GetMapping("/{projectId}/milestone/list")
     public TableDataInfo list(@PathVariable Long projectId)
@@ -44,9 +41,6 @@ public class MilestoneController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 获取里程碑详情
-     */
     @RequiresPermissions("project:milestone:query")
     @GetMapping("/milestone/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
@@ -54,9 +48,6 @@ public class MilestoneController extends BaseController
         return success(milestoneService.selectMilestoneById(id));
     }
 
-    /**
-     * 新增里程碑
-     */
     @RequiresPermissions("project:milestone:add")
     @Log(title = "里程碑管理", businessType = BusinessType.INSERT)
     @PostMapping("/{projectId}/milestone")
@@ -66,21 +57,15 @@ public class MilestoneController extends BaseController
         return toAjax(milestoneService.insertMilestone(milestone));
     }
 
-    /**
-     * 修改里程碑
-     */
     @RequiresPermissions("project:milestone:edit")
     @Log(title = "里程碑管理", businessType = BusinessType.UPDATE)
     @PutMapping("/milestone/{id}")
     public AjaxResult edit(@PathVariable Long id, @RequestBody Milestone milestone)
     {
-        milestone.setId(id);
+        milestone.setMilestoneId(id);
         return toAjax(milestoneService.updateMilestone(milestone));
     }
 
-    /**
-     * 删除里程碑
-     */
     @RequiresPermissions("project:milestone:remove")
     @Log(title = "里程碑管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/milestone/{id}")
@@ -89,9 +74,6 @@ public class MilestoneController extends BaseController
         return toAjax(milestoneService.deleteMilestoneById(id));
     }
 
-    /**
-     * 关联迭代到里程碑
-     */
     @RequiresPermissions("project:milestone:edit")
     @Log(title = "里程碑管理", businessType = BusinessType.UPDATE)
     @PostMapping("/milestone/{id}/iteration")
@@ -100,9 +82,6 @@ public class MilestoneController extends BaseController
         return toAjax(milestoneService.addIteration(id, relation.getIterationId()));
     }
 
-    /**
-     * 查询里程碑关联的迭代
-     */
     @GetMapping("/milestone/{id}/iteration/list")
     public AjaxResult iterationList(@PathVariable Long id)
     {

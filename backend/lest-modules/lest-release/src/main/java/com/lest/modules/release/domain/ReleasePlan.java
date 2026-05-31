@@ -13,7 +13,7 @@ public class ReleasePlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long releasePlanId;
     private Long projectId;
     private String name;
     private String description;
@@ -46,8 +46,8 @@ public class ReleasePlan extends BaseEntity
     private String statusName;
     private String releaseTypeName;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getReleasePlanId() { return releasePlanId; }
+    public void setReleasePlanId(Long releasePlanId) { this.releasePlanId = releasePlanId; }
     public Long getProjectId() { return projectId; }
     public void setProjectId(Long projectId) { this.projectId = projectId; }
     public String getName() { return name; }

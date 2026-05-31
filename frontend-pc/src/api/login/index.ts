@@ -19,10 +19,10 @@ export async function login(data: LoginParam): Promise<string> {
 
 /**
  * 获取验证码
- * GET /code → 直接由网关处理，返回 AjaxResult 顶层字段 { captchaEnabled, uuid, img }
+ * GET /captcha → 直接由网关处理，返回 AjaxResult 顶层字段 { captchaEnabled, uuid, img }
  */
 export async function getCaptcha(): Promise<CaptchaResult> {
-  const res = await request.get<AjaxResult<unknown>>('/code');
+  const res = await request.get<AjaxResult<unknown>>('/captcha');
   if (res.data.code === 200) {
     return res.data as unknown as CaptchaResult;
   }

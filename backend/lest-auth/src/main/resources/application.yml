@@ -9,19 +9,32 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:true}
+        enabled: ${NACOS_ENABLED:false}
         server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_APP_GROUP:DEFAULT_GROUP}
         cluster-name: DEFAULT
         ephemeral: false
       config:
-        enabled: ${NACOS_ENABLED:true}
+        enabled: ${NACOS_ENABLED:false}
         server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_APP_GROUP:DEFAULT_GROUP}
         file-extension: yaml
         refresh-enabled: true
+    # Feign 负载均衡配置 - 本地开发使用 HTTP 直连
+    openfeign:
+      client:
+        config:
+          default:
+            url: http://127.0.0.1:8081
+          remoteUserService:
+            url: http://127.0.0.1:8081
+          remoteLogService:
+            url: http://127.0.0.1:8081
+    loadbalancer:
+      ribbon:
+        enabled: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:3306/${MYSQL_DB:lest_platform}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true

@@ -13,8 +13,8 @@ public class ReleaseArtifact extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private Long releaseId;
+    private Long releaseArtifactId;
+    private Long releasePlanId;
     private String artifactName;
     private String artifactType;
     private String fileName;
@@ -33,10 +33,10 @@ public class ReleaseArtifact extends BaseEntity
     private String metadata;
     private Boolean deleted;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Long getReleaseId() { return releaseId; }
-    public void setReleaseId(Long releaseId) { this.releaseId = releaseId; }
+    public Long getReleaseArtifactId() { return releaseArtifactId; }
+    public void setReleaseArtifactId(Long releaseArtifactId) { this.releaseArtifactId = releaseArtifactId; }
+    public Long getReleasePlanId() { return releasePlanId; }
+    public void setReleasePlanId(Long releasePlanId) { this.releasePlanId = releasePlanId; }
     public String getArtifactName() { return artifactName; }
     public void setArtifactName(String artifactName) { this.artifactName = artifactName; }
     public String getArtifactType() { return artifactType; }

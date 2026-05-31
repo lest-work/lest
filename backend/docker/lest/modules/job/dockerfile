@@ -1,15 +1,10 @@
-# 基础镜像
-FROM eclipse-temurin:21-jre
-# author
+FROM eclipse-temurin:21-jre-alpine
 MAINTAINER lest
 
-# 挂载目录
 VOLUME /home/lest
-# 创建目录
 RUN mkdir -p /home/lest
-# 指定路径
+
 WORKDIR /home/lest
-# 复制jar文件到路径
-COPY ./jar/lest-modules-job.jar /home/lest/lest-modules-job.jar
-# 启动服务
-ENTRYPOINT ["java","-jar","lest-modules-job.jar"]
+COPY ./jar/lest-job.jar /home/lest/lest-job.jar
+
+ENTRYPOINT ["java", "-jar", "lest-job.jar"]

@@ -11,8 +11,8 @@ on:
         required: true
         type: string
       environment:
-        description: 'Deployment environment'
-        required: true
+        description: 'Deployment environment (reserved for future deployment step)'
+        required: false
         default: 'staging'
         type: choice
         options:
@@ -97,6 +97,27 @@ jobs:
           # lest-modules-release
           mkdir -p lest-modules/lest-release/jar
           cp lest-modules/lest-release/target/lest-release-*.jar lest-modules/lest-release/jar/lest-modules-release.jar
+          # lest-modules-meeting
+          mkdir -p lest-modules/lest-meeting/jar
+          cp lest-modules/lest-meeting/target/lest-meeting-*.jar lest-modules/lest-meeting/jar/lest-modules-meeting.jar
+          # lest-modules-notification
+          mkdir -p lest-modules/lest-notification/jar
+          cp lest-modules/lest-notification/target/lest-notification-*.jar lest-modules/lest-notification/jar/lest-modules-notification.jar
+          # lest-modules-ai
+          mkdir -p lest-modules/lest-ai/jar
+          cp lest-modules/lest-ai/target/lest-ai-*.jar lest-modules/lest-ai/jar/lest-modules-ai.jar
+          # lest-modules-open
+          mkdir -p lest-modules/lest-open/jar
+          cp lest-modules/lest-open/target/lest-open-*.jar lest-modules/lest-open/jar/lest-modules-open.jar
+          # lest-modules-performance
+          mkdir -p lest-modules/lest-performance/jar
+          cp lest-modules/lest-performance/target/lest-performance-*.jar lest-modules/lest-performance/jar/lest-modules-performance.jar
+          # lest-modules-plugin
+          mkdir -p lest-modules/lest-plugin/jar
+          cp lest-modules/lest-plugin/target/lest-plugin-*.jar lest-modules/lest-plugin/jar/lest-modules-plugin.jar
+          # lest-modules-wakapi
+          mkdir -p lest-modules/lest-wakapi/jar
+          cp lest-modules/lest-wakapi/target/lest-wakapi-*.jar lest-modules/lest-wakapi/jar/lest-modules-wakapi.jar
           # lest-visual-monitor
           mkdir -p lest-visual/lest-monitor/jar
           cp lest-visual/lest-monitor/target/lest-monitor-*.jar lest-visual/lest-monitor/jar/lest-visual-monitor.jar
@@ -146,45 +167,71 @@ jobs:
       matrix:
         service:
           - name: gateway
-            path: lest-gateway
+            path: backend/lest-gateway
             port: 8080
-            dockerfile: docker-dev.Dockerfile
+            dockerfile: backend/docker/lest/gateway/dockerfile
           - name: auth
-            path: lest-auth
+            path: backend/lest-auth
             port: 8096
-            dockerfile: docker-dev.Dockerfile
+            dockerfile: backend/docker/lest/auth/dockerfile
           - name: modules-system
-            path: lest-modules/lest-system
-            port: 9201
-            dockerfile: docker-dev.Dockerfile
-          - name: modules-job
-            path: lest-modules/lest-job
-            port: 9203
-            dockerfile: docker-dev.Dockerfile
-          - name: modules-file
-            path: lest-modules/lest-file
-            port: 9300
-            dockerfile: docker-dev.Dockerfile
+            path: backend/lest-modules/lest-system
+            port: 8081
+            dockerfile: backend/docker/lest/modules/system/dockerfile
           - name: modules-project
-            path: lest-modules/lest-project
-            port: 9400
-            dockerfile: docker-dev.Dockerfile
+            path: backend/lest-modules/lest-project
+            port: 8082
+            dockerfile: backend/docker/lest/modules/project/dockerfile
           - name: modules-task
-            path: lest-modules/lest-task
-            port: 9401
-            dockerfile: docker-dev.Dockerfile
+            path: backend/lest-modules/lest-task
+            port: 8083
+            dockerfile: backend/docker/lest/modules/task/dockerfile
           - name: modules-release
-            path: lest-modules/lest-release
-            port: 9402
-            dockerfile: docker-dev.Dockerfile
+            path: backend/lest-modules/lest-release
+            port: 8087
+            dockerfile: backend/docker/lest/modules/release/dockerfile
+          - name: modules-job
+            path: backend/lest-modules/lest-job
+            port: 9203
+            dockerfile: backend/docker/lest/modules/job/dockerfile
+          - name: modules-file
+            path: backend/lest-modules/lest-file
+            port: 8091
+            dockerfile: backend/docker/lest/modules/file/dockerfile
+          - name: modules-meeting
+            path: backend/lest-modules/lest-meeting
+            port: 8085
+            dockerfile: backend/docker/lest/modules/meeting/dockerfile
+          - name: modules-notification
+            path: backend/lest-modules/lest-notification
+            port: 8086
+            dockerfile: backend/docker/lest/modules/notification/dockerfile
+          - name: modules-ai
+            path: backend/lest-modules/lest-ai
+            port: 8090
+            dockerfile: backend/docker/lest/modules/ai/dockerfile
+          - name: modules-open
+            path: backend/lest-modules/lest-open
+            port: 8094
+            dockerfile: backend/docker/lest/modules/open/dockerfile
+          - name: modules-performance
+            path: backend/lest-modules/lest-performance
+            port: 8088
+            dockerfile: backend/docker/lest/modules/performance/dockerfile
+          - name: modules-plugin
+            path: backend/lest-modules/lest-plugin
+            port: 8092
+            dockerfile: backend/docker/lest/modules/plugin/dockerfile
+          - name: modules-wakapi
+            path: backend/lest-modules/lest-wakapi
+            port: 8089
+            dockerfile: backend/docker/lest/modules/wakapi/dockerfile
           - name: visual-monitor
-            path: lest-visual/lest-monitor
+            path: backend/lest-visual/lest-monitor
             port: 9100
-            dockerfile: docker-dev.Dockerfile
-          - name: nginx
-            path: nginx
-            port: 80
-            dockerfile: backend/docker/nginx/dockerfile
+            dockerfile: backend/docker/lest/visual/monitor/dockerfile
+          # 注：nginx 前端服务已从镜像构建中移除（backend/docker/nginx/ 目录不存在）
+          # 前端静态资源已包含在 gateway 镜像或通过 CDN 分发
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -196,10 +243,58 @@ jobs:
 
       - name: Prepare artifacts for Docker build
         run: |
-          mkdir -p backend/jar
-          cp -r artifacts/backend-jars/* backend/jar/
-          mkdir -p backend/docker/nginx/html
-          cp -r artifacts/frontend-dist/* backend/docker/nginx/html/
+          # Restore backend JARs to their Maven target directory structure
+          # so the Dockerfiles can find them with /target/*.jar pattern
+          mkdir -p backend/lest-gateway/target
+          cp artifacts/backend-jars/lest-gateway*.jar backend/lest-gateway/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-auth/target
+          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-system/target
+          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-project/target
+          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-task/target
+          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-release/target
+          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-job/target
+          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-file/target
+          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-meeting/target
+          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-notification/target
+          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-ai/target
+          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-open/target
+          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-performance/target
+          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-plugin/target
+          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-modules/lest-wakapi/target
+          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/target/ 2>/dev/null || true
+
+          mkdir -p backend/lest-visual/lest-monitor/target
+          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/target/ 2>/dev/null || true
+
+          # Restore frontend dist
+          # 注：nginx/html 目录仅为预留，当前版本前端静态文件通过 CDN 分发或挂载到 gateway
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

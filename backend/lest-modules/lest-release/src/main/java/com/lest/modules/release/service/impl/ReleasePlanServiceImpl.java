@@ -46,9 +46,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
     }
 
     @Override
-    public ReleasePlan selectReleasePlanById(Long id)
+    public ReleasePlan selectReleasePlanById(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -87,7 +87,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
     @Transactional(rollbackFor = Exception.class)
     public int updateReleasePlan(ReleasePlan plan)
     {
-        ReleasePlan existing = planMapper.selectById(plan.getId());
+        ReleasePlan existing = planMapper.selectById(plan.getReleasePlanId());
         if (existing == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -99,9 +99,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteReleasePlanById(Long id)
+    public int deleteReleasePlanById(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -110,14 +110,14 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         {
             throw new ServiceException("已发布的版本不能删除");
         }
-        return planMapper.deleteById(id);
+        return planMapper.deleteById(releasePlanId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int publish(Long id)
+    public int publish(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -135,9 +135,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int archive(Long id)
+    public int archive(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -150,9 +150,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int restore(Long id)
+    public int restore(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -169,9 +169,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int startBuild(Long id)
+    public int startBuild(Long releasePlanId)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -193,9 +193,9 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int completeBuild(Long id, String downloadUrl)
+    public int completeBuild(Long releasePlanId, String downloadUrl)
     {
-        ReleasePlan plan = planMapper.selectById(id);
+        ReleasePlan plan = planMapper.selectById(releasePlanId);
         if (plan == null)
         {
             throw new ServiceException("发布计划不存在");
@@ -229,8 +229,8 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     private void enrichPlan(ReleasePlan plan)
     {
-        plan.setArtifactCount(artifactMapper.countByReleaseId(plan.getId()));
-        plan.setIssueCount(issueMapper.countByReleaseId(plan.getId()));
+        plan.setArtifactCount(artifactMapper.countByReleaseId(plan.getReleasePlanId()));
+        plan.setIssueCount(issueMapper.countByReleaseId(plan.getReleasePlanId()));
         plan.setStatusName(getStatusName(plan.getStatus()));
         plan.setReleaseTypeName(getReleaseTypeName(plan.getReleaseType()));
     }

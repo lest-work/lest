@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jre-alpine
+MAINTAINER lest
+
+VOLUME /home/lest
+RUN mkdir -p /home/lest
+
+WORKDIR /home/lest
+COPY ./jar/lest-wakapi.jar /home/lest/lest-wakapi.jar
+
+ENTRYPOINT ["java", "-jar", "lest-wakapi.jar"]

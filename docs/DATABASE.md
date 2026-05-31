@@ -273,7 +273,7 @@ CREATE TABLE sys_org (
     phone          VARCHAR(32)     DEFAULT NULL               COMMENT '联系电话',
     email          VARCHAR(128)    DEFAULT NULL               COMMENT '邮箱',
     sort            INT             NOT NULL DEFAULT 0         COMMENT '排序号',
-    status         TININT         NOT NULL DEFAULT 1         COMMENT '状态：0-禁用，1-启用',
+    status         TINYINT         NOT NULL DEFAULT 1         COMMENT '状态：0-禁用，1-启用',
     created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at     DATETIME        ON UPDATE CURRENT_TIMESTAMP  COMMENT '更新时间',
     deleted        TINYINT         NOT NULL DEFAULT 0         COMMENT '软删除',
@@ -1029,26 +1029,6 @@ CREATE TABLE notification_log (
     KEY idx_recipient (recipient(64)),
     KEY idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='通知发送日志表';
-```
-
-### 10.6 notification_setting 通知设置表
-
-```sql
-CREATE TABLE notification_setting (
-    id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '设置ID',
-    user_id         BIGINT          NOT NULL                  COMMENT '用户ID',
-    channel         VARCHAR(32)     NOT NULL                  COMMENT '通知渠道：in_app/email/dingtalk/wechat/feishu',
-    event_type      VARCHAR(64)     NOT NULL                  COMMENT '事件类型',
-    enabled        TINYINT         NOT NULL DEFAULT 1         COMMENT '是否启用：0-禁用，1-启用',
-    mute_enabled    TINYINT         NOT NULL DEFAULT 0         COMMENT '免打扰是否启用',
-    mute_start      TIME            DEFAULT NULL               COMMENT '免打扰开始时间',
-    mute_end        TIME            DEFAULT NULL               COMMENT '免打扰结束时间',
-    frequency       VARCHAR(16)     DEFAULT 'realtime'       COMMENT '通知频率：realtime/hourly/daily',
-    created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at     DATETIME        ON UPDATE CURRENT_TIMESTAMP  COMMENT '更新时间',
-    UNIQUE KEY uk_user_event_channel (user_id, event_type, channel),
-    KEY idx_user_id (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='通知设置表';
 ```
 
 ---

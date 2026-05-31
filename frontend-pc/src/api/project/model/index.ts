@@ -4,8 +4,8 @@ import type { PageParam } from '@/api';
  * 项目
  */
 export interface Project {
-  /** 主键ID */
-  id?: number;
+  /** 项目ID */
+  projectId?: number;
   /** 项目名称 */
   name?: string;
   /** 项目描述 */
@@ -30,25 +30,33 @@ export interface Project {
  * 项目成员
  */
 export interface ProjectMember {
-  userId?: number;
   projectId?: number;
+  userId?: number;
   role?: string;
   userName?: string;
   nickName?: string;
+  joinedAt?: string;
 }
 
 /**
  * 迭代
  */
 export interface Iteration {
-  id?: number;
+  /** 迭代ID */
+  iterationId?: number;
+  /** 所属项目ID */
   projectId?: number;
+  /** 迭代名称 */
   name?: string;
+  /** 迭代目标 */
   goal?: string;
   /** 状态：1=计划中，2=进行中，3=已完成 */
   status?: number;
+  /** 开始日期 yyyy-MM-dd */
   startDate?: string;
+  /** 结束日期 yyyy-MM-dd */
   endDate?: string;
+  /** 完成时间 yyyy-MM-dd HH:mm:ss */
   completedAt?: string;
 }
 
@@ -56,11 +64,17 @@ export interface Iteration {
  * 里程碑
  */
 export interface Milestone {
-  id?: number;
+  /** 里程碑ID */
+  milestoneId?: number;
+  /** 所属项目ID */
   projectId?: number;
+  /** 里程碑名称 */
   name?: string;
+  /** 里程碑描述 */
   description?: string;
+  /** 目标日期 yyyy-MM-dd */
   targetDate?: string;
+  /** 关联迭代列表（非数据库字段） */
   iterations?: Iteration[];
 }
 

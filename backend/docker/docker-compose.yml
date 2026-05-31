@@ -1,5 +1,11 @@
-version : '3.8'
+version: '3.8'
+
 services:
+  # ========================
+  # 基础架构 (Infrastructure)
+  # ========================
+
+  # Nacos 注册/配置中心
   lest-nacos:
     container_name: lest-nacos
     image: nacos/nacos-server:v3.0.2
@@ -7,137 +13,119 @@ services:
       context: ./nacos
     environment:
       - MODE=standalone
-      - NACOS_AUTH_TOKEN=TGVzdFBsYXRmb3JtTmFjb3NBdXRoU2VjcmV0S2V5MjAyNg==
-      - NACOS_AUTH_IDENTITY_KEY=your_identity_key
-      - NACOS_AUTH_IDENTITY_VALUE=your_identity_value
+      - JVM_XMS=512m
+      - JVM_XMX=512m
+      - NACOS_AUTH_ENABLE=false
+      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+      - NACOS_AUTH_IDENTITY_KEY=lest-platform-key
+      - NACOS_AUTH_IDENTITY_VALUE=lest-platform-value
     volumes:
-      - ./nacos/logs/:/home/nacos/logs
+      - ./nacos/logs:/home/nacos/logs
       - ./nacos/conf/application.properties:/home/nacos/conf/application.properties
     ports:
       - "8848:8848"
+      - "18848:8080"
       - "9848:9848"
       - "9849:9849"
-    depends_on:
-      - lest-mysql
-  lest-mysql:
-    container_name: lest-mysql
-    image: mysql:8.0
-    build:
-      context: ./mysql
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Sentinel 流量控制面板
+  lest-sentinel:
+    container_name: lest-sentinel
+    image: bladex/sentinel-dashboard:latest
     ports:
-      - "3306:3306"
-    volumes:
-      - ./mysql/conf:/etc/mysql/conf.d
-      - ./mysql/logs:/logs
-      - ./mysql/data:/var/lib/mysql
-    command: [
-          'mysqld',
-          '--innodb-buffer-pool-size=80M',
-          '--character-set-server=utf8mb4',
-          '--collation-server=utf8mb4_unicode_ci',
-          '--default-time-zone=+8:00',
-          '--lower-case-table-names=1'
-        ]
+      - "8858:8858"
+    network_mode: host
+
+  # MinIO 对象存储
+  lest-minio:
+    container_name: lest-minio
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     environment:
-      MYSQL_DATABASE: 'lest_platform'
-      MYSQL_ROOT_PASSWORD: '12345678'
-  lest-redis:
-    container_name: lest-redis
-    image: redis
-    build:
-      context: ./redis
-    ports:
-      - "6379:6379"
+      - MINIO_ROOT_USER=lest
+      - MINIO_ROOT_PASSWORD=lest12345
     volumes:
-      - ./redis/conf/redis.conf:/home/lest/redis/redis.conf
-      - ./redis/data:/data
-    command: redis-server /home/lest/redis/redis.conf
-  lest-nginx:
-    container_name: lest-nginx
-    image: nginx
-    build:
-      context: ./nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/html/dist:/home/lest/projects/lest-ui
-      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/logs:/var/log/nginx
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - lest-gateway
-    links:
-      - lest-gateway
+      - ./minio/data:/data
+    command: server /data --console-address ":9001"
+    network_mode: host
+
+  # ========================
+  # 应用服务 (Application)
+  # ========================
+
+  # API 网关
   lest-gateway:
     container_name: lest-gateway
     build:
-      context: ./lest/gateway
-      dockerfile: dockerfile
+      context: ./lest
+      dockerfile: gateway/dockerfile
     ports:
-      - "18080:8080"
+      - "8080:8080"
     environment:
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+      - SENTINEL_DASHBOARD=127.0.0.1:8858
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-redis
       - lest-nacos
-    links:
-      - lest-redis
+    network_mode: host
+
+  # 认证服务
   lest-auth:
     container_name: lest-auth
     build:
       context: ./lest/auth
       dockerfile: dockerfile
     ports:
-      - "9200:9200"
+      - "8096:8096"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-redis
-      - lest-mysql
       - lest-nacos
-    links:
-      - lest-redis
-      - lest-mysql
+    network_mode: host
+
+  # 系统服务
   lest-modules-system:
     container_name: lest-modules-system
     build:
       context: ./lest/modules/system
       dockerfile: dockerfile
     ports:
-      - "9201:9201"
+      - "8081:8081"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-redis
-      - lest-mysql
       - lest-nacos
-    links:
-      - lest-redis
-      - lest-mysql
+    network_mode: host
+
+  # 定时任务服务
   lest-modules-job:
     container_name: lest-modules-job
     build:
@@ -146,125 +134,105 @@ services:
     ports:
       - "9203:9203"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-mysql
-      - lest-redis
       - lest-nacos
-    links:
-      - lest-mysql
-      - lest-redis
+    network_mode: host
+
+  # 文件服务
   lest-modules-file:
     container_name: lest-modules-file
     build:
       context: ./lest/modules/file
       dockerfile: dockerfile
     ports:
-      - "9300:9300"
-    environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
-      - NACOS_PORT=8848
-    depends_on:
-      - lest-mysql
-      - lest-redis
-      - lest-nacos
-    links:
-      - lest-mysql
-      - lest-redis
+      - "8091:8091"
     volumes:
-      - ./lest/uploadPath:/home/lest/uploadPath
+      - ./uploadPath:/home/lest/uploadPath
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # 项目管理服务
   lest-modules-project:
     container_name: lest-modules-project
     build:
       context: ./lest/modules/project
       dockerfile: dockerfile
     ports:
-      - "9400:9400"
+      - "8082:8082"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-mysql
-      - lest-redis
       - lest-nacos
-    links:
-      - lest-mysql
-      - lest-redis
+    network_mode: host
+
+  # 任务管理服务
   lest-modules-task:
     container_name: lest-modules-task
     build:
       context: ./lest/modules/task
       dockerfile: dockerfile
     ports:
-      - "9401:9401"
+      - "8083:8083"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-mysql
-      - lest-redis
       - lest-nacos
-    links:
-      - lest-mysql
-      - lest-redis
+    network_mode: host
+
+  # 发布管理服务
   lest-modules-release:
     container_name: lest-modules-release
     build:
       context: ./lest/modules/release
       dockerfile: dockerfile
     ports:
-      - "9402:9402"
+      - "8087:8087"
     environment:
-      - MYSQL_HOST=lest-mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DB=lest_platform
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=12345678
-      - REDIS_HOST=lest-redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=12345678
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - lest-mysql
-      - lest-redis
       - lest-nacos
-    links:
-      - lest-mysql
-      - lest-redis
+    network_mode: host
+
+  # 系统监控服务
   lest-visual-monitor:
     container_name: lest-visual-monitor
     build:
@@ -273,7 +241,160 @@ services:
     ports:
       - "9100:9100"
     environment:
-      - NACOS_HOST=lest-nacos
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
       - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - lest-nacos
+    network_mode: host
+
+  # 会议服务
+  lest-modules-meeting:
+    container_name: lest-modules-meeting
+    build:
+      context: ./lest/modules/meeting
+      dockerfile: dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # 通知服务
+  lest-modules-notification:
+    container_name: lest-modules-notification
+    build:
+      context: ./lest/modules/notification
+      dockerfile: dockerfile
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # AI 服务
+  lest-modules-ai:
+    container_name: lest-modules-ai
+    build:
+      context: ./lest/modules/ai
+      dockerfile: dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # 效能分析服务
+  lest-modules-performance:
+    container_name: lest-modules-performance
+    build:
+      context: ./lest/modules/performance
+      dockerfile: dockerfile
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # 开放平台服务
+  lest-modules-open:
+    container_name: lest-modules-open
+    build:
+      context: ./lest/modules/open
+      dockerfile: dockerfile
+    ports:
+      - "8094:8094"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # 插件服务
+  lest-modules-plugin:
+    container_name: lest-modules-plugin
+    build:
+      context: ./lest/modules/plugin
+      dockerfile: dockerfile
+    ports:
+      - "8092:8092"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host
+
+  # Wakapi 数据采集服务
+  lest-modules-wakapi:
+    container_name: lest-modules-wakapi
+    build:
+      context: ./lest/modules/wakapi
+      dockerfile: dockerfile
+    ports:
+      - "8089:8089"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_HOST=127.0.0.1
+      - NACOS_PORT=8848
+      - NACOS_ENABLED=true
+      - NACOS_REGISTER_ENABLED=true
+      - REDIS_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lest-nacos
+    network_mode: host

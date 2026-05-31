@@ -125,7 +125,7 @@ X-Jenkins-Token: {签名}            # Jenkins Webhook
 ## 3. 认证服务 API (lest-auth)
 
 **服务标识**：lest-auth
-**默认端口**：8001
+**默认端口**：8096
 **Base Path**：/auth, /organization, /dictionary, /operation-log
 
 ### 3.1 认证接口
@@ -691,7 +691,7 @@ Authorization: Bearer {accessToken}
 ## 4. 项目管理 API (lest-project)
 
 **服务标识**：lest-project
-**默认端口**：8003
+**默认端口**：8082
 **Base Path**：/project, /iteration, /milestone
 
 ### 4.1 项目管理接口
@@ -1384,7 +1384,7 @@ Content-Type: application/json
 ## 5. 任务管理 API (lest-task)
 
 **服务标识**：lest-task
-**默认端口**：8002
+**默认端口**：8083
 **Base Path**：/task
 
 ### 5.1 任务管理接口

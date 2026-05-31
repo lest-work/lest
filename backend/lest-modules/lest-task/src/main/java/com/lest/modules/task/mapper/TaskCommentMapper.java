@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface TaskCommentMapper
 {
-    TaskComment selectById(@Param("id") Long id);
+    TaskComment selectById(@Param("taskCommentId") Long taskCommentId);
 
     List<TaskComment> selectByTaskId(@Param("taskId") Long taskId);
 
@@ -23,7 +23,7 @@ public interface TaskCommentMapper
 
     int updateById(TaskComment comment);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("taskCommentId") Long taskCommentId);
 
     int countByParentId(@Param("parentId") Long parentId);
 }

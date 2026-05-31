@@ -81,7 +81,8 @@ public class ValidateCodeServiceImpl implements ValidateCodeService
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try
         {
-            ImageIO.write(image, "jpg", os);
+            // 使用 PNG 格式以获得更高清晰度
+            ImageIO.write(image, "png", os);
         }
         catch (IOException e)
         {

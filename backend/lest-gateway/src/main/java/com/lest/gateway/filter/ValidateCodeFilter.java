@@ -2,13 +2,13 @@ package com.lest.gateway.filter;
 
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -17,6 +17,7 @@ import com.lest.common.core.utils.StringUtils;
 import com.lest.gateway.config.properties.CaptchaProperties;
 import com.lest.gateway.service.ValidateCodeService;
 import reactor.core.publisher.Flux;
+
 
 /**
  * 验证码过滤器
@@ -50,31 +51,36 @@ public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object>
                 return chain.filter(exchange);
             }
 
-            try
-            {
-                String rspStr = resolveBodyFromRequest(request);
-                JSONObject obj = JSON.parseObject(rspStr);
-                validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
-            }
-            catch (Exception e)
-            {
-                return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
-            }
-            return chain.filter(exchange);
+            return DataBufferUtils.join(request.getBody())
+                .flatMap(dataBuffer -> {
+                    try
+                    {
+                        dataBuffer.readPosition(0);
+                        CharBuffer charBuffer = StandardCharsets.UTF_8.decode(dataBuffer.toByteBuffer());
+                        String rspStr = charBuffer.toString();
+                        DataBufferUtils.release(dataBuffer);
+                        
+                        JSONObject obj = JSON.parseObject(rspStr);
+                        validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
+                        
+                        // 重新包装请求体，以便后续过滤器可以读取
+                        ServerHttpRequest newRequest = new ServerHttpRequestDecorator(request)
+                        {
+                            @Override
+                            public Flux<DataBuffer> getBody()
+                            {
+                                return Flux.just(dataBuffer);
+                            }
+                        };
+                        
+                        return chain.filter(exchange.mutate().request(newRequest).build());
+                    }
+                    catch (Exception e)
+                    {
+                        DataBufferUtils.release(dataBuffer);
+                        return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
+                    }
+                });
         };
-    }
-
-    @SuppressWarnings("deprecation")
-    private String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest)
-    {
-        // 获取请求体
-        Flux<DataBuffer> body = serverHttpRequest.getBody();
-        AtomicReference<String> bodyRef = new AtomicReference<>();
-        body.subscribe(buffer -> {
-            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());
-            DataBufferUtils.release(buffer);
-            bodyRef.set(charBuffer.toString());
-        });
-        return bodyRef.get();
     }
 }

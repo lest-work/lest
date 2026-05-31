@@ -93,8 +93,8 @@ configuration: |
         "pinDigest": true
       },
       {
-        "description": "Do not update these",
-        "matchPackagePrefixes": ["io.minio", "com.netease.lic"],
+        "description": "Do not auto-update infrastructure dependencies",
+        "matchPackagePrefixes": ["io.minio"],
         "enabled": false
       }
     ]

@@ -105,7 +105,7 @@
                 :prefix-icon="LockOutlined"
               />
             </el-form-item>
-            <el-form-item prop="code">
+            <el-form-item v-if="captchaEnabled" prop="code">
               <div class="login-captcha-group">
                 <el-input
                   clearable
@@ -208,6 +208,9 @@
   /** 图形验证码样式 */
   const captchaStyle = ref({});
 
+  /** 验证码是否启用 */
+  const captchaEnabled = ref(false);
+
 
   /** 提交 */
   const submit = () => {
@@ -225,7 +228,9 @@
         .catch((e) => {
           loading.value = false;
           EleMessage.error({ message: e.message, plain: true });
-          changeCaptcha();
+          if (captchaEnabled.value) {
+            changeCaptcha();
+          }
         });
     });
   };
@@ -234,12 +239,16 @@
   const changeCaptcha = () => {
     getCaptcha()
       .then((data) => {
-        captcha.value = `data:image/gif;base64,${data.img}`;
-        captchaStyle.value = {
-          transform: `scaleX(1.${Math.floor(Math.random() * (0 - 5) + 5)}) skewX(-${Math.floor(Math.random() * (0 - 30) + 30)}deg) scale(1.04)`,
-          filter: `contrast(200%) hue-rotate(${Math.floor(Math.random() * (0 - 360) + 360)}deg)`
-        };
-        form.uuid = data.uuid;
+        captchaEnabled.value = data.captchaEnabled ?? false;
+        if (captchaEnabled.value) {
+          captcha.value = `data:image/png;base64,${data.img}`;
+          captchaStyle.value = {};
+          form.uuid = data.uuid;
+        } else {
+          captcha.value = '';
+          form.uuid = '';
+          form.code = '';
+        }
         formRef.value?.clearValidate?.();
       })
       .catch((e) => {
@@ -463,7 +472,7 @@
 
     .login-captcha {
       flex-shrink: 0;
-      width: 108px;
+      width: 120px;
       height: 40px;
       margin-left: 8px;
       border-radius: var(--el-border-radius-base);

@@ -9,18 +9,29 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/版本-v0.2.0-brightgreen.svg" alt="version"></a>
-  <img src="https://img.shields.io/badge/许可证-MIT-blue.svg" alt="license">
-  <img src="https://img.shields.io/badge/JDK-21+-blue.svg" alt="jdk">
-  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green.svg" alt="spring boot">
-  <img src="https://img.shields.io/badge/Vue-3.x-42b883.svg" alt="vue">
-  <a href="README.md"><img src="https://img.shields.io/badge/Docs-English-blue.svg" alt="English"></a>
+
+<!-- Badges row 1 -->
+<a href="https://github.com/yshan2028/Lest/releases/latest"><img src="https://img.shields.io/github/v/release/yshan2028/Lest?style=flat-square" alt="GitHub release"></a>
+<a href="https://github.com/yshan2028/Lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/yshan2028/Lest?style=flat-square" alt="License"></a>
+<a href="https://github.com/yshan2028/Lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yshan2028/Lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
+<a href="https://github.com/yshan2028/Lest/issues"><img src="https://img.shields.io/github/issues/yshan2028/Lest?style=flat-square" alt="Issues"></a>
+<a href="https://github.com/yshan2028/Lest/stargazers"><img src="https://img.shields.io/github/stars/yshan2028/Lest?style=flat-square" alt="Stars"></a>
+<a href="https://github.com/yshan2028/Lest/fork"><img src="https://img.shields.io/github/forks/yshan2028/Lest?style=flat-square" alt="Forks"></a>
+
+<!-- Badges row 2 -->
+<a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
+<a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring" alt="Spring Boot"></a>
+<a href="https://v3.vuejs.org"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue"></a>
+<a href="https://nestjs.com"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript" alt="TypeScript"></a>
+<a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-24.x-2496ED?style=flat-square&logo=docker" alt="Docker"></a>
+<a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/社区-讨论-blueviolet?style=flat-square" alt="Discussions"></a>
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
-  <a href="https://github.com/yshan2028/Lest/issues">反馈 Bug</a> ·
-  <a href="https://github.com/yshan2028/Lest/issues">功能建议</a>
+  <a href="README.md"><img src="https://img.shields.io/badge/Docs-English-blue?style=flat-square" alt="English"></a>
+  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/版本记录-CHANGELOG-brightgreen?style=flat-square" alt="Releases"></a>
+  <a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/社区-Discussions-blueviolet?style=flat-square" alt="Discussions"></a>
+  <a href="https://github.com/yshan2028/Lest/issues/new/choose"><img src="https://img.shields.io/badge/❮%20Issue-报告问题-orange?style=flat-square" alt="Report Bug"></a>
 </p>
 
 ---
@@ -143,7 +154,7 @@ git clone https://github.com/yshan2028/Lest.git
 cd lest-platform
 
 # 启动所有基础设施 + 服务
-docker compose -f docker-compose.dev.yml up -d
+docker compose -f backend/docker/docker-compose.local.yaml up -d
 
 # 启动前端开发服务器（热更新）
 cd frontend-pc
@@ -155,14 +166,14 @@ npm run dev
 
 ```bash
 # 1. 启动基础设施（MySQL、Redis、Nacos）
-docker compose -f docker-compose.dev.yml up mysql redis nacos -d
+docker compose -f backend/docker/docker-compose.local.yaml up mysql redis nacos -d
 
 # 2. 构建后端
 cd backend
 mvn clean install -DskipTests
 
 # 3. 分别启动各服务（各开一个终端）
-./bin/run-auth.sh
+详见 backend/docker/README.md
 ./bin/run-gateway.sh
 ./bin/run-system.sh
 
@@ -175,25 +186,77 @@ npm run dev
 
 ## 🌐 访问地址
 
-| 服务 | 地址 | 账号密码 |
-|------|------|---------|
-| **前端** | <http://localhost:5173> | admin / admin123 |
-| **API 网关** | <http://localhost:8080> | — |
-| **Swagger 文档** | <http://localhost:8080/doc.html> | — |
-| **Nacos 控制台** | <http://localhost:8848/nacos> | nacos / nacos |
-| **MinIO 控制台** | <http://localhost:9001> | minioadmin / minioadmin |
+### 本地开发
+
+本地开发时，Vite 开发服务器会将 `/api/*` 请求代理到 `localhost:8080` —— **无需配置域名或 hosts 文件**。
+
+| 服务 | 本地地址 | 账号密码 |
+|------|---------|---------|
+| **前端** | http://localhost:5173 | admin / admin123 |
+| **API 网关** | http://localhost:8080 | — |
+| **API 文档** | http://localhost:8080/doc.html | — |
+| **Nacos 控制台** | http://localhost:8848/nacos | nacos / nacos |
+| **MinIO 控制台** | http://localhost:9001 | minioadmin / minioadmin |
+
+### 生产环境
+
+> 以下服务托管于 `lest.work` 域名。完整域名架构见 [docs/DOMAIN_PLAN.md](./docs/DOMAIN_PLAN.md)。
+
+| 服务 | 生产环境地址 | 账号密码 |
+|------|------------|---------|
+| **Web 应用** | https://app.lest.work | admin / admin123 |
+| **API 网关** | https://api.lest.work | — |
+| **API 文档** | https://doc.lest.work | — |
+| **Nacos 控制台** | https://nacos.lest.work | nacos / nacos |
+| **MinIO 控制台** | https://minio.lest.work | minioadmin / minioadmin |
+
+> **官网** — 访问 [https://lest.top](https://lest.top) 了解产品介绍。
 
 ---
 
 ## 📋 版本规划
 
-| 版本 | 主题 | 状态 |
-|------|------|------|
-| **v0.1.0** | 基础框架 — 认证、系统管理、网关、仪表盘 | ✅ 已发布 |
-| **v0.2.0** | 项目与任务前端页面、DDL、API 补全 | ✅ 已发布 |
-| **v0.3.0** | 燃尽图、任务工时/评论面板、看板拖拽 | 🔵 计划中 |
-| **v0.4.0** | 发布管理 UI、Webhook 集成 | 🔵 计划中 |
-| **v1.0.0** | 正式版、移动端、完整文档 | 🔵 计划中 |
+## 📋 版本规划
+
+> 追踪项目进度。详细里程碑见 [docs/MILESTONES.md](./docs/MILESTONES.md)。
+
+```
+v0.1.0          v0.2.0          v0.3.0          v0.4.0          v0.5.0          v1.0.0
+  |               |               |               |               |               |
+  ●───────────────●───────────────○               ○               ○               ○  基础框架
+  ●───────────────●───────────────○               ○               ○               ○  认证服务
+  ●───────────────●───────────────○               ○               ○               ○  系统管理
+  ●───────────────●───────────────○               ○               ○               ○  API 网关
+  ●───────────────●───────────────○               ○               ○               ○  项目后端
+  ●───────────────●───────────────○               ○               ○               ○  任务后端
+  ○───────────────●───────────────○               ○               ○               ○  项目前端
+  ○───────────────●───────────────○               ○               ○               ○  任务前端
+  ○───────────────●───────────────○               ○               ○               ○  发布后端
+  ○───────────────○───────────────●               ○               ○               ○  燃尽图
+  ○───────────────○───────────────●               ○               ○               ○  看板拖拽
+  ○───────────────○───────────────●               ○               ○               ○  工时/评论
+  ○───────────────○───────────────○               ●               ○               ○  通知服务
+  ○───────────────○───────────────○               ●               ○               ○  会议管理
+  ○───────────────○───────────────○               ●               ○               ○  发布前端
+  ○───────────────○───────────────○               ○               ●               ○  CI 集成
+  ○───────────────○───────────────○               ○               ●               ○  WakaTime
+  ○───────────────○───────────────○               ○               ●               ○  效能看板
+  ○───────────────○───────────────○               ○               ○               ●  AI 助手
+  ○───────────────○───────────────○               ○               ○               ●  移动端
+  ○───────────────○───────────────○               ○               ○               ●  插件系统
+
+  ✅ 已发布        ✅ 已发布        🔵 计划中      🔵 计划中      🔵 计划中      🔵 计划中
+```
+
+| 版本 | 主题 | 目标日期 | 状态 |
+|------|------|---------|------|
+| **v0.1.0** | 基础框架 — 认证、系统管理、网关、仪表盘 | 2026-05-29 | ✅ 已发布 |
+| **v0.2.0** | 项目与任务前端页面、DDL、API 补全 | 2026-05-30 | ✅ 已发布 |
+| **v0.3.0** | 燃尽图、看板拖拽、任务工时/评论面板 | 2026-06-05 | 🔵 计划中 |
+| **v0.4.0** | 通知服务（WebSocket）、会议管理、发布前端 | 2026-06-12 | 🔵 计划中 |
+| **v0.5.0** | CI 集成、WakaTime、效能数据看板 | 2026-06-19 | 🔵 计划中 |
+| **v0.6.0–v0.9.0** | 高级模块 — AI、插件、开放平台 | 2026-07 | 🔵 计划中 |
+| **v1.0.0** | 正式版 — 全功能集、移动端、完整文档 | 2026-08-07 | 🔵 计划中 |
 
 完整更新记录见 [CHANGELOG.md](./CHANGELOG.md)，里程碑规划见 [docs/MILESTONES.md](./docs/MILESTONES.md)。
 
@@ -201,15 +264,46 @@ npm run dev
 
 ## 🤝 参与贡献
 
-欢迎提交 Issue、功能建议和 Pull Request！
+欢迎贡献代码！提交前请阅读贡献指南。
 
-1. Fork 本仓库
-2. 创建分支：`git checkout -b feat/your-feature`
-3. 提交代码：`git commit -m 'feat: 添加某功能'`
-4. 推送分支：`git push origin feat/your-feature`
-5. 发起 Pull Request
+| 资源 | 说明 |
+|------|------|
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | 贡献指南、代码规范、提交规范 |
+| [docs/BRANCHING.md](./docs/BRANCHING.md) | 分支命名、Git Flow 工作流、Commit 格式 |
+| [CHANGELOG.md](./CHANGELOG.md) | 版本历史和版本号规范 |
+| [docs/MILESTONES.md](./docs/MILESTONES.md) | 功能路线图和里程碑规划 |
 
-代码规范和提交约定请参阅 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+### 快速开始
+
+```bash
+# 1. Fork 并克隆仓库
+git clone https://github.com/YOUR_USERNAME/Lest.git
+cd lest-platform
+
+# 2. 添加上游仓库
+git remote add upstream https://github.com/yshan2028/Lest.git
+
+# 3. 从 develop 创建功能分支
+git checkout -b feature/your-feature-name
+
+# 4. 提交代码（遵循 Conventional Commits）
+git commit -m "feat(project): add burndown chart component"
+
+# 5. 保持 Fork 与上游同步
+git fetch upstream
+git rebase upstream/develop
+
+# 6. 推送并发起 Pull Request
+git push origin feature/your-feature-name
+```
+
+> 完整指南包括编码标准、测试要求、PR 检查清单，见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
+---
+
+## 🔒 安全问题
+
+发现安全漏洞？请阅读 [SECURITY.md](./SECURITY.md) 了解负责任的披露流程。请勿公开提交安全问题。
 
 ---
 

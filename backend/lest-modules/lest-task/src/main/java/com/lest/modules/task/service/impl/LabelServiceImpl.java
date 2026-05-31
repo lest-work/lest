@@ -11,7 +11,7 @@ import com.lest.modules.task.service.ILabelService;
 
 /**
  * 标签 服务层实现
- * 
+ *
  * @author yshan2028
  */
 @Service
@@ -27,9 +27,9 @@ public class LabelServiceImpl implements ILabelService
     }
 
     @Override
-    public Label selectLabelById(Long id)
+    public Label selectLabelById(Long labelId)
     {
-        return labelMapper.selectById(id);
+        return labelMapper.selectById(labelId);
     }
 
     @Override
@@ -41,13 +41,13 @@ public class LabelServiceImpl implements ILabelService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteLabelById(Long id)
+    public int deleteLabelById(Long labelId)
     {
-        Label label = labelMapper.selectById(id);
+        Label label = labelMapper.selectById(labelId);
         if (label == null)
         {
             throw new ServiceException("标签不存在");
         }
-        return labelMapper.deleteById(id);
+        return labelMapper.deleteById(labelId);
     }
 }
