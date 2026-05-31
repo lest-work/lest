@@ -323,7 +323,7 @@ This project stands on the shoulders of giants. We sincerely thank:
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** — see the [LICENSE](./LICENSE) file for details.
 
-> The MIT License applies to the LEST Platform source code itself. Please respect the individual licenses of third-party dependencies, particularly the commercial components listed in the Acknowledgements section above.
+> The Apache License 2.0 applies to the LEST Platform source code itself. Please respect the individual licenses of third-party dependencies, particularly the commercial components listed in the Acknowledgements section above.
 

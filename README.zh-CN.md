@@ -322,6 +322,6 @@ git push origin feature/your-feature-name
 
 ## 📄 许可证
 
-本项目基于 **MIT 许可证** 开源，详见 [LICENSE](./LICENSE) 文件。
+本项目基于 **Apache License 2.0** 开源，详见 [LICENSE](./LICENSE) 文件。
 
-> MIT 许可证仅适用于 LEST Platform 本身的源代码。请遵守各第三方依赖的独立许可协议，特别是上述致谢中涉及商业授权的组件。
+> Apache License 2.0 仅适用于 LEST Platform 本身的源代码。请遵守各第三方依赖的独立许可协议，特别是上述致谢中涉及商业授权的组件。
