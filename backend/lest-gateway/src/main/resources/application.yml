@@ -27,7 +27,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:true}
+        enabled: ${NACOS_ENABLED:false}
         server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
@@ -47,7 +47,11 @@ spring:
           globalcors:
             cors-configurations:
               '[/**]':
-                allowedOriginPatterns: "*"
+                allowedOriginPatterns: |
+                  http://localhost:*,
+                  https://app.lest.work,
+                  https://lest.top,
+                  https://*.lest.work
                 allowedMethods:
                   - GET
                   - POST
@@ -60,7 +64,7 @@ spring:
                 maxAge: 3600
           routes:
             - id: lest-auth
-              uri: lb://lest-auth
+              uri: http://127.0.0.1:8096
               predicates:
                 - Path=/auth/**
               filters:
@@ -68,102 +72,105 @@ spring:
                 - StripPrefix=1
 
             - id: lest-system
-              uri: lb://lest-system
+              uri: http://127.0.0.1:8081
               predicates:
                 - Path=/system/**
               filters:
                 - StripPrefix=1
 
             - id: lest-monitor
-              uri: lb://lest-system
+              uri: http://127.0.0.1:9100
               predicates:
                 - Path=/monitor/**
               filters:
                 - StripPrefix=1
 
             - id: lest-job
-              uri: lb://lest-job
+              uri: http://127.0.0.1:9203
               predicates:
                 - Path=/job/**
               filters:
                 - StripPrefix=1
 
             - id: lest-project
-              uri: lb://lest-project
+              uri: http://127.0.0.1:8082
               predicates:
                 - Path=/project/**
               filters:
                 - StripPrefix=1
 
             - id: lest-task
-              uri: lb://lest-task
+              uri: http://127.0.0.1:8083
               predicates:
                 - Path=/task/**
               filters:
                 - StripPrefix=1
 
-            - id: lest-meeting
-              uri: lb://lest-meeting
-              predicates:
-                - Path=/meeting/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-meeting
+            #   uri: http://127.0.0.1:8085
+            #   predicates:
+            #     - Path=/meeting/**
+            #   filters:
+            #     - StripPrefix=1
 
             - id: lest-file
-              uri: lb://lest-file
+              uri: http://127.0.0.1:8091
               predicates:
                 - Path=/file/**
               filters:
                 - StripPrefix=1
 
-            - id: lest-notification
-              uri: lb://lest-notification
-              predicates:
-                - Path=/notification/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-notification
+            #   uri: http://127.0.0.1:8086
+            #   predicates:
+            #     - Path=/notification/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-ai
-              uri: lb://lest-ai
-              predicates:
-                - Path=/ai/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-ai
+            #   uri: http://127.0.0.1:8090
+            #   predicates:
+            #     - Path=/ai/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-performance
-              uri: lb://lest-performance
-              predicates:
-                - Path=/performance/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-performance
+            #   uri: http://127.0.0.1:8088
+            #   predicates:
+            #     - Path=/performance/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-open
-              uri: lb://lest-open
-              predicates:
-                - Path=/open/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-open
+            #   uri: http://127.0.0.1:8094
+            #   predicates:
+            #     - Path=/open/**
+            #   filters:
+            #     - StripPrefix=1
 
             - id: lest-release
-              uri: lb://lest-release
+              uri: http://127.0.0.1:8087
               predicates:
                 - Path=/release/**
               filters:
                 - StripPrefix=1
 
-            - id: lest-plugin
-              uri: lb://lest-plugin
-              predicates:
-                - Path=/plugin/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-plugin
+            #   uri: http://127.0.0.1:8092
+            #   predicates:
+            #     - Path=/plugin/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-wakapi
-              uri: lb://lest-wakapi
-              predicates:
-                - Path=/wakapi/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-wakapi
+            #   uri: http://127.0.0.1:8089
+            #   predicates:
+            #     - Path=/wakapi/**
+            #   filters:
+            #     - StripPrefix=1
 
 # Actuator
 management:
@@ -211,7 +218,7 @@ spring.cloud.sentinel:
     enabled: true
   transport:
     # Sentinel dashboard address (optional - set when dashboard is available)
-    dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:9090}
+    dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
     port: 8719
   filter:
     # Enable URL cleanup (remove trailing slashes, etc.)
@@ -225,7 +232,7 @@ spring.cloud.sentinel:
       response-body: '{"code":429,"msg":"请求过于频繁，请稍后再试"}'
 
 # Sentinel Dashboard (local config - configure SENTINEL_DASHBOARD env var for production)
-# Default port for Sentinel dashboard: 9090 (add to docker-compose.yml)
+# Default port for Sentinel dashboard: 8858 (add to docker-compose.yml)
   level:
     org.springframework.cloud.gateway: INFO
     com.lest.gateway: DEBUG
@@ -233,12 +240,12 @@ spring.cloud.sentinel:
 # Security Config
 security:
   captcha:
-    enabled: true
-    type: math
+    enabled: false
+    type: char
   ignore:
     whites:
       - /auth/**
-      - /code
+      - /captcha
       - /doc.html
       - /swagger-ui/**
       - /v3/api-docs/**

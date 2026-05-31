@@ -15,7 +15,7 @@ import com.lest.modules.project.service.IMilestoneService;
 
 /**
  * 里程碑 服务层实现
- * 
+ *
  * @author yshan2028
  */
 @Service
@@ -40,9 +40,9 @@ public class MilestoneServiceImpl implements IMilestoneService
     }
 
     @Override
-    public Milestone selectMilestoneById(Long id)
+    public Milestone selectMilestoneById(Long milestoneId)
     {
-        return milestoneMapper.selectById(id);
+        return milestoneMapper.selectById(milestoneId);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MilestoneServiceImpl implements IMilestoneService
     @Transactional(rollbackFor = Exception.class)
     public int updateMilestone(Milestone milestone)
     {
-        if (milestoneMapper.selectById(milestone.getId()) == null)
+        if (milestoneMapper.selectById(milestone.getMilestoneId()) == null)
         {
             throw new ServiceException("里程碑不存在");
         }
@@ -69,14 +69,14 @@ public class MilestoneServiceImpl implements IMilestoneService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteMilestoneById(Long id)
+    public int deleteMilestoneById(Long milestoneId)
     {
-        if (milestoneMapper.selectById(id) == null)
+        if (milestoneMapper.selectById(milestoneId) == null)
         {
             throw new ServiceException("里程碑不存在");
         }
-        milestoneIterationMapper.deleteByMilestoneId(id);
-        return milestoneMapper.deleteById(id);
+        milestoneIterationMapper.deleteByMilestoneId(milestoneId);
+        return milestoneMapper.deleteById(milestoneId);
     }
 
     @Override

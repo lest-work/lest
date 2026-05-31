@@ -13,7 +13,7 @@ import com.lest.modules.task.service.ITaskService;
 
 /**
  * 任务 服务层实现
- * 
+ *
  * @author yshan2028
  */
 @Service
@@ -40,20 +40,23 @@ public class TaskServiceImpl implements ITaskService
     @Autowired
     private TaskCommitMapper commitMapper;
 
+    @Autowired
+    private TaskCommentMapper commentMapper;
+
     @Override
     public List<Task> selectTaskList(Task task)
     {
         List<Task> list = taskMapper.selectTaskList(
                 task.getProjectId(), task.getIterationId(), task.getAssigneeId(),
-                task.getStatus(), task.getPriority(), null);
+                task.getStatus(), task.getPriority(), task.getTitle());
         list.forEach(this::enrichTask);
         return list;
     }
 
     @Override
-    public Task selectTaskById(Long id)
+    public Task selectTaskById(Long taskId)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task != null)
         {
             enrichTask(task);
@@ -84,18 +87,18 @@ public class TaskServiceImpl implements ITaskService
         int rows = taskMapper.insert(task);
         if (task.getLabelIds() != null && !task.getLabelIds().isEmpty())
         {
-            saveLabels(task.getId(), task.getLabelIds());
+            saveLabels(task.getTaskId(), task.getLabelIds());
         }
         if (task.getWatcherIds() != null && !task.getWatcherIds().isEmpty())
         {
-            saveWatchers(task.getId(), task.getWatcherIds());
+            saveWatchers(task.getTaskId(), task.getWatcherIds());
         }
         else
         {
             Long currentUserId = com.lest.common.security.utils.SecurityUtils.getUserId();
             if (currentUserId != null)
             {
-                saveWatchers(task.getId(), List.of(currentUserId));
+                saveWatchers(task.getTaskId(), List.of(currentUserId));
             }
         }
         return rows;
@@ -105,7 +108,7 @@ public class TaskServiceImpl implements ITaskService
     @Transactional(rollbackFor = Exception.class)
     public int updateTask(Task task)
     {
-        Task existing = taskMapper.selectById(task.getId());
+        Task existing = taskMapper.selectById(task.getTaskId());
         if (existing == null)
         {
             throw new ServiceException("任务不存在");
@@ -113,53 +116,53 @@ public class TaskServiceImpl implements ITaskService
         int rows = taskMapper.updateById(task);
         if (task.getLabelIds() != null)
         {
-            taskLabelMapper.deleteByTaskId(task.getId());
-            saveLabels(task.getId(), task.getLabelIds());
+            taskLabelMapper.deleteByTaskId(task.getTaskId());
+            saveLabels(task.getTaskId(), task.getLabelIds());
         }
         if (task.getWatcherIds() != null)
         {
-            watcherMapper.deleteByTaskId(task.getId());
-            saveWatchers(task.getId(), task.getWatcherIds());
+            watcherMapper.deleteByTaskId(task.getTaskId());
+            saveWatchers(task.getTaskId(), task.getWatcherIds());
         }
         return rows;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteTaskById(Long id)
+    public int deleteTaskById(Long taskId)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
         }
-        int childCount = taskMapper.countByParentId(id);
+        int childCount = taskMapper.countByParentId(taskId);
         if (childCount > 0)
         {
             throw new ServiceException("任务下存在子任务，无法删除");
         }
-        int depCount = dependencyMapper.countByTaskId(id);
+        int depCount = dependencyMapper.countByTaskId(taskId);
         if (depCount > 0)
         {
             throw new ServiceException("任务存在依赖关系，无法删除");
         }
-        taskLabelMapper.deleteByTaskId(id);
-        watcherMapper.deleteByTaskId(id);
-        return taskMapper.deleteById(id);
+        taskLabelMapper.deleteByTaskId(taskId);
+        watcherMapper.deleteByTaskId(taskId);
+        return taskMapper.deleteById(taskId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateStatus(Long id, String status)
+    public int updateStatus(Long taskId, String status)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
         }
         if ("completed".equals(status))
         {
-            checkBlockers(id);
+            checkBlockers(taskId);
         }
         task.setStatus(status);
         if ("completed".equals(status))
@@ -175,9 +178,9 @@ public class TaskServiceImpl implements ITaskService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int assignTask(Long id, Long assigneeId)
+    public int assignTask(Long taskId, Long assigneeId)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
@@ -188,9 +191,9 @@ public class TaskServiceImpl implements ITaskService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int claimTask(Long id)
+    public int claimTask(Long taskId)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
@@ -228,16 +231,16 @@ public class TaskServiceImpl implements ITaskService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int moveTask(Long id, String targetColumn, Integer targetPosition)
+    public int moveTask(Long taskId, String targetColumn, Integer targetPosition)
     {
-        Task task = taskMapper.selectById(id);
+        Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
         }
         if ("completed".equals(targetColumn))
         {
-            checkBlockers(id);
+            checkBlockers(taskId);
         }
         task.setStatus(targetColumn);
         if (targetPosition != null)
@@ -310,7 +313,7 @@ public class TaskServiceImpl implements ITaskService
     {
         List<Long> depIds = dependencyMapper.selectDependencyTaskIds(taskId);
         List<Task> depTasks = depIds.isEmpty() ? List.of() : taskMapper.selectByIds(depIds);
-        Map<Long, Task> taskMap = depTasks.stream().collect(Collectors.toMap(Task::getId, t -> t));
+        Map<Long, Task> taskMap = depTasks.stream().collect(Collectors.toMap(Task::getTaskId, t -> t));
 
         return depIds.stream().map(depId -> {
             TaskDependency dep = new TaskDependency();
@@ -406,14 +409,46 @@ public class TaskServiceImpl implements ITaskService
         return commitMapper.insert(mr);
     }
 
-    /**
-     * 丰富任务信息（标签、关注者、子任务数等）
-     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addComment(Long taskId, TaskComment comment)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null)
+        {
+            throw new ServiceException("任务不存在");
+        }
+        comment.setTaskId(taskId);
+        return commentMapper.insert(comment);
+    }
+
+    @Override
+    public List<TaskComment> selectComments(Long taskId)
+    {
+        return commentMapper.selectByTaskId(taskId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteComment(Long taskId, Long commentId)
+    {
+        TaskComment comment = commentMapper.selectById(commentId);
+        if (comment == null)
+        {
+            throw new ServiceException("评论不存在");
+        }
+        if (!comment.getTaskId().equals(taskId))
+        {
+            throw new ServiceException("评论不属于该任务");
+        }
+        return commentMapper.deleteById(commentId);
+    }
+
     private void enrichTask(Task task)
     {
-        task.setWatcherIds(watcherMapper.selectWatcherIdsByTaskId(task.getId()));
-        task.setChildCount(taskMapper.countByParentId(task.getId()));
-        task.setHasBlockers(!dependencyMapper.selectDependencyTaskIds(task.getId()).isEmpty());
+        task.setWatcherIds(watcherMapper.selectWatcherIdsByTaskId(task.getTaskId()));
+        task.setChildCount(taskMapper.countByParentId(task.getTaskId()));
+        task.setHasBlockers(!dependencyMapper.selectDependencyTaskIds(task.getTaskId()).isEmpty());
         task.setDepth(calculateDepth(task.getParentId()));
     }
 

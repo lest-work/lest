@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface MilestoneMapper
 {
-    Milestone selectById(@Param("id") Long id);
+    Milestone selectById(@Param("milestoneId") Long milestoneId);
 
     List<Milestone> selectByProjectId(@Param("projectId") Long projectId);
 
@@ -20,5 +20,5 @@ public interface MilestoneMapper
 
     int updateById(Milestone milestone);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("milestoneId") Long milestoneId);
 }

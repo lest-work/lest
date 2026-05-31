@@ -6,10 +6,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.lest.common.core.web.controller.BaseController;
 import com.lest.common.core.web.domain.AjaxResult;
+import com.lest.common.log.annotation.Log;
+import com.lest.common.log.enums.BusinessType;
+import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.task.domain.Label;
 import com.lest.modules.task.service.ILabelService;
 
@@ -19,6 +23,7 @@ import com.lest.modules.task.service.ILabelService;
  * @author yshan2028
  */
 @RestController
+@RequestMapping("")
 public class LabelController extends BaseController
 {
     @Autowired
@@ -27,6 +32,7 @@ public class LabelController extends BaseController
     /**
      * 获取项目标签列表
      */
+    @RequiresPermissions("task:label:list")
     @GetMapping("/project/{projectId}/label/list")
     public AjaxResult list(@PathVariable Long projectId)
     {
@@ -36,6 +42,8 @@ public class LabelController extends BaseController
     /**
      * 创建标签
      */
+    @RequiresPermissions("task:label:add")
+    @Log(title = "标签管理", businessType = BusinessType.INSERT)
     @PostMapping("/project/{projectId}/label")
     public AjaxResult add(@PathVariable Long projectId, @RequestBody Label label)
     {
@@ -46,6 +54,8 @@ public class LabelController extends BaseController
     /**
      * 删除标签
      */
+    @RequiresPermissions("task:label:remove")
+    @Log(title = "标签管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/label/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {

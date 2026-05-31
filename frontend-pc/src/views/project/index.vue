@@ -22,7 +22,7 @@
           <el-button type="primary" :icon="SearchOutlined" @click="handleSearch">查询</el-button>
           <el-button :icon="ReloadOutlined" @click="handleReset">重置</el-button>
           <el-button
-            v-permission="['project:add']"
+            v-permission="['project:project:add']"
             type="primary"
             :icon="PlusOutlined"
             @click="openAddDialog"
@@ -41,7 +41,7 @@
       <el-row :gutter="16">
         <el-col
           v-for="item in list"
-          :key="item.id"
+          :key="item.projectId"
           :xs="24"
           :sm="12"
           :md="8"
@@ -75,7 +75,7 @@
                       归档
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-permission="['project:remove']"
+                      v-permission="['project:project:remove']"
                       style="color: #f56c6c"
                       @click.stop="handleDelete(item)"
                     >
@@ -124,7 +124,7 @@
     <!-- 新增/编辑弹窗 / Add/Edit dialog -->
     <el-dialog
       v-model="dialogVisible"
-      :title="formData.id ? '编辑项目' : '新建项目'"
+      :title="formData.projectId ? '编辑项目' : '新建项目'"
       width="520px"
       destroy-on-close
     >
@@ -206,7 +206,7 @@
   });
 
   const formData = reactive({
-    id: undefined,
+    projectId: undefined,
     name: '',
     description: '',
     template: 'agile',
@@ -246,7 +246,7 @@
 
   function openAddDialog() {
     Object.assign(formData, {
-      id: undefined,
+      projectId: undefined,
       name: '',
       description: '',
       template: 'agile',
@@ -262,14 +262,14 @@
   }
 
   function goDetail(item) {
-    router.push(`/project/detail/${item.id}`);
+    router.push(`/project/detail/${item.projectId}`);
   }
 
   async function handleSubmit() {
     await formRef.value?.validate();
     submitLoading.value = true;
     try {
-      if (formData.id) {
+      if (formData.projectId) {
         await updateProject(formData);
         EleMessage.success({ message: '修改成功', plain: true });
       } else {
@@ -286,7 +286,7 @@
   }
 
   function handleArchive(item) {
-    archiveProject(item.id)
+    archiveProject(item.projectId)
       .then(() => {
         EleMessage.success({ message: '已归档', plain: true });
         fetchList();
@@ -302,7 +302,7 @@
       draggable: true
     })
       .then(() => {
-        removeProject(item.id)
+        removeProject(item.projectId)
           .then(() => {
             EleMessage.success({ message: '删除成功', plain: true });
             fetchList();

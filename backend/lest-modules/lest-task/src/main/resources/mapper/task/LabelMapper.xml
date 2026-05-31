@@ -3,27 +3,28 @@
 <mapper namespace="com.lest.modules.task.mapper.LabelMapper">
 
     <resultMap type="com.lest.modules.task.domain.Label" id="LabelResult">
-        <id     property="id"        column="id"         />
-        <result property="projectId" column="project_id" />
-        <result property="name"      column="name"       />
-        <result property="color"     column="color"      />
-        <result property="createTime" column="created_at"  />
+        <id     property="labelId"      column="label_id"   />
+        <result property="projectId"   column="project_id" />
+        <result property="name"         column="name"       />
+        <result property="color"        column="color"      />
+        <result property="createBy"   column="create_by"   />
+        <result property="createTime"  column="create_time" />
     </resultMap>
 
     <select id="selectById" resultMap="LabelResult">
-        select id, project_id, name, color, created_at from label where id = #{id}
+        select label_id, project_id, name, color, create_by, create_time from label where label_id = #{labelId}
     </select>
 
     <select id="selectByProjectId" resultMap="LabelResult">
-        select id, project_id, name, color, created_at from label where project_id = #{projectId} order by created_at asc
+        select label_id, project_id, name, color, create_by, create_time from label where project_id = #{projectId} order by create_time asc
     </select>
 
-    <insert id="insert" parameterType="com.lest.modules.task.domain.Label" useGeneratedKeys="true" keyProperty="id">
-        insert into label (project_id, name, color, created_at) values (#{projectId}, #{name}, #{color}, now())
+    <insert id="insert" parameterType="com.lest.modules.task.domain.Label" useGeneratedKeys="true" keyProperty="labelId">
+        insert into label (project_id, name, color, create_by, create_time) values (#{projectId}, #{name}, #{color}, #{createBy}, now())
     </insert>
 
     <delete id="deleteById">
-        delete from label where id = #{id}
+        delete from label where label_id = #{labelId}
     </delete>
 
 </mapper>

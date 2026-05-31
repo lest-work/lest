@@ -6,15 +6,15 @@ import com.lest.common.core.web.domain.BaseEntity;
 
 /**
  * 项目对象 project
- * 
+ *
  * @author yshan2028
  */
 public class Project extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
-    private Long id;
+    /** 项目ID */
+    private Long projectId;
 
     /** 项目名称 */
     private String name;
@@ -45,14 +45,14 @@ public class Project extends BaseEntity
     /** 逻辑删除标记 */
     private Integer deleted;
 
-    public Long getId()
+    public Long getProjectId()
     {
-        return id;
+        return projectId;
     }
 
-    public void setId(Long id)
+    public void setProjectId(Long projectId)
     {
-        this.id = id;
+        this.projectId = projectId;
     }
 
     public String getName()

@@ -8,7 +8,7 @@ import com.lest.common.core.web.domain.BaseEntity;
 
 /**
  * 任务对象 task
- * 
+ *
  * @author yshan2028
  */
 public class Task extends BaseEntity
@@ -16,7 +16,7 @@ public class Task extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 任务ID */
-    private Long id;
+    private Long taskId;
 
     /** 任务标题 */
     private String title;
@@ -87,14 +87,14 @@ public class Task extends BaseEntity
     /** 是否有阻塞（非数据库字段） */
     private Boolean hasBlockers;
 
-    public Long getId()
+    public Long getTaskId()
     {
-        return id;
+        return taskId;
     }
 
-    public void setId(Long id)
+    public void setTaskId(Long taskId)
     {
-        this.id = id;
+        this.taskId = taskId;
     }
 
     public String getTitle()

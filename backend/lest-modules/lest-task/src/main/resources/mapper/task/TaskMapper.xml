@@ -3,36 +3,38 @@
 <mapper namespace="com.lest.modules.task.mapper.TaskMapper">
 
     <resultMap type="com.lest.modules.task.domain.Task" id="TaskResult">
-        <id     property="id"             column="id"              />
-        <result property="title"          column="title"           />
-        <result property="description"    column="description"     />
-        <result property="projectId"      column="project_id"      />
-        <result property="iterationId"    column="iteration_id"    />
+        <id     property="taskId"          column="task_id"           />
+        <result property="title"           column="title"            />
+        <result property="description"     column="description"      />
+        <result property="projectId"       column="project_id"      />
+        <result property="iterationId"     column="iteration_id"    />
         <result property="parentId"       column="parent_id"       />
-        <result property="taskType"       column="task_type"       />
-        <result property="priority"       column="priority"        />
-        <result property="status"         column="status"          />
-        <result property="assigneeId"     column="assignee_id"     />
-        <result property="startTime"      column="start_time"      />
-        <result property="completedAt"    column="completed_at"    />
-        <result property="estimatedHours" column="estimated_hours" />
-        <result property="actualHours"    column="actual_hours"    />
-        <result property="dueDate"        column="due_date"        />
-        <result property="sort"           column="sort"            />
-        <result property="createTime"      column="created_at"      />
-        <result property="updateTime"      column="updated_at"      />
-        <result property="deleted"        column="deleted"         />
+        <result property="taskType"        column="task_type"       />
+        <result property="priority"        column="priority"        />
+        <result property="status"          column="status"          />
+        <result property="assigneeId"      column="assignee_id"     />
+        <result property="startTime"        column="start_time"      />
+        <result property="completedAt"     column="completed_at"    />
+        <result property="estimatedHours"   column="estimated_hours" />
+        <result property="actualHours"     column="actual_hours"    />
+        <result property="dueDate"         column="due_date"       />
+        <result property="sort"            column="sort"           />
+        <result property="createBy"         column="create_by"       />
+        <result property="createTime"        column="create_time"     />
+        <result property="updateBy"         column="update_by"       />
+        <result property="updateTime"        column="update_time"     />
+        <result property="deleted"         column="deleted"        />
     </resultMap>
 
     <sql id="selectTaskVo">
-        select id, title, description, project_id, iteration_id, parent_id, task_type, priority, status,
+        select task_id, title, description, project_id, iteration_id, parent_id, task_type, priority, status,
                assignee_id, start_time, completed_at, estimated_hours, actual_hours, due_date, sort,
-               created_at, updated_at, deleted
+               create_by, create_time, update_by, update_time, deleted
         from task where deleted = 0
     </sql>
 
     <select id="selectById" resultMap="TaskResult">
-        <include refid="selectTaskVo"/> and id = #{id}
+        <include refid="selectTaskVo"/> and task_id = #{taskId}
     </select>
 
     <select id="selectTaskList" resultMap="TaskResult">
@@ -42,10 +44,10 @@
         <if test="assigneeId != null">and assignee_id = #{assigneeId}</if>
         <if test="status != null and status != ''">and status = #{status}</if>
         <if test="priority != null and priority != ''">and priority = #{priority}</if>
-        <if test="keyword != null and keyword != ''">
-            and (title like concat('%', #{keyword}, '%') or description like concat('%', #{keyword}, '%'))
+        <if test="title != null and title != ''">
+            and title like concat('%', #{title}, '%')
         </if>
-        order by sort desc, created_at desc
+        order by sort desc, create_time desc
     </select>
 
     <select id="selectBoardTasks" resultMap="TaskResult">
@@ -65,20 +67,22 @@
     </select>
 
     <select id="selectByParentId" resultMap="TaskResult">
-        <include refid="selectTaskVo"/> and parent_id = #{parentId} order by sort desc
+        <include refid="selectTaskVo"/> and parent_id = #{parentId} and deleted = 0 order by sort desc
     </select>
 
     <select id="selectByIds" resultMap="TaskResult">
         <include refid="selectTaskVo"/>
-        and id in
+        and task_id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">#{id}</foreach>
     </select>
 
-    <insert id="insert" parameterType="com.lest.modules.task.domain.Task" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.lest.modules.task.domain.Task" useGeneratedKeys="true" keyProperty="taskId">
         insert into task (title, description, project_id, iteration_id, parent_id, task_type, priority,
-                         status, assignee_id, start_time, estimated_hours, due_date, sort, created_at, updated_at)
+                         status, assignee_id, start_time, estimated_hours, due_date, sort,
+                         create_by, create_time, update_by, update_time)
         values (#{title}, #{description}, #{projectId}, #{iterationId}, #{parentId}, #{taskType}, #{priority},
-                #{status}, #{assigneeId}, #{startTime}, #{estimatedHours}, #{dueDate}, #{sort}, now(), now())
+                #{status}, #{assigneeId}, #{startTime}, #{estimatedHours}, #{dueDate}, #{sort},
+                #{createBy}, now(), #{updateBy}, now())
     </insert>
 
     <update id="updateById" parameterType="com.lest.modules.task.domain.Task">
@@ -98,13 +102,14 @@
             <if test="actualHours != null">actual_hours = #{actualHours},</if>
             <if test="dueDate != null">due_date = #{dueDate},</if>
             <if test="sort != null">sort = #{sort},</if>
-            updated_at = now()
+            update_by = #{updateBy},
+            update_time = now()
         </set>
-        where id = #{id} and deleted = 0
+        where task_id = #{taskId} and deleted = 0
     </update>
 
     <update id="deleteById">
-        update task set deleted = 1 where id = #{id}
+        update task set deleted = 1 where task_id = #{taskId}
     </update>
 
     <select id="countByParentId" resultType="int">

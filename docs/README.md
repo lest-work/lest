@@ -21,57 +21,34 @@
 | V1.0 | 插件系统 | 已完成 | V1.0 |
 | V1.0 | 开放平台 | 已完成 | V1.0 |
 
-### 开发文档
+### 开发指南 (Development Guide)
 
 | 文档 | 说明 | 状态 |
 |------|------|------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构设计（15 个微服务、部署架构、服务通信） | ✅ 已完成 |
-| [DATABASE.md](./DATABASE.md) | 数据库设计文档（15 个 Schema、68 张表完整 SQL） | ✅ 已完成 |
-| [API.md](./API.md) | API 接口文档（18 个服务完整 API 定义） | ✅ 已完成 |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范、Git 规范） | ✅ 已完成 |
-| [AI_DEVELOPER_IMPLEMENTATION_SPEC.md](./AI_DEVELOPER_IMPLEMENTATION_SPEC.md) | AI 开发者低漂移高精度实现规范（状态机校验、双部署总线抽象、分布式内存聚合等具象落地指南） | ✅ 已完成 |
-| [DEVELOPMENT_TASKS.md](./DEVELOPMENT_TASKS.md) | 敏捷开发任务列表与进度追踪白皮书（逐个需求模块精细化分解、P0/P1/P2优先级、状态备注、测试结果跟踪等） | ✅ 已完成 |
+| [guide/DEVELOPMENT.md](./guide/DEVELOPMENT.md) | 开发指南（环境搭建、工程规范、代码规范） | ✅ 已完成 |
+| [guide/DEPLOYMENT.md](./guide/DEPLOYMENT.md) | 生产部署指南 | ✅ 已完成 |
+| [guide/BRANCHING.md](./guide/BRANCHING.md) | 分支管理规范与 Git Flow 工作流 | ✅ 已完成 |
+| [guide/DOMAIN_PLAN.md](./guide/DOMAIN_PLAN.md) | 域名规划与本地/生产环境配置 | ✅ 已完成 |
+| [../SECURITY.md](../SECURITY.md) | 安全策略与漏洞报告 | ✅ 已完成 |
 
-### 核心架构文档
+### 技术参考 (Technical Reference)
 
-#### ARCHITECTURE.md 内容概要
+| 文档 | 说明 | 状态 |
+|------|------|------|
+| [reference/ARCHITECTURE.md](./reference/ARCHITECTURE.md) | 系统架构设计 | ✅ 已完成 |
+| [reference/DATABASE.md](./reference/DATABASE.md) | 数据库设计文档 | ✅ 已完成 |
+| [reference/api/API.md](./reference/api/API.md) | API 参考（双语标题对照） | ✅ 已完成 |
+| [reference/api/API.en.md](./reference/api/API.en.md) | API 参考（英文全文版） | ✅ Done |
+| [reference/api/API.zh-CN.md](./reference/api/API.zh-CN.md) | API 参考（中文全文版） | ✅ 已完成 |
 
-本文档详细描述了 LEST Platform 的完整技术架构，包括：
+### 里程碑与变更 (Milestones & Changelog)
 
-1. **整体架构图** - 17 个微服务的部署架构
-2. **服务列表** - 每个服务的端口、技术栈、数据库 Schema
-3. **服务间通信** - OpenFeign 同步调用 + Kafka 异步消息
-4. **数据模型** - 数据库隔离策略、跨服务关联、ER 图
-5. **插件系统集成架构** - 前端扩展点渲染机制、后端扩展点调用、API 路由注册
-6. **开放平台集成架构** - Webhook 事件流转、OAuth2 授权流程
-7. **WakaTime 集成架构** - 心跳接收、任务关联、每日汇总计算
-8. **部署架构** - Kubernetes 部署配置、服务发现
-9. **监控与可观测性** - Prometheus + Grafana + Jaeger + AlertManager
-10. **安全架构** - JWT 认证、RBAC + ABAC 权限模型
-11. **版本兼容性** - API 版本管理、插件兼容性规则
-
-#### DATABASE.md 内容概要
-
-本文档包含完整的数据库设计规范：
-
-1. **数据库规范** - 命名规范、字段类型规范、通用字段
-2. **Schema 规划** - 15 个独立数据库 Schema
-3. **完整 SQL** - 所有 68 张表的 CREATE TABLE 语句，包含：
-   - 认证服务 (auth_db): 7 张表
-   - 系统管理 (system_db): 5 张表
-   - 项目管理 (project_db): 2 张表
-   - 任务管理 (task_db): 6 张表
-   - 代码管理 (code_db): 3 张表
-   - CI/CD (ci_db): 3 张表
-   - 会议管理 (meeting_db): 4 张表
-   - 通知服务 (notification_db): 5 张表
-   - 发布管理 (release_db): 4 张表
-   - 插件系统 (plugin_db): 4 张表
-   - AI 服务 (ai_db): 8 张表
-   - WakaTime 集成 (wakapi_db): 4 张表
-   - 团队绩效 (performance_db): 6 张表
-   - 文件服务 (file_db): 1 张表
-   - 开放平台 (open_db): 6 张表
+| 文档 | 说明 | 状态 |
+|------|------|------|
+| [../MILESTONES.md](../MILESTONES.md) | 里程碑规划（英文） | ✅ Done |
+| [../MILESTONES.zh-CN.md](../MILESTONES.zh-CN.md) | 里程碑规划（中文） | ✅ 已完成 |
+| [../CHANGELOG.md](../CHANGELOG.md) | 版本变更记录（英文） | ✅ Done |
+| [../CHANGELOG.zh-CN.md](../CHANGELOG.zh-CN.md) | 版本变更记录（中文） | ✅ 已完成 |
 
 ---
 

@@ -12,23 +12,23 @@ public interface IReleasePlanService
 {
     public List<ReleasePlan> selectReleasePlanList(ReleasePlan plan);
 
-    public ReleasePlan selectReleasePlanById(Long id);
+    public ReleasePlan selectReleasePlanById(Long releasePlanId);
 
     public int insertReleasePlan(ReleasePlan plan);
 
     public int updateReleasePlan(ReleasePlan plan);
 
-    public int deleteReleasePlanById(Long id);
+    public int deleteReleasePlanById(Long releasePlanId);
 
-    public int publish(Long id);
+    public int publish(Long releasePlanId);
 
-    public int archive(Long id);
+    public int archive(Long releasePlanId);
 
-    public int restore(Long id);
+    public int restore(Long releasePlanId);
 
-    public int startBuild(Long id);
+    public int startBuild(Long releasePlanId);
 
-    public int completeBuild(Long id, String downloadUrl);
+    public int completeBuild(Long releasePlanId, String downloadUrl);
 
     public List<ReleasePlan> selectUpcoming();
 

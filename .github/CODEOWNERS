@@ -1,0 +1,40 @@
+# CODEOWNERS — Auto-assign code reviewers based on file paths
+
+# Default owner for most of the codebase
+*       @lest-work
+
+# Backend
+/backend/                              @lest-work
+/backend/lest-auth/                   @lest-work
+/backend/lest-gateway/                 @lest-work
+/backend/lest-common/                  @lest-work
+/backend/lest-modules/lest-system/     @lest-work
+/backend/lest-modules/lest-project/    @lest-work
+/backend/lest-modules/lest-task/       @lest-work
+/backend/lest-modules/lest-release/    @lest-work
+/backend/lest-modules/lest-job/       @lest-work
+/backend/lest-modules/lest-file/       @lest-work
+/backend/lest-modules/lest-meeting/   @lest-work
+/backend/lest-modules/lest-notification/ @lest-work
+/backend/lest-modules/lest-ai/         @lest-work
+/backend/lest-modules/lest-open/       @lest-work
+/backend/lest-modules/lest-performance/ @lest-work
+/backend/lest-modules/lest-plugin/     @lest-work
+/backend/lest-modules/lest-wakapi/    @lest-work
+/backend/lest-visual/                  @lest-work
+/backend/docker/                       @lest-work
+
+# Frontend
+/frontend-pc/                          @lest-work
+/frontend-h5/                          @lest-work
+/frontend-app/                         @lest-work
+
+# Documentation
+/docs/                                 @lest-work
+
+# CI/CD
+/.github/workflows/                    @lest-work
+
+# Config files
+/pom.xml                               @lest-work
+/backend/pom.xml                       @lest-work

@@ -1,157 +1,159 @@
-# LEST Platform — 里程碑规划 / Milestone Roadmap
+# LEST Platform — Milestone Roadmap
 
-> 版本迭代按周推进，每个里程碑对应一个主功能模块的完整交付。
 > Iterations advance weekly; each milestone corresponds to the full delivery of a major functional module.
->
-> 状态图例 / Status Legend:
-> `✅ 已完成 Done` | `🟡 进行中 In Progress` | `🔴 未开始 Not Started` | `⏸️ 暂缓 On Hold`
+
+> Status Legend:
+> `✅ Done` | `🟡 In Progress` | `🔴 Not Started` | `⏸️ On Hold`
 
 ---
 
-## 🏁 Milestone 1 — 基础框架 / Foundation
+## 🏁 Milestone 1 — Foundation
 
-**目标 / Goal**: 完成后端微服务框架、认证、系统管理、Docker 环境搭建，前端脚手架可运行
+**Goal**: Complete backend microservice framework, auth, system mgmt, Docker setup, frontend scaffold running
 
-**版本 / Version**: `v0.1.0` | **完成日期 / Completed**: 2026-05-29 (W22) | **状态**: ✅ 已完成
+**Version**: `v0.1.0` | **Completed**: 2026-05-29 (W22) | **Status**: ✅ Done
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| Spring Boot 4.x + Spring Cloud 微服务架构搭建 | ✅ |
-| Spring Cloud Gateway 统一路由（StripPrefix=1）| ✅ |
-| lest-auth：登录/登出/验证码/刷新 Token | ✅ |
-| lest-system：用户/角色/菜单/部门/岗位/字典/参数/日志/公告/定时任务 | ✅ |
-| lest-project：项目/成员/迭代/里程碑 CRUD（后端）| ✅ |
-| lest-task：任务/看板/甘特/工时/Webhook（后端）| ✅ |
-| Docker Compose 本地开发环境（14 容器）| ✅ |
-| 数据库初始化 SQL（系统表 + 初始数据）| ✅ |
-| 前端 Vue 3 + TypeScript 脚手架 + 仪表盘 | ✅ |
-| 前端系统管理全套页面 | ✅ |
-| project/task DDL 加入 init.sql | 🔴 |
+| Spring Boot 4.x + Spring Cloud microservice architecture | ✅ |
+| Spring Cloud Gateway unified routing (StripPrefix=1) | ✅ |
+| lest-auth: Login/logout/captcha/refresh token | ✅ |
+| lest-system: User/Role/Menu/Dept/Post/Dict/Config/Log/Notice/Job CRUD | ✅ |
+| lest-project: Project/Member/Iteration/Milestone CRUD (backend) | ✅ |
+| lest-task: Task/Kanban/Gantt/Worklog/Webhook (backend) | ✅ |
+| Docker Compose local dev environment (14 containers) | ✅ |
+| Database init SQL (system tables + seed data) | ✅ |
+| Frontend Vue 3 + TypeScript scaffold + dashboard | ✅ |
+| Full frontend system admin pages | ✅ |
+| Project/task DDL added to init.sql | ✅ |
 
 ---
 
-## 🏁 Milestone 2 — 项目与任务前端 / Project & Task UI
+## 🏁 Milestone 2 — Project & Task UI
 
-**目标 / Goal**: 项目管理和任务管理的完整前端页面，实现完整的增删改查和可视化看板
+**Goal**: Complete project & task management frontend with full CRUD and visual kanban
 
-**版本 / Version**: `v0.2.0` | **计划发布 / Target**: 2026-06-05 (W23) | **状态**: 🔴 未开始
+**Version**: `v0.2.0-alpha.1` | **Completed**: 2026-05-31 (W22) | **Status**: ✅ Done
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| project/task 建表 SQL 加入 init.sql | 🔴 |
-| 项目列表页（卡片/表格视图）| 🔴 |
-| 项目详情页（概况/成员/迭代/里程碑 Tab）| 🔴 |
-| 任务列表页（多条件筛选）| 🔴 |
-| 任务看板视图（拖拽更新状态）| 🔴 |
-| 任务详情抽屉（子任务/工时/关联 commit）| 🔴 |
-| 甘特图视图（ECharts 横道图）| 🔴 |
+| Project/task DDL added to init.sql | ✅ |
+| Project list page (card grid) | ✅ |
+| Project detail page (Overview/Members/Iteration/Milestone tabs) | ✅ |
+| Task list page (multi-filter) | ✅ |
+| Task kanban board (basic) | ✅ |
+| Task detail drawer (subtask/worklog/linked commits) | ✅ |
+| Gantt chart view (ECharts) | ✅ |
+| Release management frontend (list/detail/artifacts/linked issues) | ✅ |
 
 ---
 
-## 🏁 Milestone 3 — 通知与消息 / Notification System
+## 🏁 Milestone 3 — Notification System
 
-**目标 / Goal**: 站内通知、消息推送、@提及通知，WebSocket 实时推送
+**Goal**: In-app notifications, push messages, @mention alerts, WebSocket real-time delivery
 
-**版本 / Version**: `v0.3.0` | **计划发布 / Target**: 2026-06-12 (W24) | **状态**: 🔴 未开始
+**Version**: `v0.3.0` | **Target**: 2026-06-12 (W24) | **Status**: 🔴 Not Started
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| lest-notification 服务启动 | 🔴 |
-| 站内通知 CRUD | 🔴 |
-| WebSocket 实时推送 | 🔴 |
-| 任务被指派/评论/@提及 触发通知 | 🔴 |
-| 前端通知中心（铃铛下拉 + 消息列表页）| 🔴 |
+| lest-notification service startup | 🔴 |
+| In-app notification CRUD | 🔴 |
+| WebSocket real-time push | 🔴 |
+| Task assigned/commented/@mentioned triggers notification | 🔴 |
+| Frontend notification center (bell dropdown + message list) | 🔴 |
 
 ---
 
-## 🏁 Milestone 4 — 敏捷会议 / Agile Meetings
+## 🏁 Milestone 4 — Agile Meetings
 
-**目标 / Goal**: 每日站会、迭代计划会、回顾会记录与管理
+**Goal**: Daily standup, sprint planning, retrospective records & management
 
-**版本 / Version**: `v0.4.0` | **计划发布 / Target**: 2026-06-19 (W25) | **状态**: 🔴 未开始
+**Version**: `v0.4.0` | **Target**: 2026-06-19 (W25) | **Status**: 🔴 Not Started
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| lest-meeting 服务启动 | 🔴 |
-| 会议记录 CRUD（类型/时间/参与人/摘要）| 🔴 |
-| 行动项（Action Item）跟踪 | 🔴 |
-| 与任务/迭代关联 | 🔴 |
-| 前端会议日历 + 会议详情页 | 🔴 |
+| lest-meeting service startup | 🔴 |
+| Meeting record CRUD (type/time/participants/summary) | 🔴 |
+| Action item tracking | 🔴 |
+| Link to task/iteration | 🔴 |
+| Frontend meeting calendar + meeting detail page | 🔴 |
 
 ---
 
-## 🏁 Milestone 5 — 发布管理 / Release Management
+## 🏁 Milestone 5 — Release Management
 
-**目标 / Goal**: 发布计划、制品追踪、发布与 Issue 的关联
+**Goal**: Release planning, artifact tracking, release-issue linking
 
-**版本 / Version**: `v0.5.0` | **计划发布 / Target**: 2026-06-26 (W26) | **状态**: 🔴 未开始
+**Version**: `v0.2.0-alpha.1` (DDL+frontend) → `v0.5.0` (full) | **Partially Done**: 2026-05-31 | **Status**: 🟡 In Progress (DDL + frontend pages completed)
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| lest-release 服务完善（DDL + 前端）| 🔴 |
-| 发布计划 CRUD（版本号/状态/目标日期）| 🔴 |
-| 发布制品管理（Artifact）| 🔴 |
-| 关联 Issue/Task | 🔴 |
-| 前端发布列表 + 详情页 | 🔴 |
+| lest-release DDL + frontend pages | ✅ |
+| Release plan CRUD (version/status/target date) | ✅ |
+| Release artifact management | ✅ |
+| Link Issue/Task | ✅ |
+| Frontend release list + detail page | ✅ |
+| Release Gantt chart view | 🔴 |
+| Release email/Slack notification | 🔴 |
 
 ---
 
-## 🏁 Milestone 6 — CI 持续集成 / CI Integration
+## 🏁 Milestone 6 — CI Integration
 
-**目标 / Goal**: 对接 GitLab CI / GitHub Actions，构建状态可视化
+**Goal**: Integrate GitLab CI / GitHub Actions, build status visualization
 
-**版本 / Version**: `v0.6.0` | **计划发布 / Target**: 2026-07-03 (W27) | **状态**: 🔴 未开始
+**Version**: `v0.6.0` | **Target**: 2026-07-03 (W27) | **Status**: 🔴 Not Started
 
-| 交付项 / Deliverable | 状态 |
+| Deliverable | Status |
 | :--- | :--- |
-| lest-ci 服务（CI 流水线状态接收）| 🔴 |
-| GitLab CI Webhook 接入 | 🔴 |
-| GitHub Actions Webhook 接入 | 🔴 |
-| 构建状态展示（成功/失败/进行中）| 🔴 |
-| 与任务/发布关联 | 🔴 |
+| lest-ci service (CI pipeline status receiver) | 🔴 |
+| GitLab CI Webhook integration | 🔴 |
+| GitHub Actions Webhook integration | 🔴 |
+| Build status display (success/failed/in-progress) | 🔴 |
+| Link to task/release | 🔴 |
 
 ---
 
-## 🏁 Milestone 7 — WakaTime 集成 / WakaTime Integration
+## 🏁 Milestone 7 — WakaTime Integration
 
-**目标 / Goal**: 接入 WakaTime / Wakapi，展示团队编码时长统计
+**Goal**: Integrate WakaTime / Wakapi, display team coding time statistics
 
-**版本 / Version**: `v0.7.0` | **计划发布 / Target**: 2026-07-10 (W28) | **状态**: 🔴 未开始
-
----
-
-## 🏁 Milestone 8 — 团队绩效 / Team Performance
-
-**目标 / Goal**: 研发效能数据看板（任务完成率、工时、提交频率）
-
-**版本 / Version**: `v0.8.0` | **计划发布 / Target**: 2026-07-17 (W29) | **状态**: 🔴 未开始
+**Version**: `v0.7.0` | **Target**: 2026-07-10 (W28) | **Status**: 🔴 Not Started
 
 ---
 
-## 🏁 Milestone 9 — AI 服务 / AI Assistant
+## 🏁 Milestone 8 — Team Performance
 
-**目标 / Goal**: AI 辅助任务拆解、需求分析、代码 Review 建议
+**Goal**: R&D performance dashboard (task completion rate, work hours, commit frequency)
 
-**版本 / Version**: `v0.9.0` | **计划发布 / Target**: 2026-07-24 (W30) | **状态**: 🔴 未开始
+**Version**: `v0.8.0` | **Target**: 2026-07-17 (W29) | **Status**: 🔴 Not Started
 
 ---
 
-## 🏁 Milestone 10 — v1.0 正式发布 / v1.0 General Release
+## 🏁 Milestone 9 — AI Assistant
 
-**目标 / Goal**: 核心功能完整、稳定，具备生产可用性
+**Goal**: AI-assisted task breakdown, requirement analysis, code review suggestions
 
-**版本 / Version**: `v1.0.0` | **计划发布 / Target**: 2026-08-07 (W32) | **状态**: 🔴 未开始
+**Version**: `v0.9.0` | **Target**: 2026-07-24 (W30) | **Status**: 🔴 Not Started
 
-| 交付项 / Deliverable | 状态 |
+---
+
+## 🏁 Milestone 10 — v1.0 General Release
+
+**Goal**: Complete & stable core features, production-ready
+
+**Version**: `v1.0.0` | **Target**: 2026-08-07 (W32) | **Status**: 🔴 Not Started
+
+| Deliverable | Status |
 | :--- | :--- |
-| 全部 M1-M9 功能稳定 | 🔴 |
-| 性能测试与优化 | 🔴 |
-| 完整 API 文档（Swagger/Springdoc）| 🔴 |
-| 开放平台 API Key 管理 | 🔴 |
-| 插件扩展框架 | 🔴 |
-| 生产 Docker Compose / K8s Helm Chart | 🔴 |
+| All M1-M9 features stable | 🔴 |
+| Performance testing & optimization | 🔴 |
+| Complete API docs (Swagger/Springdoc) | 🔴 |
+| Open platform API key management | 🔴 |
+| Plugin extension framework | 🔴 |
+| Production Docker Compose / K8s Helm Chart | 🔴 |
 
 ---
 
-> 📌 查看完整版本记录 / See full version history: [CHANGELOG.md](../CHANGELOG.md)
-> 📌 查看开发任务 / See development tasks: [TASKS/README.md](./TASKS/README.md)
+> 📌 See full version history: [CHANGELOG.md](../CHANGELOG.md)
+> 📌 See development tasks: [TASKS/README.md](./TASKS/README.md)

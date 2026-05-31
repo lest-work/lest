@@ -7,7 +7,7 @@ import com.lest.common.core.web.domain.AjaxResult;
 /**
  * 验证码处理
  *
- * @author yshan2028
+ * @author ruoyi
  */
 public interface ValidateCodeService
 {

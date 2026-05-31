@@ -21,9 +21,9 @@ public class ReleaseIssueServiceImpl implements IReleaseIssueService
     private ReleaseIssueMapper issueMapper;
 
     @Override
-    public List<ReleaseIssue> selectIssuesByReleaseId(Long releaseId)
+    public List<ReleaseIssue> selectIssuesByReleaseId(Long releasePlanId)
     {
-        return issueMapper.selectIssueList(releaseId, null, null, null);
+        return issueMapper.selectIssueList(releasePlanId, null, null, null);
     }
 
     @Override
@@ -38,14 +38,14 @@ public class ReleaseIssueServiceImpl implements IReleaseIssueService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteIssueById(Long id)
+    public int deleteIssueById(Long releaseIssueId)
     {
-        return issueMapper.deleteById(id);
+        return issueMapper.deleteById(releaseIssueId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchAddIssues(Long releaseId, Long[] taskIds, Long[] issueIds, Integer category, String notes)
+    public int batchAddIssues(Long releasePlanId, Long[] taskIds, Long[] issueIds, Integer category, String notes)
     {
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
         int count = 0;
@@ -54,7 +54,7 @@ public class ReleaseIssueServiceImpl implements IReleaseIssueService
             for (Long taskId : taskIds)
             {
                 ReleaseIssue issue = new ReleaseIssue();
-                issue.setReleaseId(releaseId);
+                issue.setReleasePlanId(releasePlanId);
                 issue.setTaskId(taskId);
                 issue.setCategory(category);
                 issue.setNotes(notes);
@@ -69,7 +69,7 @@ public class ReleaseIssueServiceImpl implements IReleaseIssueService
             for (Long issueId : issueIds)
             {
                 ReleaseIssue issue = new ReleaseIssue();
-                issue.setReleaseId(releaseId);
+                issue.setReleasePlanId(releasePlanId);
                 issue.setIssueId(issueId);
                 issue.setCategory(category);
                 issue.setNotes(notes);

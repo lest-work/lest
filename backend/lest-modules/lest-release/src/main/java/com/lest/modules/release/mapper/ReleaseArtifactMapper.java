@@ -11,9 +11,9 @@ public interface ReleaseArtifactMapper
 {
     int insert(ReleaseArtifact artifact);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("releaseArtifactId") Long releaseArtifactId);
 
-    List<ReleaseArtifact> selectByReleaseId(@Param("releaseId") Long releaseId);
+    List<ReleaseArtifact> selectByReleaseId(@Param("releasePlanId") Long releasePlanId);
 
-    int countByReleaseId(@Param("releaseId") Long releaseId);
+    int countByReleaseId(@Param("releasePlanId") Long releasePlanId);
 }

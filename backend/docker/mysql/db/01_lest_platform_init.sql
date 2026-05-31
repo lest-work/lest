@@ -712,20 +712,20 @@ SELECT 1, menu_id FROM sys_menu;
 
 DROP TABLE IF EXISTS `project`;
 CREATE TABLE `project` (
-  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '项目ID',
-  `name`        varchar(100) NOT NULL                COMMENT '项目名称',
-  `description` text                                 COMMENT '项目描述',
-  `status`      tinyint      NOT NULL DEFAULT 1      COMMENT '状态：1-活跃 2-已归档',
-  `template`    varchar(20)  NOT NULL DEFAULT 'agile' COMMENT '模板：agile/waterfall/kanban',
-  `owner_id`    bigint                               COMMENT '负责人用户ID',
-  `start_date`  date                                 COMMENT '开始日期',
-  `end_date`    date                                 COMMENT '结束日期',
-  `deleted`     tinyint      NOT NULL DEFAULT 0      COMMENT '逻辑删除：0-正常 1-删除',
-  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
-  `create_time` datetime                             COMMENT '创建时间',
-  `update_by`   varchar(64)           DEFAULT ''     COMMENT '更新者',
-  `update_time` datetime                             COMMENT '更新时间',
-  PRIMARY KEY (`id`)
+  `project_id`    bigint       NOT NULL AUTO_INCREMENT COMMENT '项目ID',
+  `name`          varchar(100) NOT NULL                COMMENT '项目名称',
+  `description`   text                                 COMMENT '项目描述',
+  `status`        tinyint      NOT NULL DEFAULT 1    COMMENT '状态：1-活跃 2-已归档',
+  `template`      varchar(20)  NOT NULL DEFAULT 'agile' COMMENT '模板：agile/waterfall/kanban',
+  `owner_id`      bigint                               COMMENT '负责人用户ID',
+  `start_date`    date                                 COMMENT '开始日期',
+  `end_date`      date                                 COMMENT '结束日期',
+  `deleted`       tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0-正常 1-删除',
+  `create_by`     varchar(64)          DEFAULT ''   COMMENT '创建者',
+  `create_time`   datetime                             COMMENT '创建时间',
+  `update_by`     varchar(64)          DEFAULT ''   COMMENT '更新者',
+  `update_time`   datetime                             COMMENT '更新时间',
+  PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='项目表';
 
 DROP TABLE IF EXISTS `project_member`;
@@ -739,40 +739,40 @@ CREATE TABLE `project_member` (
 
 DROP TABLE IF EXISTS `iteration`;
 CREATE TABLE `iteration` (
-  `id`           bigint      NOT NULL AUTO_INCREMENT COMMENT '迭代ID',
-  `project_id`   bigint      NOT NULL                COMMENT '所属项目ID',
+  `iteration_id` bigint       NOT NULL AUTO_INCREMENT COMMENT '迭代ID',
+  `project_id`   bigint       NOT NULL                COMMENT '所属项目ID',
   `name`         varchar(100) NOT NULL               COMMENT '迭代名称',
   `goal`         text                                COMMENT '迭代目标',
-  `status`       tinyint     NOT NULL DEFAULT 1      COMMENT '状态：1-计划中 2-进行中 3-已完成',
+  `status`       tinyint     NOT NULL DEFAULT 1     COMMENT '状态：1-计划中 2-进行中 3-已完成',
   `start_date`   date                                COMMENT '开始日期',
   `end_date`     date                                COMMENT '结束日期',
   `completed_at` datetime                            COMMENT '完成时间',
-  `create_by`    varchar(64)          DEFAULT ''     COMMENT '创建者',
+  `create_by`    varchar(64)          DEFAULT ''    COMMENT '创建者',
   `create_time`  datetime                            COMMENT '创建时间',
-  `update_by`    varchar(64)          DEFAULT ''     COMMENT '更新者',
+  `update_by`    varchar(64)          DEFAULT ''    COMMENT '更新者',
   `update_time`  datetime                            COMMENT '更新时间',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`iteration_id`),
   KEY `idx_iteration_project` (`project_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='迭代表';
 
 DROP TABLE IF EXISTS `milestone`;
 CREATE TABLE `milestone` (
-  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '里程碑ID',
-  `project_id`  bigint       NOT NULL                COMMENT '所属项目ID',
-  `name`        varchar(100) NOT NULL                COMMENT '里程碑名称',
-  `description` text                                 COMMENT '描述',
-  `target_date` date                                 COMMENT '目标日期',
-  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
-  `create_time` datetime                             COMMENT '创建时间',
-  `update_by`   varchar(64)           DEFAULT ''     COMMENT '更新者',
-  `update_time` datetime                             COMMENT '更新时间',
-  PRIMARY KEY (`id`),
+  `milestone_id` bigint       NOT NULL AUTO_INCREMENT COMMENT '里程碑ID',
+  `project_id`   bigint       NOT NULL                COMMENT '所属项目ID',
+  `name`         varchar(100) NOT NULL                COMMENT '里程碑名称',
+  `description`  text                                 COMMENT '描述',
+  `target_date`  date                                 COMMENT '目标日期',
+  `create_by`    varchar(64)          DEFAULT ''     COMMENT '创建者',
+  `create_time`  datetime                             COMMENT '创建时间',
+  `update_by`    varchar(64)          DEFAULT ''     COMMENT '更新者',
+  `update_time`  datetime                             COMMENT '更新时间',
+  PRIMARY KEY (`milestone_id`),
   KEY `idx_milestone_project` (`project_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='里程碑表';
 
 DROP TABLE IF EXISTS `milestone_iteration`;
 CREATE TABLE `milestone_iteration` (
-  `milestone_id`  bigint NOT NULL COMMENT '里程碑ID',
+  `milestone_id` bigint NOT NULL COMMENT '里程碑ID',
   `iteration_id`  bigint NOT NULL COMMENT '迭代ID',
   PRIMARY KEY (`milestone_id`, `iteration_id`)
 ) ENGINE=InnoDB COMMENT='里程碑-迭代关联表';
@@ -783,28 +783,28 @@ CREATE TABLE `milestone_iteration` (
 
 DROP TABLE IF EXISTS `task`;
 CREATE TABLE `task` (
-  `id`               bigint        NOT NULL AUTO_INCREMENT  COMMENT '任务ID',
+  `task_id`          bigint        NOT NULL AUTO_INCREMENT  COMMENT '任务ID',
   `title`            varchar(200)  NOT NULL                 COMMENT '任务标题',
-  `description`      text                                   COMMENT '任务描述',
+  `description`       text                                   COMMENT '任务描述',
   `project_id`       bigint        NOT NULL                 COMMENT '所属项目ID',
-  `iteration_id`     bigint                                 COMMENT '所属迭代ID',
-  `parent_id`        bigint                                 COMMENT '父任务ID（子任务）',
-  `task_type`        varchar(20)   NOT NULL DEFAULT 'task'  COMMENT '类型：story/task/bug/improvement',
-  `priority`         varchar(10)   NOT NULL DEFAULT 'p2'    COMMENT '优先级：p0/p1/p2/p3',
+  `iteration_id`     bigint                                COMMENT '所属迭代ID',
+  `parent_id`       bigint                                COMMENT '父任务ID（子任务）',
+  `task_type`        varchar(20)   NOT NULL DEFAULT 'task' COMMENT '类型：story/task/bug/improvement',
+  `priority`         varchar(10)   NOT NULL DEFAULT 'p2'   COMMENT '优先级：p0/p1/p2/p3',
   `status`           varchar(20)   NOT NULL DEFAULT 'todo'  COMMENT '状态：todo/in_progress/completed',
-  `assignee_id`      bigint                                 COMMENT '负责人用户ID',
-  `start_time`       datetime                               COMMENT '开始时间',
-  `completed_at`     datetime                               COMMENT '完成时间',
-  `estimated_hours`  decimal(6,2)                           COMMENT '预估工时（小时）',
-  `actual_hours`     decimal(6,2)                           COMMENT '实际工时（小时）',
+  `assignee_id`      bigint                                COMMENT '负责人用户ID',
+  `start_time`        datetime                               COMMENT '开始时间',
+  `completed_at`      datetime                               COMMENT '完成时间',
+  `estimated_hours`   decimal(6,2)                          COMMENT '预估工时（小时）',
+  `actual_hours`     decimal(6,2)                          COMMENT '实际工时（小时）',
   `due_date`         date                                   COMMENT '截止日期',
-  `sort`             int                    DEFAULT 0       COMMENT '排序权重',
-  `deleted`          tinyint       NOT NULL DEFAULT 0       COMMENT '逻辑删除：0-正常 1-删除',
-  `create_by`        varchar(64)            DEFAULT ''      COMMENT '创建者',
-  `create_time`      datetime                               COMMENT '创建时间',
-  `update_by`        varchar(64)            DEFAULT ''      COMMENT '更新者',
-  `update_time`      datetime                               COMMENT '更新时间',
-  PRIMARY KEY (`id`),
+  `sort`             int                    DEFAULT 0      COMMENT '排序权重',
+  `deleted`          tinyint       NOT NULL DEFAULT 0      COMMENT '逻辑删除：0-正常 1-删除',
+  `create_by`        varchar(64)            DEFAULT ''     COMMENT '创建者',
+  `create_time`       datetime                              COMMENT '创建时间',
+  `update_by`        varchar(64)            DEFAULT ''     COMMENT '更新者',
+  `update_time`       datetime                              COMMENT '更新时间',
+  PRIMARY KEY (`task_id`),
   KEY `idx_task_project`  (`project_id`),
   KEY `idx_task_assignee` (`assignee_id`),
   KEY `idx_task_status`   (`status`)
@@ -812,13 +812,13 @@ CREATE TABLE `task` (
 
 DROP TABLE IF EXISTS `label`;
 CREATE TABLE `label` (
-  `id`          bigint      NOT NULL AUTO_INCREMENT    COMMENT '标签ID',
-  `project_id`  bigint      NOT NULL                  COMMENT '所属项目ID',
+  `label_id`     bigint      NOT NULL AUTO_INCREMENT    COMMENT '标签ID',
+  `project_id`   bigint      NOT NULL                  COMMENT '所属项目ID',
   `name`        varchar(50) NOT NULL                  COMMENT '标签名称',
   `color`       varchar(20) NOT NULL DEFAULT '#409EFF' COMMENT '标签颜色',
-  `create_by`   varchar(64)          DEFAULT ''        COMMENT '创建者',
-  `create_time` datetime                               COMMENT '创建时间',
-  PRIMARY KEY (`id`)
+  `create_by`   varchar(64)          DEFAULT ''       COMMENT '创建者',
+  `create_time`  datetime                              COMMENT '创建时间',
+  PRIMARY KEY (`label_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='标签表';
 
 DROP TABLE IF EXISTS `task_label`;
@@ -832,61 +832,61 @@ DROP TABLE IF EXISTS `task_watcher`;
 CREATE TABLE `task_watcher` (
   `task_id`     bigint   NOT NULL                         COMMENT '任务ID',
   `user_id`     bigint   NOT NULL                         COMMENT '用户ID',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP        COMMENT '关注时间',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP         COMMENT '关注时间',
   PRIMARY KEY (`task_id`, `user_id`)
 ) ENGINE=InnoDB COMMENT='任务关注人表';
 
 DROP TABLE IF EXISTS `task_worklog`;
 CREATE TABLE `task_worklog` (
-  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '工时记录ID',
-  `task_id`     bigint       NOT NULL                COMMENT '任务ID',
-  `user_id`     bigint       NOT NULL                COMMENT '记录人用户ID',
-  `hours`       decimal(6,2) NOT NULL                COMMENT '工时（小时）',
-  `work_date`   date         NOT NULL                COMMENT '工作日期',
-  `description` varchar(500)                         COMMENT '工作内容描述',
-  `create_by`   varchar(64)           DEFAULT ''     COMMENT '创建者',
-  `create_time` datetime                             COMMENT '创建时间',
-  PRIMARY KEY (`id`),
+  `task_worklog_id` bigint       NOT NULL AUTO_INCREMENT COMMENT '工时记录ID',
+  `task_id`        bigint       NOT NULL                COMMENT '任务ID',
+  `user_id`        bigint       NOT NULL                COMMENT '记录人用户ID',
+  `hours`          decimal(6,2) NOT NULL                COMMENT '工时（小时）',
+  `work_date`      date         NOT NULL                COMMENT '工作日期',
+  `description`   varchar(500)                         COMMENT '工作内容描述',
+  `create_by`     varchar(64)           DEFAULT ''    COMMENT '创建者',
+  `create_time`    datetime                             COMMENT '创建时间',
+  PRIMARY KEY (`task_worklog_id`),
   KEY `idx_worklog_task` (`task_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务工时记录表';
 
 DROP TABLE IF EXISTS `task_comment`;
 CREATE TABLE `task_comment` (
-  `id`          bigint   NOT NULL AUTO_INCREMENT COMMENT '评论ID',
-  `task_id`     bigint   NOT NULL                COMMENT '任务ID',
-  `user_id`     bigint   NOT NULL                COMMENT '评论人用户ID',
-  `content`     text     NOT NULL                COMMENT '评论内容',
-  `parent_id`   bigint                           COMMENT '父评论ID（回复）',
-  `create_by`   varchar(64)      DEFAULT ''      COMMENT '创建者',
-  `create_time` datetime                         COMMENT '创建时间',
-  `update_time` datetime                         COMMENT '更新时间',
-  PRIMARY KEY (`id`),
+  `task_comment_id` bigint   NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+  `task_id`        bigint   NOT NULL                COMMENT '任务ID',
+  `user_id`        bigint   NOT NULL                COMMENT '评论人用户ID',
+  `content`        text     NOT NULL                COMMENT '评论内容',
+  `parent_id`       bigint                          COMMENT '父评论ID（回复）',
+  `create_by`      varchar(64)      DEFAULT ''   COMMENT '创建者',
+  `create_time`     datetime                        COMMENT '创建时间',
+  `update_time`     datetime                        COMMENT '更新时间',
+  PRIMARY KEY (`task_comment_id`),
   KEY `idx_comment_task` (`task_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务评论表';
 
 DROP TABLE IF EXISTS `task_commit`;
 CREATE TABLE `task_commit` (
-  `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `task_id`      bigint       NOT NULL                COMMENT '任务ID',
-  `repo`         varchar(200)                         COMMENT '仓库名称',
-  `commit_hash`  varchar(64)  NOT NULL                COMMENT '提交哈希',
-  `message`      varchar(500)                         COMMENT '提交信息',
-  `author`       varchar(100)                         COMMENT '提交者',
-  `committed_at` datetime                             COMMENT '提交时间',
-  `create_by`    varchar(64)           DEFAULT ''     COMMENT '创建者',
-  `create_time`  datetime                             COMMENT '创建时间',
-  PRIMARY KEY (`id`),
+  `task_commit_id`  bigint       NOT NULL AUTO_INCREMENT COMMENT '提交记录ID',
+  `task_id`        bigint       NOT NULL                COMMENT '任务ID',
+  `repo_id`        varchar(200)                         COMMENT '仓库ID/名称',
+  `commit_hash`    varchar(64)  NOT NULL                COMMENT '提交哈希',
+  `commit_message`  varchar(500)                         COMMENT '提交信息',
+  `author`         varchar(100)                         COMMENT '提交者',
+  `commit_time`     datetime                             COMMENT '提交时间',
+  `create_by`      varchar(64)           DEFAULT ''    COMMENT '创建者',
+  `create_time`     datetime                             COMMENT '创建时间',
+  PRIMARY KEY (`task_commit_id`),
   KEY `idx_commit_task` (`task_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务关联代码提交表';
 
 DROP TABLE IF EXISTS `task_dependency`;
 CREATE TABLE `task_dependency` (
-  `id`            bigint      NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `task_id`       bigint      NOT NULL                COMMENT '任务ID',
-  `depends_on_id` bigint      NOT NULL                COMMENT '依赖的任务ID',
-  `type`          varchar(20) NOT NULL DEFAULT 'blocks' COMMENT '依赖类型：blocks/blocked_by',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_task_dep` (`task_id`, `depends_on_id`)
+  `task_dependency_id` bigint      NOT NULL AUTO_INCREMENT COMMENT '依赖关系ID',
+  `task_id`            bigint      NOT NULL                COMMENT '任务ID',
+  `dependency_task_id` bigint      NOT NULL                COMMENT '依赖的任务ID',
+  `type`              varchar(20) NOT NULL DEFAULT 'blocks' COMMENT '依赖类型：blocks/blocked_by',
+  PRIMARY KEY (`task_dependency_id`),
+  UNIQUE KEY `uk_task_dep` (`task_id`, `dependency_task_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='任务依赖关系表';
 
 -- ============================================================
@@ -918,3 +918,72 @@ INSERT INTO sys_menu (menu_id, parent_id, menu_name, order_num, path, component,
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 (1,4),(1,5),(1,400),(1,401),(1,500),(1,501),
 (1,2000),(1,2001),(1,2002),(1,2003),(1,2010),(1,2011),(1,2012),(1,2013);
+
+-- ============================================================
+-- 发布管理模块 Release Module
+-- ============================================================
+
+DROP TABLE IF EXISTS `release_issue`;
+DROP TABLE IF EXISTS `release_artifact`;
+DROP TABLE IF EXISTS `release_plan`;
+
+CREATE TABLE `release_plan` (
+  `release_plan_id`    BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '发布计划ID',
+  `project_id`         BIGINT       NOT NULL                COMMENT '所属项目ID',
+  `name`               VARCHAR(128) NOT NULL DEFAULT ''      COMMENT '发布名称',
+  `description`        VARCHAR(500) DEFAULT NULL             COMMENT '发布描述',
+  `release_date`       DATETIME     DEFAULT NULL             COMMENT '计划发布日期',
+  `status`             INT          DEFAULT 0 COMMENT '状态：0=草稿 1=已发布 2=构建中 3=已发布 4=已归档',
+  `build_number`       INT          DEFAULT 0                COMMENT '构建号',
+  `git_tag`            VARCHAR(128) DEFAULT NULL             COMMENT 'Git标签',
+  `git_branch`         VARCHAR(128) DEFAULT NULL             COMMENT 'Git分支',
+  `changelog`          TEXT                                   COMMENT '变更日志',
+  `created_by`         BIGINT     DEFAULT NULL               COMMENT '创建者',
+  `created_at`         DATETIME    DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_by`         BIGINT     DEFAULT NULL               COMMENT '更新者',
+  `updated_at`         DATETIME    DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `desc`               VARCHAR(500) DEFAULT NULL             COMMENT '描述',
+  `release_type`       INT          DEFAULT 0 COMMENT '类型：0=标准 1=热修复 2=特性 3=测试版 4=预发布',
+  `is_draft`           TINYINT(1)  DEFAULT 1                COMMENT '是否草稿',
+  `is_stable`          TINYINT(1)  DEFAULT 1                COMMENT '是否稳定版',
+  `download_url`       VARCHAR(500) DEFAULT NULL             COMMENT '下载地址',
+  `release_notes`      TEXT                                   COMMENT '发布说明',
+  `deleted`            TINYINT(1)  DEFAULT 0                 COMMENT '逻辑删除',
+  INDEX `idx_release_project` (`project_id`),
+  INDEX `idx_release_status`  (`status`),
+  INDEX `idx_release_deleted` (`deleted`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 COMMENT='发布计划表';
+
+CREATE TABLE `release_artifact` (
+  `release_artifact_id` BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '发布产物ID',
+  `release_plan_id`     BIGINT       NOT NULL                COMMENT '所属发布计划ID',
+  `artifact_name`       VARCHAR(128) NOT NULL DEFAULT ''      COMMENT '产物名称',
+  `artifact_type`       VARCHAR(32)  DEFAULT NULL             COMMENT '产物类型',
+  `file_name`           VARCHAR(256) DEFAULT NULL             COMMENT '文件名称',
+  `file_path`           VARCHAR(500) DEFAULT NULL             COMMENT '文件路径',
+  `file_size`           BIGINT       DEFAULT NULL             COMMENT '文件大小',
+  `file_hash`           VARCHAR(64)  DEFAULT NULL             COMMENT '文件哈希',
+  `download_url`        VARCHAR(500) DEFAULT NULL             COMMENT '下载地址',
+  `download_count`      INT          DEFAULT 0                COMMENT '下载次数',
+  `uploaded_by`         BIGINT       DEFAULT NULL             COMMENT '上传人',
+  `uploaded_at`         DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
+  `metadata`            TEXT                                   COMMENT '元数据',
+  `deleted`             TINYINT(1)  DEFAULT 0                 COMMENT '逻辑删除',
+  INDEX `idx_artifact_release` (`release_plan_id`),
+  INDEX `idx_artifact_deleted` (`deleted`)
+) ENGINE=InnoDB COMMENT='发布产物表';
+
+CREATE TABLE `release_issue` (
+  `release_issue_id`  BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '发布关联问题ID',
+  `release_plan_id`   BIGINT       NOT NULL                COMMENT '所属发布计划ID',
+  `issue_id`           BIGINT       DEFAULT NULL             COMMENT '外部问题ID',
+  `task_id`            BIGINT       DEFAULT NULL             COMMENT '关联任务ID',
+  `category`           INT          DEFAULT NULL COMMENT '类别：0=bug 1=新特性 2=优化 3=任务',
+  `notes`              VARCHAR(500) DEFAULT NULL             COMMENT '备注',
+  `added_by`           BIGINT       DEFAULT NULL             COMMENT '添加人',
+  `added_at`           DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  `deleted`            TINYINT(1)  DEFAULT 0                 COMMENT '逻辑删除',
+  INDEX `idx_issue_release` (`release_plan_id`),
+  INDEX `idx_issue_task`     (`task_id`),
+  INDEX `idx_issue_deleted`  (`deleted`)
+) ENGINE=InnoDB COMMENT='发布关联问题表';

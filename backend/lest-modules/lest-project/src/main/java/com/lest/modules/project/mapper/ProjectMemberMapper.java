@@ -12,15 +12,13 @@ import java.util.List;
 @Mapper
 public interface ProjectMemberMapper
 {
-    ProjectMember selectById(@Param("id") Long id);
-
     List<ProjectMember> selectByProjectId(@Param("projectId") Long projectId);
 
     ProjectMember selectByProjectIdAndUserId(@Param("projectId") Long projectId, @Param("userId") Long userId);
 
     int insert(ProjectMember member);
 
-    int updateById(ProjectMember member);
+    int updateByProjectIdAndUserId(ProjectMember member);
 
     int deleteByProjectIdAndUserId(@Param("projectId") Long projectId, @Param("userId") Long userId);
 

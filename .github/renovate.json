@@ -1,0 +1,101 @@
+name: Renovate
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Every Monday at 2 AM UTC
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'info'
+        type: choice
+        options:
+          - debug
+          - info
+          - warn
+          - error
+
+  # Run on these events to catch up quickly
+  push:
+    branches:
+      - renovate/all-minor-patch
+
+permissions:
+  contents: write
+  pull-requests: write
+  discussions: write
+
+env:
+  LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+
+# Declare dynamic configuration
+configuration: |
+  {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+      "config:recommended",
+      "docker:disableMajor",
+      "group:allNonMajor",
+      ":semanticCommitTypeAll(chore)",
+      ":semanticCommitScope(deps)"
+    ],
+    "labels": ["dependencies", "automated"],
+    "assignees": ["@${{ github.repository_owner }}"],
+    "reviewers": ["@${{ github.repository_owner }}"],
+    "timezone": "Asia/Shanghai",
+    "schedule": ["every weekend"],
+    "commitMessagePrefix": "chore(deps)",
+    "prConcurrentLimit": 5,
+    "prHourlyLimit": 3,
+    "separateMajorMinor": true,
+    "separateMinorPatch": false,
+    "rebaseWhen": "behind",
+    "dependencyDashboard": true,
+    "dependencyDashboardTitle": "🤖 Renovate Dependency Dashboard",
+    "commitMessageAction": "Update",
+    "commitMessageExtra": "to {{newVersion}}",
+    "commitMessageTopic": "{{depName}}",
+    "commitMessageSuffix": "",
+    "vulnerabilityAlerts": {
+      "labels": ["security"],
+      "assignees": ["@${{ github.repository_owner }}"],
+      "reviewers": ["@${{ github.repository_owner }}"],
+      "semanticCommits": "enabled",
+      "assigneesSampleSize": 1,
+      "reviewersSampleSize": 1
+    },
+    "packageRules": [
+      {
+        "description": "Auto-merge minor and patch updates for backend (Maven)",
+        "matchManagers": ["maven"],
+        "matchUpdateTypes": ["minor", "patch", "digest"],
+        "automerge": true,
+        "automergeType": "pr",
+        "automergeStrategy": "squash"
+      },
+      {
+        "description": "Auto-merge minor and patch updates for frontend (npm)",
+        "matchManagers": ["npm"],
+        "matchUpdateTypes": ["minor", "patch", "digest"],
+        "automerge": true,
+        "automergeType": "pr",
+        "automergeStrategy": "squash"
+      },
+      {
+        "description": "Group Docker base image updates",
+        "matchDatasources": ["dockerfile"],
+        "groupName": "docker base images"
+      },
+      {
+        "description": "Pin GitHub Actions to SHA",
+        "matchManagers": ["github-actions"],
+        "pinDigest": true
+      },
+      {
+        "description": "Do not auto-update infrastructure dependencies",
+        "matchPackagePrefixes": ["io.minio"],
+        "enabled": false
+      }
+    ]
+  }

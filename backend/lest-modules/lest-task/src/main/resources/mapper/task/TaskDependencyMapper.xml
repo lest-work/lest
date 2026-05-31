@@ -2,6 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lest.modules.task.mapper.TaskDependencyMapper">
 
+    <resultMap type="com.lest.modules.task.domain.TaskDependency" id="TaskDependencyResult">
+        <id     property="taskDependencyId"   column="task_dependency_id" />
+        <result property="taskId"             column="task_id"           />
+        <result property="dependencyTaskId"   column="dependency_task_id"/>
+        <result property="type"               column="type"            />
+    </resultMap>
+
     <insert id="insert" parameterType="com.lest.modules.task.domain.TaskDependency">
         insert into task_dependency (task_id, dependency_task_id, type) values (#{taskId}, #{dependencyTaskId}, #{type})
     </insert>

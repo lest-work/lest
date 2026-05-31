@@ -354,8 +354,23 @@ public class AuthLogic
      */
     public boolean hasPermi(Collection<String> authorities, String permission)
     {
-        return authorities.stream().filter(StringUtils::hasText)
-                .anyMatch(x -> ALL_PERMISSION.equals(x) || PatternMatchUtils.simpleMatch(x, permission));
+        if (authorities == null || authorities.isEmpty())
+        {
+            return false;
+        }
+        for (String authority : authorities)
+        {
+            if (StringUtils.isEmpty(authority))
+            {
+                continue;
+            }
+            if (ALL_PERMISSION.equals(authority) || authority.equals(permission)
+                    || PatternMatchUtils.simpleMatch(authority, permission))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

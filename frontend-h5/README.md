@@ -42,4 +42,4 @@ npm run build
 ## 文档链接
 
 - [主项目文档](../docs/README.md)
-- [API 文档](../docs/API.md)
+- [API 文档](../docs/reference/api/API.md)

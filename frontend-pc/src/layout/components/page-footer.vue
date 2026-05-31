@@ -2,22 +2,25 @@
 <template>
   <ele-text type="placeholder" class="ele-footer">
     <el-space :size="24">
-      <el-link underline="never" href="http://doc.ruoyi.vip" target="_blank">
-        RuoYi
+      <el-link underline="never" href="https://github.com/lest-work/lest" target="_blank">
+        GitHub
       </el-link>
-      <el-link
-        underline="never"
-        href="https://eleadmin.com/doc/eleadminplus/"
-        target="_blank"
-      >
-        EleAdmin
+      <el-link underline="never" href="https://github.com/lest-work/lest/issues" target="_blank">
+        反馈
+      </el-link>
+      <el-link underline="never" href="https://github.com/lest-work/lest/blob/main/README.md" target="_blank">
+        文档
       </el-link>
     </el-space>
     <div style="margin-top: 8px">
-      Copyright © 2025 RuoYi & EleAdmin All Rights Reserved.
+      Copyright © {{ currentYear }} Lest Platform. MIT License.
     </div>
   </ele-text>
 </template>
+
+<script setup>
+  const currentYear = new Date().getFullYear();
+</script>
 
 <style lang="scss" scoped>
   @use 'element-plus/theme-chalk/src/mixins/function.scss' as *;

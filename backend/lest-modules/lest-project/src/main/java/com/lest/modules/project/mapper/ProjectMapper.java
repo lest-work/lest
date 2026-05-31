@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper
 {
-    Project selectById(@Param("id") Long id);
+    Project selectById(@Param("projectId") Long projectId);
 
     List<Project> selectProjectList(Project project);
 
@@ -22,5 +22,5 @@ public interface ProjectMapper
 
     int updateById(Project project);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("projectId") Long projectId);
 }

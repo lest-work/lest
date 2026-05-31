@@ -17,6 +17,12 @@
 
     <dependencies>
 
+        <!-- Lest Common Core -->
+        <dependency>
+            <groupId>com.lest</groupId>
+            <artifactId>lest-common-core</artifactId>
+        </dependency>
+
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework</groupId>

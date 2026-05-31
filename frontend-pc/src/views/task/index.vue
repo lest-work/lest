@@ -22,9 +22,9 @@
           >
             <el-option
               v-for="p in projectOptions"
-              :key="p.id"
+              :key="p.projectId"
               :label="p.name"
-              :value="p.id"
+              :value="p.projectId"
             />
           </el-select>
         </el-form-item>
@@ -47,7 +47,7 @@
           <el-button type="primary" :icon="SearchOutlined" @click="handleSearch">查询</el-button>
           <el-button :icon="ReloadOutlined" @click="handleReset">重置</el-button>
           <el-button
-            v-permission="['task:add']"
+            v-permission="['task:task:add']"
             type="primary"
             :icon="PlusOutlined"
             @click="openAddDialog"
@@ -65,7 +65,7 @@
         v-loading="loading"
         :data="list"
         stripe
-        row-key="id"
+        row-key="taskId"
         style="width: 100%"
       >
         <el-table-column prop="title" label="任务标题" min-width="200" show-overflow-tooltip>
@@ -98,7 +98,7 @@
             <el-link type="primary" underline="never" @click="handleChangeStatus(row)">改状态</el-link>
             <el-divider direction="vertical" />
             <el-link
-              v-permission="['task:remove']"
+              v-permission="['task:task:remove']"
               type="danger"
               underline="never"
               @click="handleDelete(row)"
@@ -125,7 +125,7 @@
     <!-- 新增/编辑弹窗 / Add/Edit dialog -->
     <el-dialog
       v-model="dialogVisible"
-      :title="formData.id ? '编辑任务' : '新建任务'"
+      :title="formData.taskId ? '编辑任务' : '新建任务'"
       width="560px"
       destroy-on-close
     >
@@ -135,7 +135,12 @@
         </el-form-item>
         <el-form-item label="所属项目" prop="projectId">
           <el-select v-model="formData.projectId" filterable placeholder="请选择项目" style="width: 100%">
-            <el-option v-for="p in projectOptions" :key="p.id" :label="p.name" :value="p.id" />
+            <el-option v-for="p in projectOptions" :key="p.projectId" :label="p.name" :value="p.projectId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属迭代">
+          <el-select v-model="formData.iterationId" clearable placeholder="选择迭代（可选）" style="width: 100%" :disabled="!formData.projectId">
+            <el-option v-for="it in iterationOptions" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
           </el-select>
         </el-form-item>
         <el-form-item label="任务类型" prop="taskType">
@@ -215,13 +220,13 @@
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessageBox } from 'element-plus';
   import { EleMessage } from 'ele-admin-plus';
-  import { SearchOutlined, PlusOutlined, ReloadOutlined, PictureOutlined as KanbanIcon } from '@/components/icons';
+  import { SearchOutlined, PlusOutlined, ReloadOutlined, AppstoreOutlined as KanbanIcon } from '@/components/icons';
   import { pageTasks, addTask, updateTask, removeTask, updateTaskStatus } from '@/api/task';
-  import { pageProjects } from '@/api/project';
+  import { pageProjects, listIterations } from '@/api/project';
 
   const router = useRouter();
 
@@ -236,6 +241,7 @@
   const list = ref([]);
   const total = ref(0);
   const projectOptions = ref([]);
+  const iterationOptions = ref([]);
   const dialogVisible = ref(false);
   const drawerVisible = ref(false);
   const statusDialogVisible = ref(false);
@@ -253,9 +259,10 @@
   });
 
   const formData = reactive({
-    id: undefined,
+    taskId: undefined,
     title: '',
     projectId: undefined,
+    iterationId: undefined,
     taskType: 'task',
     priority: 'p2',
     status: 'todo',
@@ -289,6 +296,16 @@
     }).catch(() => {});
   }
 
+  watch(() => formData.projectId, (val) => {
+    iterationOptions.value = [];
+    formData.iterationId = undefined;
+    if (val) {
+      listIterations(val, { pageSize: 100 }).then((res) => {
+        iterationOptions.value = res.rows ?? [];
+      }).catch(() => {});
+    }
+  });
+
   function handleSearch() {
     query.pageNum = 1;
     fetchList();
@@ -305,9 +322,10 @@
 
   function openAddDialog() {
     Object.assign(formData, {
-      id: undefined,
+      taskId: undefined,
       title: '',
       projectId: undefined,
+      iterationId: undefined,
       taskType: 'task',
       priority: 'p2',
       status: 'todo',
@@ -315,6 +333,7 @@
       estimatedHours: undefined,
       description: ''
     });
+    iterationOptions.value = [];
     dialogVisible.value = true;
   }
 
@@ -336,7 +355,7 @@
     await formRef.value?.validate();
     submitLoading.value = true;
     try {
-      if (formData.id) {
+      if (formData.taskId) {
         await updateTask(formData);
         EleMessage.success({ message: '修改成功', plain: true });
       } else {
@@ -360,7 +379,7 @@
 
   function handleSubmitStatus() {
     submitLoading.value = true;
-    updateTaskStatus(currentTask.value.id, newStatus.value)
+    updateTaskStatus(currentTask.value.taskId, newStatus.value)
       .then(() => {
         EleMessage.success({ message: '状态已更新', plain: true });
         statusDialogVisible.value = false;
@@ -380,7 +399,7 @@
       draggable: true
     })
       .then(() => {
-        removeTask(row.id)
+        removeTask(row.taskId)
           .then(() => {
             EleMessage.success({ message: '删除成功', plain: true });
             fetchList();

@@ -7,15 +7,15 @@ import com.lest.common.core.web.domain.BaseEntity;
 
 /**
  * 里程碑对象 milestone
- * 
+ *
  * @author yshan2028
  */
 public class Milestone extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
-    private Long id;
+    /** 里程碑ID */
+    private Long milestoneId;
 
     /** 所属项目ID */
     private Long projectId;
@@ -33,14 +33,14 @@ public class Milestone extends BaseEntity
     /** 关联迭代列表（非数据库字段） */
     private List<Iteration> iterations;
 
-    public Long getId()
+    public Long getMilestoneId()
     {
-        return id;
+        return milestoneId;
     }
 
-    public void setId(Long id)
+    public void setMilestoneId(Long milestoneId)
     {
-        this.id = id;
+        this.milestoneId = milestoneId;
     }
 
     public Long getProjectId()

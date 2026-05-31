@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lest.common.core.web.controller.BaseController;
 import com.lest.common.core.web.domain.AjaxResult;
 import com.lest.common.core.web.page.TableDataInfo;
+import com.lest.common.log.annotation.Log;
+import com.lest.common.log.enums.BusinessType;
+import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.task.domain.Task;
+import com.lest.modules.task.domain.TaskComment;
 import com.lest.modules.task.domain.TaskCommit;
 import com.lest.modules.task.domain.TaskDependency;
 import com.lest.modules.task.domain.TaskWorklog;
@@ -36,6 +40,7 @@ public class TaskController extends BaseController
     /**
      * 查询任务列表
      */
+    @RequiresPermissions("task:task:list")
     @GetMapping("/list")
     public TableDataInfo list(Task task)
     {
@@ -47,6 +52,7 @@ public class TaskController extends BaseController
     /**
      * 获取任务详情
      */
+    @RequiresPermissions("task:task:query")
     @GetMapping("/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
     {
@@ -56,6 +62,8 @@ public class TaskController extends BaseController
     /**
      * 新增任务
      */
+    @RequiresPermissions("task:task:add")
+    @Log(title = "任务管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Task task)
     {
@@ -65,6 +73,8 @@ public class TaskController extends BaseController
     /**
      * 修改任务
      */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Task task)
     {
@@ -74,6 +84,8 @@ public class TaskController extends BaseController
     /**
      * 删除任务
      */
+    @RequiresPermissions("task:task:remove")
+    @Log(title = "任务管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {
@@ -83,6 +95,8 @@ public class TaskController extends BaseController
     /**
      * 更新任务状态
      */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务状态", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/status")
     public AjaxResult updateStatus(@PathVariable Long id, @RequestBody Task task)
     {
@@ -92,6 +106,8 @@ public class TaskController extends BaseController
     /**
      * 分配任务
      */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务分配", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/assign")
     public AjaxResult assign(@PathVariable Long id, @RequestBody Task task)
     {
@@ -110,6 +126,7 @@ public class TaskController extends BaseController
     /**
      * 获取看板视图
      */
+    @RequiresPermissions("task:task:list")
     @GetMapping("/board")
     public AjaxResult board(@RequestParam Long projectId,
                             @RequestParam(required = false) Long iterationId)
@@ -120,6 +137,8 @@ public class TaskController extends BaseController
     /**
      * 看板拖拽移动
      */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务看板", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}/move")
     public AjaxResult move(@PathVariable Long id, @RequestBody Map<String, Object> params)
     {
@@ -132,6 +151,7 @@ public class TaskController extends BaseController
     /**
      * 获取甘特图数据
      */
+    @RequiresPermissions("task:task:list")
     @GetMapping("/gantt")
     public AjaxResult gantt(@RequestParam(required = false) Long projectId,
                             @RequestParam(required = false) Long iterationId)
@@ -142,6 +162,8 @@ public class TaskController extends BaseController
     /**
      * 添加子任务
      */
+    @RequiresPermissions("task:task:add")
+    @Log(title = "子任务", businessType = BusinessType.INSERT)
     @PostMapping("/{id}/subtask")
     public AjaxResult addSubtask(@PathVariable Long id, @RequestBody Task task)
     {
@@ -187,6 +209,8 @@ public class TaskController extends BaseController
     /**
      * 添加工时
      */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务工时", businessType = BusinessType.INSERT)
     @PostMapping("/{id}/worklog")
     public AjaxResult addWorklog(@PathVariable Long id, @RequestBody TaskWorklog worklog)
     {
@@ -220,6 +244,37 @@ public class TaskController extends BaseController
     public AjaxResult mergeRequestList(@PathVariable Long id)
     {
         return success(taskService.selectMergeRequests(id));
+    }
+
+    /**
+     * 获取任务评论列表
+     */
+    @GetMapping("/{id}/comment/list")
+    public AjaxResult commentList(@PathVariable Long id)
+    {
+        return success(taskService.selectComments(id));
+    }
+
+    /**
+     * 新增任务评论
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务评论", businessType = BusinessType.INSERT)
+    @PostMapping("/{id}/comment")
+    public AjaxResult addComment(@PathVariable Long id, @RequestBody TaskComment comment)
+    {
+        return toAjax(taskService.addComment(id, comment));
+    }
+
+    /**
+     * 删除任务评论
+     */
+    @RequiresPermissions("task:task:remove")
+    @Log(title = "任务评论", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{id}/comment/{commentId}")
+    public AjaxResult removeComment(@PathVariable Long id, @PathVariable Long commentId)
+    {
+        return toAjax(taskService.deleteComment(id, commentId));
     }
 
     /**

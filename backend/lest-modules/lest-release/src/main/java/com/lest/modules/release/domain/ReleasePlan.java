@@ -13,7 +13,7 @@ public class ReleasePlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long releasePlanId;
     private Long projectId;
     private String name;
     private String description;
@@ -27,8 +27,6 @@ public class ReleasePlan extends BaseEntity
     private String gitTag;
     private String gitBranch;
     private String changelog;
-    private Long createdBy;
-    private Long updatedBy;
 
     /** 描述 */
     private String desc;
@@ -46,8 +44,8 @@ public class ReleasePlan extends BaseEntity
     private String statusName;
     private String releaseTypeName;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getReleasePlanId() { return releasePlanId; }
+    public void setReleasePlanId(Long releasePlanId) { this.releasePlanId = releasePlanId; }
     public Long getProjectId() { return projectId; }
     public void setProjectId(Long projectId) { this.projectId = projectId; }
     public String getName() { return name; }
@@ -66,10 +64,6 @@ public class ReleasePlan extends BaseEntity
     public void setGitBranch(String gitBranch) { this.gitBranch = gitBranch; }
     public String getChangelog() { return changelog; }
     public void setChangelog(String changelog) { this.changelog = changelog; }
-    public Long getCreatedBy() { return createdBy; }
-    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
-    public Long getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(Long updatedBy) { this.updatedBy = updatedBy; }
     public String getDesc() { return desc; }
     public void setDesc(String desc) { this.desc = desc; }
     public Integer getReleaseType() { return releaseType; }

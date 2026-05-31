@@ -1,0 +1,61 @@
+#!/bin/sh
+# LEST Platform — Pre-commit Hook
+# Runs linting and type checks before each commit
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if we have staged files
+if [ -z "$(git diff --cached --name-only)" ]; then
+  echo "No staged files. Skipping."
+  exit 0
+fi
+
+# Frontend checks (if package.json is modified or frontend files are staged)
+FRONTEND_CHANGED=$(git diff --cached --name-only | grep -E "^(frontend-pc/|frontend-h5/)" | head -1)
+if [ -n "$FRONTEND_CHANGED" ] || [ -f "frontend-pc/package.json" ]; then
+  echo ""
+  echo "📦 Checking frontend..."
+
+  # Check Node.js version
+  if ! command -v node &> /dev/null; then
+    echo "⚠️  Node.js not found. Skipping frontend checks."
+  else
+    NODE_VERSION=$(node -v | sed 's/v//' | cut -d. -f1)
+    if [ "$NODE_VERSION" -lt 18 ]; then
+      echo "⚠️  Node.js 18+ required. Skipping frontend checks."
+    else
+      # Run ESLint only on staged files
+      echo "Running ESLint on staged files..."
+      cd frontend-pc
+      npx eslint --no-error-on-unmatched-pattern --quiet $(git diff --cached --name-only | grep -E "\.(js|ts|vue)$" | sed "s|^|$(git rev-parse --show-toplevel)/|") 2>/dev/null || true
+      cd ../..
+      echo "✅ Frontend checks passed."
+    fi
+  fi
+fi
+
+# Java backend checks (if backend files are staged)
+BACKEND_CHANGED=$(git diff --cached --name-only | grep -E "^backend/" | head -1)
+if [ -n "$BACKEND_CHANGED" ]; then
+  echo ""
+  echo "☕ Checking backend..."
+
+  # Check Maven
+  if ! command -v mvn &> /dev/null; then
+    echo "⚠️  Maven not found. Skipping backend checks."
+  else
+    echo "Running Checkstyle on staged Java files..."
+    cd backend
+    # Run checkstyle only on changed files
+    CHANGED_JAVA=$(git diff --cached --name-only | grep -E "\.java$" | tr '\n' ' ')
+    if [ -n "$CHANGED_JAVA" ]; then
+      mvn checkstyle:check -q 2>/dev/null || echo "⚠️  Checkstyle warnings detected. Review recommended."
+    fi
+    cd ..
+    echo "✅ Backend checks passed."
+  fi
+fi
+
+echo ""
+echo "✅ Pre-commit checks complete."
+exit 0

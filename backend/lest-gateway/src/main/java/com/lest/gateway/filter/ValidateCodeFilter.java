@@ -1,10 +1,14 @@
 package com.lest.gateway.filter;
 
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -12,14 +16,13 @@ import com.lest.common.core.utils.ServletUtils;
 import com.lest.common.core.utils.StringUtils;
 import com.lest.gateway.config.properties.CaptchaProperties;
 import com.lest.gateway.service.ValidateCodeService;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
-import java.nio.charset.StandardCharsets;
 
 /**
  * 验证码过滤器
  *
- * @author yshan2028
+ * @author ruoyi
  */
 @Component
 public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object>
@@ -50,31 +53,34 @@ public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object>
 
             return DataBufferUtils.join(request.getBody())
                 .flatMap(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    String bodyStr = new String(bytes, StandardCharsets.UTF_8);
                     try
                     {
-                        JSONObject obj = JSON.parseObject(bodyStr);
+                        dataBuffer.readPosition(0);
+                        CharBuffer charBuffer = StandardCharsets.UTF_8.decode(dataBuffer.toByteBuffer());
+                        String rspStr = charBuffer.toString();
+                        DataBufferUtils.release(dataBuffer);
+                        
+                        JSONObject obj = JSON.parseObject(rspStr);
                         validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
+                        
+                        // 重新包装请求体，以便后续过滤器可以读取
+                        ServerHttpRequest newRequest = new ServerHttpRequestDecorator(request)
+                        {
+                            @Override
+                            public Flux<DataBuffer> getBody()
+                            {
+                                return Flux.just(dataBuffer);
+                            }
+                        };
+                        
+                        return chain.filter(exchange.mutate().request(newRequest).build());
                     }
                     catch (Exception e)
                     {
+                        DataBufferUtils.release(dataBuffer);
                         return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
                     }
-                    // 重新包装请求体（因为已经被消费了）
-                    var factory = exchange.getResponse().bufferFactory();
-                    var newBuffer = factory.wrap(bytes);
-                    var decorator = new org.springframework.http.server.reactive.ServerHttpRequestDecorator(request) {
-                        @Override
-                        public reactor.core.publisher.Flux<org.springframework.core.io.buffer.DataBuffer> getBody() {
-                            return reactor.core.publisher.Flux.just(newBuffer);
-                        }
-                    };
-                    return chain.filter(exchange.mutate().request(decorator).build());
-                })
-                .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)));
+                });
         };
     }
 }

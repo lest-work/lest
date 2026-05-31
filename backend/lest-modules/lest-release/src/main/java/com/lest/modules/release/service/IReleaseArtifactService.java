@@ -10,9 +10,9 @@ import com.lest.modules.release.domain.ReleaseArtifact;
  */
 public interface IReleaseArtifactService
 {
-    public List<ReleaseArtifact> selectArtifactsByReleaseId(Long releaseId);
+    public List<ReleaseArtifact> selectArtifactsByReleaseId(Long releasePlanId);
 
     public int insertArtifact(ReleaseArtifact artifact);
 
-    public int deleteArtifactById(Long id);
+    public int deleteArtifactById(Long releaseArtifactId);
 }

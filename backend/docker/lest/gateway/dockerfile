@@ -1,15 +1,10 @@
-# 基础镜像
-FROM eclipse-temurin:25-jre-noble
-# author
-MAINTAINER lest
+FROM eclipse-temurin:21-jre-alpine
+LABEL maintainer="lest"
 
-# 挂载目录
 VOLUME /home/lest
-# 创建目录
 RUN mkdir -p /home/lest
-# 指定路径
+
 WORKDIR /home/lest
-# 复制jar文件到路径
-COPY ./jar/lest-gateway.jar /home/lest/lest-gateway.jar
-# 启动服务
-ENTRYPOINT ["java","-jar","lest-gateway.jar"]
+COPY jar/lest-gateway.jar /home/lest/lest-gateway.jar
+
+ENTRYPOINT ["java", "-jar", "lest-gateway.jar"]

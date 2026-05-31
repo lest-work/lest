@@ -23,7 +23,7 @@ import com.lest.gateway.service.ValidateCodeService;
 /**
  * 验证码实现处理
  *
- * @author yshan2028
+ * @author ruoyi
  */
 @Service
 public class ValidateCodeServiceImpl implements ValidateCodeService
@@ -81,7 +81,8 @@ public class ValidateCodeServiceImpl implements ValidateCodeService
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try
         {
-            ImageIO.write(image, "jpg", os);
+            // 使用 PNG 格式以获得更高清晰度
+            ImageIO.write(image, "png", os);
         }
         catch (IOException e)
         {

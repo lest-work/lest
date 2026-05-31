@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface ReleasePlanMapper
 {
-    ReleasePlan selectById(@Param("id") Long id);
+    ReleasePlan selectById(@Param("releasePlanId") Long releasePlanId);
 
     List<ReleasePlan> selectPlanList(@Param("projectId") Long projectId, @Param("keyword") String keyword,
                                      @Param("status") Integer status, @Param("releaseType") Integer releaseType,
@@ -26,5 +26,5 @@ public interface ReleasePlanMapper
 
     int updateById(ReleasePlan plan);
 
-    int deleteById(@Param("id") Long id);
+    int deleteById(@Param("releasePlanId") Long releasePlanId);
 }

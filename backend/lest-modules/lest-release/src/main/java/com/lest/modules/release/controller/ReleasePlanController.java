@@ -54,10 +54,10 @@ public class ReleasePlanController extends BaseController
     /**
      * 获取发布计划详情
      */
-    @GetMapping("/plan/{id}")
-    public AjaxResult getInfo(@PathVariable Long id)
+    @GetMapping("/plan/{releasePlanId}")
+    public AjaxResult getInfo(@PathVariable Long releasePlanId)
     {
-        return success(releasePlanService.selectReleasePlanById(id));
+        return success(releasePlanService.selectReleasePlanById(releasePlanId));
     }
 
     /**
@@ -81,56 +81,56 @@ public class ReleasePlanController extends BaseController
     /**
      * 删除发布计划
      */
-    @DeleteMapping("/plan/{id}")
-    public AjaxResult remove(@PathVariable Long id)
+    @DeleteMapping("/plan/{releasePlanId}")
+    public AjaxResult remove(@PathVariable Long releasePlanId)
     {
-        return toAjax(releasePlanService.deleteReleasePlanById(id));
+        return toAjax(releasePlanService.deleteReleasePlanById(releasePlanId));
     }
 
     /**
      * 发布
      */
-    @PostMapping("/plan/{id}/publish")
-    public AjaxResult publish(@PathVariable Long id)
+    @PostMapping("/plan/{releasePlanId}/publish")
+    public AjaxResult publish(@PathVariable Long releasePlanId)
     {
-        return toAjax(releasePlanService.publish(id));
+        return toAjax(releasePlanService.publish(releasePlanId));
     }
 
     /**
      * 归档
      */
-    @PostMapping("/plan/{id}/archive")
-    public AjaxResult archive(@PathVariable Long id)
+    @PostMapping("/plan/{releasePlanId}/archive")
+    public AjaxResult archive(@PathVariable Long releasePlanId)
     {
-        return toAjax(releasePlanService.archive(id));
+        return toAjax(releasePlanService.archive(releasePlanId));
     }
 
     /**
      * 恢复
      */
-    @PostMapping("/plan/{id}/restore")
-    public AjaxResult restore(@PathVariable Long id)
+    @PostMapping("/plan/{releasePlanId}/restore")
+    public AjaxResult restore(@PathVariable Long releasePlanId)
     {
-        return toAjax(releasePlanService.restore(id));
+        return toAjax(releasePlanService.restore(releasePlanId));
     }
 
     /**
      * 开始构建
      */
-    @PostMapping("/plan/{id}/build/start")
-    public AjaxResult startBuild(@PathVariable Long id)
+    @PostMapping("/plan/{releasePlanId}/build/start")
+    public AjaxResult startBuild(@PathVariable Long releasePlanId)
     {
-        return toAjax(releasePlanService.startBuild(id));
+        return toAjax(releasePlanService.startBuild(releasePlanId));
     }
 
     /**
      * 完成构建
      */
-    @PostMapping("/plan/{id}/build/complete")
-    public AjaxResult completeBuild(@PathVariable Long id,
+    @PostMapping("/plan/{releasePlanId}/build/complete")
+    public AjaxResult completeBuild(@PathVariable Long releasePlanId,
                                      @RequestParam(required = false) String downloadUrl)
     {
-        return toAjax(releasePlanService.completeBuild(id, downloadUrl));
+        return toAjax(releasePlanService.completeBuild(releasePlanId, downloadUrl));
     }
 
     /**
@@ -165,18 +165,18 @@ public class ReleasePlanController extends BaseController
      * 获取产物列表
      */
     @GetMapping("/artifact/list")
-    public AjaxResult artifactList(@RequestParam Long releaseId)
+    public AjaxResult artifactList(@RequestParam Long releasePlanId)
     {
-        return success(releaseArtifactService.selectArtifactsByReleaseId(releaseId));
+        return success(releaseArtifactService.selectArtifactsByReleaseId(releasePlanId));
     }
 
     /**
      * 删除产物
      */
-    @DeleteMapping("/artifact/{id}")
-    public AjaxResult removeArtifact(@PathVariable Long id)
+    @DeleteMapping("/artifact/{releaseArtifactId}")
+    public AjaxResult removeArtifact(@PathVariable Long releaseArtifactId)
     {
-        return toAjax(releaseArtifactService.deleteArtifactById(id));
+        return toAjax(releaseArtifactService.deleteArtifactById(releaseArtifactId));
     }
 
     /**
@@ -192,30 +192,30 @@ public class ReleasePlanController extends BaseController
      * 批量新增关联问题
      */
     @PostMapping("/issue/batch")
-    public AjaxResult batchAddIssues(@RequestParam Long releaseId,
+    public AjaxResult batchAddIssues(@RequestParam Long releasePlanId,
                                       @RequestParam(required = false) Long[] taskIds,
                                       @RequestParam(required = false) Long[] issueIds,
                                       @RequestParam Integer category,
                                       @RequestParam(required = false) String notes)
     {
-        return toAjax(releaseIssueService.batchAddIssues(releaseId, taskIds, issueIds, category, notes));
+        return toAjax(releaseIssueService.batchAddIssues(releasePlanId, taskIds, issueIds, category, notes));
     }
 
     /**
      * 获取关联问题列表
      */
     @GetMapping("/issue/list")
-    public AjaxResult issueList(@RequestParam Long releaseId)
+    public AjaxResult issueList(@RequestParam Long releasePlanId)
     {
-        return success(releaseIssueService.selectIssuesByReleaseId(releaseId));
+        return success(releaseIssueService.selectIssuesByReleaseId(releasePlanId));
     }
 
     /**
      * 删除关联问题
      */
-    @DeleteMapping("/issue/{id}")
-    public AjaxResult removeIssue(@PathVariable Long id)
+    @DeleteMapping("/issue/{releaseIssueId}")
+    public AjaxResult removeIssue(@PathVariable Long releaseIssueId)
     {
-        return toAjax(releaseIssueService.deleteIssueById(id));
+        return toAjax(releaseIssueService.deleteIssueById(releaseIssueId));
     }
 }

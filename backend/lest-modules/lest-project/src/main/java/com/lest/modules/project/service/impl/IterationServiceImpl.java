@@ -13,12 +13,16 @@ import com.lest.modules.project.service.IIterationService;
 
 /**
  * 迭代 服务层实现
- * 
+ *
  * @author yshan2028
  */
 @Service
 public class IterationServiceImpl implements IIterationService
 {
+    public static final int STATUS_PLANNING = 1;
+    public static final int STATUS_IN_PROGRESS = 2;
+    public static final int STATUS_COMPLETED = 3;
+
     @Autowired
     private IterationMapper iterationMapper;
 
@@ -32,9 +36,9 @@ public class IterationServiceImpl implements IIterationService
     }
 
     @Override
-    public Iteration selectIterationById(Long id)
+    public Iteration selectIterationById(Long iterationId)
     {
-        return iterationMapper.selectById(id);
+        return iterationMapper.selectById(iterationId);
     }
 
     @Override
@@ -54,7 +58,7 @@ public class IterationServiceImpl implements IIterationService
                 throw new ServiceException("迭代日期与现有迭代存在冲突");
             }
         }
-        iteration.setStatus(1);
+        iteration.setStatus(STATUS_PLANNING);
         return iterationMapper.insert(iteration);
     }
 
@@ -62,7 +66,7 @@ public class IterationServiceImpl implements IIterationService
     @Transactional(rollbackFor = Exception.class)
     public int updateIteration(Iteration iteration)
     {
-        Iteration existing = iterationMapper.selectById(iteration.getId());
+        Iteration existing = iterationMapper.selectById(iteration.getIterationId());
         if (existing == null)
         {
             throw new ServiceException("迭代不存在");
@@ -70,7 +74,7 @@ public class IterationServiceImpl implements IIterationService
         if (iteration.getStartDate() != null && iteration.getEndDate() != null)
         {
             int conflictCount = iterationMapper.countDateConflicts(
-                    existing.getProjectId(), iteration.getStartDate(), iteration.getEndDate(), iteration.getId());
+                    existing.getProjectId(), iteration.getStartDate(), iteration.getEndDate(), iteration.getIterationId());
             if (conflictCount > 0)
             {
                 throw new ServiceException("迭代日期与现有迭代存在冲突");
@@ -81,47 +85,47 @@ public class IterationServiceImpl implements IIterationService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteIterationById(Long id)
+    public int deleteIterationById(Long iterationId)
     {
-        Iteration iteration = iterationMapper.selectById(id);
+        Iteration iteration = iterationMapper.selectById(iterationId);
         if (iteration == null)
         {
             throw new ServiceException("迭代不存在");
         }
-        return iterationMapper.deleteById(id);
+        return iterationMapper.deleteById(iterationId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int startIteration(Long id)
+    public int startIteration(Long iterationId)
     {
-        Iteration iteration = iterationMapper.selectById(id);
+        Iteration iteration = iterationMapper.selectById(iterationId);
         if (iteration == null)
         {
             throw new ServiceException("迭代不存在");
         }
-        if (iteration.getStatus() != 1)
+        if (iteration.getStatus() != STATUS_PLANNING)
         {
             throw new ServiceException("只能启动计划中的迭代");
         }
-        iteration.setStatus(2);
+        iteration.setStatus(STATUS_IN_PROGRESS);
         return iterationMapper.updateById(iteration);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int completeIteration(Long id)
+    public int completeIteration(Long iterationId)
     {
-        Iteration iteration = iterationMapper.selectById(id);
+        Iteration iteration = iterationMapper.selectById(iterationId);
         if (iteration == null)
         {
             throw new ServiceException("迭代不存在");
         }
-        if (iteration.getStatus() != 2)
+        if (iteration.getStatus() != STATUS_IN_PROGRESS)
         {
             throw new ServiceException("只能完成进行中的迭代");
         }
-        iteration.setStatus(3);
+        iteration.setStatus(STATUS_COMPLETED);
         iteration.setCompletedAt(new Date());
         return iterationMapper.updateById(iteration);
     }

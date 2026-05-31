@@ -3,30 +3,33 @@
 <mapper namespace="com.lest.modules.project.mapper.MilestoneMapper">
 
     <resultMap type="com.lest.modules.project.domain.Milestone" id="MilestoneResult">
-        <id     property="id"          column="id"          />
+        <id     property="milestoneId" column="milestone_id" />
         <result property="projectId"   column="project_id"  />
-        <result property="name"        column="name"        />
-        <result property="description" column="description" />
-        <result property="targetDate"  column="target_date" />
-        <result property="createTime"   column="created_at"  />
-        <result property="updateTime"   column="updated_at"  />
+        <result property="name"         column="name"        />
+        <result property="description"  column="description" />
+        <result property="targetDate"    column="target_date" />
+        <result property="createBy"      column="create_by"   />
+        <result property="createTime"    column="create_time" />
+        <result property="updateBy"      column="update_by"   />
+        <result property="updateTime"    column="update_time" />
     </resultMap>
 
     <sql id="selectMilestoneVo">
-        select id, project_id, name, description, target_date, created_at, updated_at from milestone where deleted = 0
+        select milestone_id, project_id, name, description, target_date,
+               create_by, create_time, update_by, update_time from milestone where 1=1
     </sql>
 
     <select id="selectById" resultMap="MilestoneResult">
-        <include refid="selectMilestoneVo"/> and id = #{id}
+        <include refid="selectMilestoneVo"/> and milestone_id = #{milestoneId}
     </select>
 
     <select id="selectByProjectId" resultMap="MilestoneResult">
         <include refid="selectMilestoneVo"/> and project_id = #{projectId} order by target_date asc
     </select>
 
-    <insert id="insert" parameterType="com.lest.modules.project.domain.Milestone" useGeneratedKeys="true" keyProperty="id">
-        insert into milestone (project_id, name, description, target_date, created_at, updated_at)
-        values (#{projectId}, #{name}, #{description}, #{targetDate}, now(), now())
+    <insert id="insert" parameterType="com.lest.modules.project.domain.Milestone" useGeneratedKeys="true" keyProperty="milestoneId">
+        insert into milestone (project_id, name, description, target_date, create_by, create_time, update_by, update_time)
+        values (#{projectId}, #{name}, #{description}, #{targetDate}, #{createBy}, now(), #{updateBy}, now())
     </insert>
 
     <update id="updateById" parameterType="com.lest.modules.project.domain.Milestone">
@@ -35,13 +38,14 @@
             <if test="name != null">name = #{name},</if>
             <if test="description != null">description = #{description},</if>
             <if test="targetDate != null">target_date = #{targetDate},</if>
-            updated_at = now()
+            update_by = #{updateBy},
+            update_time = now()
         </set>
-        where id = #{id} and deleted = 0
+        where milestone_id = #{milestoneId}
     </update>
 
-    <update id="deleteById">
-        update milestone set deleted = 1 where id = #{id}
-    </update>
+    <delete id="deleteById">
+        delete from milestone where milestone_id = #{milestoneId}
+    </delete>
 
 </mapper>

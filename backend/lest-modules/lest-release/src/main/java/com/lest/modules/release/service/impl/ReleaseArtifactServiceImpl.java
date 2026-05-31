@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.lest.common.core.exception.ServiceException;
 import com.lest.modules.release.domain.ReleaseArtifact;
 import com.lest.modules.release.mapper.ReleaseArtifactMapper;
 import com.lest.modules.release.service.IReleaseArtifactService;
@@ -21,9 +20,9 @@ public class ReleaseArtifactServiceImpl implements IReleaseArtifactService
     private ReleaseArtifactMapper artifactMapper;
 
     @Override
-    public List<ReleaseArtifact> selectArtifactsByReleaseId(Long releaseId)
+    public List<ReleaseArtifact> selectArtifactsByReleaseId(Long releasePlanId)
     {
-        return artifactMapper.selectByReleaseId(releaseId);
+        return artifactMapper.selectByReleaseId(releasePlanId);
     }
 
     @Override
@@ -37,8 +36,8 @@ public class ReleaseArtifactServiceImpl implements IReleaseArtifactService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteArtifactById(Long id)
+    public int deleteArtifactById(Long releaseArtifactId)
     {
-        return artifactMapper.deleteById(id);
+        return artifactMapper.deleteById(releaseArtifactId);
     }
 }

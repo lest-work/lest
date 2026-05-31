@@ -103,7 +103,7 @@ export async function listSubtasks(id: number): Promise<Task[]> {
  * 查询工时记录
  */
 export async function listWorklogs(taskId: number): Promise<TaskWorklog[]> {
-  const res = await request.get<AjaxResult<TaskWorklog[]>>(`/task/${taskId}/worklog`);
+  const res = await request.get<AjaxResult<TaskWorklog[]>>(`/task/${taskId}/worklog/list`);
   if (res.data.code === 200) return res.data.data ?? [];
   return Promise.reject(new Error(res.data.msg));
 }
@@ -111,8 +111,8 @@ export async function listWorklogs(taskId: number): Promise<TaskWorklog[]> {
 /**
  * 新增工时记录
  */
-export async function addWorklog(data: TaskWorklog): Promise<string> {
-  const res = await request.post<AjaxResult<unknown>>('/task/worklog', data);
+export async function addWorklog(taskId: number, data: TaskWorklog): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>(`/task/${taskId}/worklog`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -121,7 +121,7 @@ export async function addWorklog(data: TaskWorklog): Promise<string> {
  * 查询任务评论列表
  */
 export async function listComments(taskId: number): Promise<TaskComment[]> {
-  const res = await request.get<AjaxResult<TaskComment[]>>(`/task/${taskId}/comment`);
+  const res = await request.get<AjaxResult<TaskComment[]>>(`/task/${taskId}/comment/list`);
   if (res.data.code === 200) return res.data.data ?? [];
   return Promise.reject(new Error(res.data.msg));
 }
@@ -129,8 +129,17 @@ export async function listComments(taskId: number): Promise<TaskComment[]> {
 /**
  * 新增任务评论
  */
-export async function addComment(data: TaskComment): Promise<string> {
-  const res = await request.post<AjaxResult<unknown>>('/task/comment', data);
+export async function addComment(taskId: number, data: TaskComment): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>(`/task/${taskId}/comment`, data);
+  if (res.data.code === 200) return res.data.msg;
+  return Promise.reject(new Error(res.data.msg));
+}
+
+/**
+ * 删除任务评论
+ */
+export async function removeComment(taskId: number, commentId: number): Promise<string> {
+  const res = await request.delete<AjaxResult<unknown>>(`/task/${taskId}/comment/${commentId}`);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
@@ -139,7 +148,7 @@ export async function addComment(data: TaskComment): Promise<string> {
  * 查询标签列表
  */
 export async function listLabels(projectId?: number): Promise<Label[]> {
-  const res = await request.get<AjaxResult<Label[]>>('/label/list', { params: { projectId } });
+  const res = await request.get<AjaxResult<Label[]>>(`/project/${projectId}/label/list`);
   if (res.data.code === 200) return res.data.data ?? [];
   return Promise.reject(new Error(res.data.msg));
 }
@@ -147,8 +156,8 @@ export async function listLabels(projectId?: number): Promise<Label[]> {
 /**
  * 新增标签
  */
-export async function addLabel(data: Label): Promise<string> {
-  const res = await request.post<AjaxResult<unknown>>('/label', data);
+export async function addLabel(projectId: number, data: Label): Promise<string> {
+  const res = await request.post<AjaxResult<unknown>>(`/project/${projectId}/label`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }
