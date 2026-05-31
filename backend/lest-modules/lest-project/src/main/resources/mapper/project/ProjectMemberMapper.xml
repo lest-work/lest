@@ -27,9 +27,9 @@
         update project_member set role = #{role} where project_id = #{projectId} and user_id = #{userId}
     </update>
 
-    <update id="deleteByProjectIdAndUserId">
-        update project_member set deleted = 1 where project_id = #{projectId} and user_id = #{userId}
-    </update>
+    <delete id="deleteByProjectIdAndUserId">
+        delete from project_member where project_id = #{projectId} and user_id = #{userId}
+    </delete>
 
     <select id="countAdminsByProjectId" resultType="int">
         select count(*) from project_member where project_id = #{projectId} and role = 'admin'

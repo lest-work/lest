@@ -19,6 +19,7 @@ import com.lest.common.log.annotation.Log;
 import com.lest.common.log.enums.BusinessType;
 import com.lest.common.security.annotation.RequiresPermissions;
 import com.lest.modules.task.domain.Task;
+import com.lest.modules.task.domain.TaskComment;
 import com.lest.modules.task.domain.TaskCommit;
 import com.lest.modules.task.domain.TaskDependency;
 import com.lest.modules.task.domain.TaskWorklog;
@@ -243,6 +244,37 @@ public class TaskController extends BaseController
     public AjaxResult mergeRequestList(@PathVariable Long id)
     {
         return success(taskService.selectMergeRequests(id));
+    }
+
+    /**
+     * 获取任务评论列表
+     */
+    @GetMapping("/{id}/comment/list")
+    public AjaxResult commentList(@PathVariable Long id)
+    {
+        return success(taskService.selectComments(id));
+    }
+
+    /**
+     * 新增任务评论
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "任务评论", businessType = BusinessType.INSERT)
+    @PostMapping("/{id}/comment")
+    public AjaxResult addComment(@PathVariable Long id, @RequestBody TaskComment comment)
+    {
+        return toAjax(taskService.addComment(id, comment));
+    }
+
+    /**
+     * 删除任务评论
+     */
+    @RequiresPermissions("task:task:remove")
+    @Log(title = "任务评论", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{id}/comment/{commentId}")
+    public AjaxResult removeComment(@PathVariable Long id, @PathVariable Long commentId)
+    {
+        return toAjax(taskService.deleteComment(id, commentId));
     }
 
     /**

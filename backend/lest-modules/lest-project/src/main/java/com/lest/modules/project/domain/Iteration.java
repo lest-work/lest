@@ -40,6 +40,9 @@ public class Iteration extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date completedAt;
 
+    /** 逻辑删除标记 */
+    private Integer deleted;
+
     public Long getIterationId()
     {
         return iterationId;
@@ -118,5 +121,15 @@ public class Iteration extends BaseEntity
     public void setCompletedAt(Date completedAt)
     {
         this.completedAt = completedAt;
+    }
+
+    public Integer getDeleted()
+    {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted)
+    {
+        this.deleted = deleted;
     }
 }

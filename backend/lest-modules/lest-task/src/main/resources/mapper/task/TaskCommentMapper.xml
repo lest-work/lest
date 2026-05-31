@@ -33,7 +33,7 @@
     </update>
 
     <delete id="deleteById">
-        update task_comment set deleted = 1 where task_comment_id = #{taskCommentId}
+        delete from task_comment where task_comment_id = #{taskCommentId}
     </delete>
 
     <select id="countByParentId" resultType="int">

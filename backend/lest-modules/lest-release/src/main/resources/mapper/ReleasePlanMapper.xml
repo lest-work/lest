@@ -13,9 +13,7 @@
         <result property="gitTag"          column="git_tag"          />
         <result property="gitBranch"       column="git_branch"       />
         <result property="changelog"      column="changelog"        />
-        <result property="createdBy"      column="created_by"       />
         <result property="createTime"      column="created_at"       />
-        <result property="updatedBy"       column="updated_by"       />
         <result property="updateTime"      column="updated_at"       />
         <result property="desc"            column="desc"             />
         <result property="releaseType"     column="release_type"     />
@@ -28,8 +26,8 @@
 
     <sql id="selectPlanVo">
         select release_plan_id, project_id, name, description, release_date, status, build_number,
-               git_tag, git_branch, changelog, created_by, created_at, updated_by, updated_at,
-               `desc`, release_type, is_draft, is_stable, download_url, release_notes
+               git_tag, git_branch, changelog, created_at, updated_at,
+               `desc`, release_type, is_draft, is_stable, download_url, release_notes, deleted
         from release_plan where deleted = 0
     </sql>
 

@@ -22,6 +22,9 @@ import com.lest.modules.project.service.IProjectService;
 @Service
 public class ProjectServiceImpl implements IProjectService
 {
+    public static final int STATUS_ACTIVE = 1;
+    public static final int STATUS_ARCHIVED = 2;
+
     @Autowired
     private ProjectMapper projectMapper;
 
@@ -52,7 +55,7 @@ public class ProjectServiceImpl implements IProjectService
         {
             throw new ServiceException("项目名称'" + project.getName() + "'已存在");
         }
-        project.setStatus(1);
+        project.setStatus(STATUS_ACTIVE);
         int rows = projectMapper.insert(project);
         ProjectMember member = new ProjectMember();
         member.setProjectId(project.getProjectId());
@@ -113,11 +116,11 @@ public class ProjectServiceImpl implements IProjectService
         {
             throw new ServiceException("项目不存在");
         }
-        if (project.getStatus() == 2)
+        if (project.getStatus() == STATUS_ARCHIVED)
         {
             throw new ServiceException("项目已处于归档状态");
         }
-        project.setStatus(2);
+        project.setStatus(STATUS_ARCHIVED);
         return projectMapper.updateById(project);
     }
 
@@ -130,11 +133,11 @@ public class ProjectServiceImpl implements IProjectService
         {
             throw new ServiceException("项目不存在");
         }
-        if (project.getStatus() != 2)
+        if (project.getStatus() != STATUS_ARCHIVED)
         {
             throw new ServiceException("项目未处于归档状态");
         }
-        project.setStatus(1);
+        project.setStatus(STATUS_ACTIVE);
         return projectMapper.updateById(project);
     }
 

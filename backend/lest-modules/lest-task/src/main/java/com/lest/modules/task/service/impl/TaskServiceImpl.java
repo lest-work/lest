@@ -40,6 +40,9 @@ public class TaskServiceImpl implements ITaskService
     @Autowired
     private TaskCommitMapper commitMapper;
 
+    @Autowired
+    private TaskCommentMapper commentMapper;
+
     @Override
     public List<Task> selectTaskList(Task task)
     {
@@ -404,6 +407,41 @@ public class TaskServiceImpl implements ITaskService
         mr.setType("mr");
         mr.setSource("manual");
         return commitMapper.insert(mr);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addComment(Long taskId, TaskComment comment)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null)
+        {
+            throw new ServiceException("任务不存在");
+        }
+        comment.setTaskId(taskId);
+        return commentMapper.insert(comment);
+    }
+
+    @Override
+    public List<TaskComment> selectComments(Long taskId)
+    {
+        return commentMapper.selectByTaskId(taskId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteComment(Long taskId, Long commentId)
+    {
+        TaskComment comment = commentMapper.selectById(commentId);
+        if (comment == null)
+        {
+            throw new ServiceException("评论不存在");
+        }
+        if (!comment.getTaskId().equals(taskId))
+        {
+            throw new ServiceException("评论不属于该任务");
+        }
+        return commentMapper.deleteById(commentId);
     }
 
     private void enrichTask(Task task)

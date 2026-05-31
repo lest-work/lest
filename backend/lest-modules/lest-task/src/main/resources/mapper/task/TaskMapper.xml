@@ -67,7 +67,7 @@
     </select>
 
     <select id="selectByParentId" resultMap="TaskResult">
-        <include refid="selectTaskVo"/> and parent_id = #{parentId} order by sort desc
+        <include refid="selectTaskVo"/> and parent_id = #{parentId} and deleted = 0 order by sort desc
     </select>
 
     <select id="selectByIds" resultMap="TaskResult">

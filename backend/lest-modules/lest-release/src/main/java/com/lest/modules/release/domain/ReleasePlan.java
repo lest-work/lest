@@ -27,8 +27,6 @@ public class ReleasePlan extends BaseEntity
     private String gitTag;
     private String gitBranch;
     private String changelog;
-    private Long createdBy;
-    private Long updatedBy;
 
     /** 描述 */
     private String desc;
@@ -66,10 +64,6 @@ public class ReleasePlan extends BaseEntity
     public void setGitBranch(String gitBranch) { this.gitBranch = gitBranch; }
     public String getChangelog() { return changelog; }
     public void setChangelog(String changelog) { this.changelog = changelog; }
-    public Long getCreatedBy() { return createdBy; }
-    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
-    public Long getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(Long updatedBy) { this.updatedBy = updatedBy; }
     public String getDesc() { return desc; }
     public void setDesc(String desc) { this.desc = desc; }
     public Integer getReleaseType() { return releaseType; }

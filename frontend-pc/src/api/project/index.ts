@@ -109,7 +109,7 @@ export async function addIteration(projectId: number, data: Iteration): Promise<
  * 修改迭代（含状态更新）
  */
 export async function updateIteration(data: Iteration): Promise<string> {
-  const res = await request.put<AjaxResult<unknown>>(`/project/iteration/${data.id}`, data);
+  const res = await request.put<AjaxResult<unknown>>(`/project/iteration/${data.iterationId}`, data);
   if (res.data.code === 200) return res.data.msg;
   return Promise.reject(new Error(res.data.msg));
 }

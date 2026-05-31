@@ -11,6 +11,7 @@
         <result property="startDate"   column="start_date"   />
         <result property="endDate"     column="end_date"     />
         <result property="completedAt" column="completed_at" />
+        <result property="deleted"      column="deleted"      />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"   column="create_time"  />
         <result property="updateBy"    column="update_by"    />
@@ -19,8 +20,8 @@
 
     <sql id="selectIterationVo">
         select iteration_id, project_id, name, goal, status, start_date, end_date, completed_at,
-               create_by, create_time, update_by, update_time
-        from iteration where 1=1
+               deleted, create_by, create_time, update_by, update_time
+        from iteration where deleted = 0
     </sql>
 
     <select id="selectById" resultMap="IterationResult">
@@ -53,21 +54,21 @@
             update_by = #{updateBy},
             update_time = now()
         </set>
-        where iteration_id = #{iterationId}
+        where iteration_id = #{iterationId} and deleted = 0
     </update>
 
-    <delete id="deleteById">
-        delete from iteration where iteration_id = #{iterationId}
-    </delete>
+    <update id="deleteById">
+        update iteration set deleted = 1 where iteration_id = #{iterationId}
+    </update>
 
     <select id="countDateConflicts" resultType="int">
         select count(*) from iteration
-        where project_id = #{projectId} and iteration_id != #{excludeId}
+        where project_id = #{projectId} and deleted = 0 and iteration_id != #{excludeId}
         and start_date &lt;= #{endDate} and end_date &gt;= #{startDate}
     </select>
 
     <select id="countByProjectId" resultType="int">
-        select count(*) from iteration where project_id = #{projectId}
+        select count(*) from iteration where project_id = #{projectId} and deleted = 0
     </select>
 
 </mapper>

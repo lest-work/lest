@@ -19,6 +19,10 @@ import com.lest.modules.project.service.IIterationService;
 @Service
 public class IterationServiceImpl implements IIterationService
 {
+    public static final int STATUS_PLANNING = 1;
+    public static final int STATUS_IN_PROGRESS = 2;
+    public static final int STATUS_COMPLETED = 3;
+
     @Autowired
     private IterationMapper iterationMapper;
 
@@ -54,7 +58,7 @@ public class IterationServiceImpl implements IIterationService
                 throw new ServiceException("迭代日期与现有迭代存在冲突");
             }
         }
-        iteration.setStatus(1);
+        iteration.setStatus(STATUS_PLANNING);
         return iterationMapper.insert(iteration);
     }
 
@@ -100,11 +104,11 @@ public class IterationServiceImpl implements IIterationService
         {
             throw new ServiceException("迭代不存在");
         }
-        if (iteration.getStatus() != 1)
+        if (iteration.getStatus() != STATUS_PLANNING)
         {
             throw new ServiceException("只能启动计划中的迭代");
         }
-        iteration.setStatus(2);
+        iteration.setStatus(STATUS_IN_PROGRESS);
         return iterationMapper.updateById(iteration);
     }
 
@@ -117,11 +121,11 @@ public class IterationServiceImpl implements IIterationService
         {
             throw new ServiceException("迭代不存在");
         }
-        if (iteration.getStatus() != 2)
+        if (iteration.getStatus() != STATUS_IN_PROGRESS)
         {
             throw new ServiceException("只能完成进行中的迭代");
         }
-        iteration.setStatus(3);
+        iteration.setStatus(STATUS_COMPLETED);
         iteration.setCompletedAt(new Date());
         return iterationMapper.updateById(iteration);
     }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import com.lest.modules.task.domain.Task;
+import com.lest.modules.task.domain.TaskComment;
 import com.lest.modules.task.domain.TaskCommit;
 import com.lest.modules.task.domain.TaskDependency;
 import com.lest.modules.task.domain.TaskWorklog;
@@ -50,6 +51,12 @@ public interface ITaskService
     public int addWorklog(Long taskId, TaskWorklog worklog);
 
     public List<TaskWorklog> selectWorklogs(Long taskId);
+
+    public int addComment(Long taskId, TaskComment comment);
+
+    public List<TaskComment> selectComments(Long taskId);
+
+    public int deleteComment(Long taskId, Long commentId);
 
     public List<TaskCommit> selectCommits(Long taskId);
 
