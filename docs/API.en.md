@@ -1,69 +1,69 @@
-| 属性 / Attribute | 内容 / Content |
-| 版本 / Version | V1.3 |
-| 创建日期 / Created | 2026-05-26 |
-| 最后更新 / Last Updated | 2026-05-31 |
+| Attribute | Content |
+| Version | V1.3 |
+| Created Date | 2026-05-26 |
+| Last Updated | 2026-05-31 |
 
 ---
 
-## 1. 文档概述 / Document Overview
+## 1. Document Overview
 
-本文档汇总了 LEST Platform 所有微服务的 API 接口定义 / This document provides API interface definitions for all LEST Platform microservices
+This document provides the API interface definitions for all microservices in LEST Platform, including authentication services, task management, project management, code management, CI/CD, WakaTime, meeting management, notification messages, team performance, and AI services modules.
 
-### 服务端口概览
+### Service Port Overview
 
-> **注意**: API Gateway (`lest-gateway`, port 8080) 统一入口，所有服务通过 Gateway 路由（StripPrefix=1）。以下 Base Path 为 Gateway 路由前缀。
+> **Note**: API Gateway (`lest-gateway`, port 8080) serves as the unified entry point. All services are routed through the Gateway (StripPrefix=1). The following Base Path is the Gateway routing prefix.
 
-| 服务名称 | 服务标识 | 默认端口 | Base Path |
+| Service Name | Service ID | Default Port | Base Path |
 |---------|---------|---------|-----------|
-| API 网关 | lest-gateway | 8080 | `/` (统一入口) |
-| 认证服务 | lest-auth | 8096 | `/auth` |
-| 系统管理服务 | lest-system | 8081 | `/system` |
-| 项目管理服务 | lest-project | 8082 | `/project` |
-| 任务管理服务 | lest-task | 8083 | `/task` |
-| 发布管理服务 | lest-release | 8087 | `/release` |
-| 定时任务服务 | lest-job | 9203 | `/jobs` |
-| 文件服务 | lest-file | 8091 | `/file` |
-| 监控服务 | lest-monitor | 9100 | `/monitor` |
+| API Gateway | lest-gateway | 8080 | `/` (Unified Entry) |
+| Authentication Service | lest-auth | 8096 | `/auth` |
+| System Management Service | lest-system | 8081 | `/system` |
+| Project Management Service | lest-project | 8082 | `/project` |
+| Task Management Service | lest-task | 8083 | `/task` |
+| Release Management Service | lest-release | 8087 | `/release` |
+| Scheduled Job Service | lest-job | 9203 | `/jobs` |
+| File Service | lest-file | 8091 | `/file` |
+| Monitoring Service | lest-monitor | 9100 | `/monitor` |
 
-> 未实现的服务（meeting/notification/ai/performance/open/plugin/wakapi）暂未启用，Gateway 路由已禁用。
+> Services not yet implemented (meeting/notification/ai/performance/open/plugin/wakapi) are currently disabled, and Gateway routing is disabled for these services.
 
 ---
 
-## 2. 通用说明 / General Notes
+## 2. General Specifications
 
-### 2.1 认证方式 / Authentication
+### 2.1 Authentication Method
 
-除特殊说明外，所有 API 请求均需要在 Header 中携带认证 Token / All API requests require an authentication Token in the Header unless otherwise noted:
+Unless otherwise specified, all API requests require an authentication token in the Header:
 
 ```
 Authorization: Bearer {accessToken}
 ```
 
-**Token 说明 / Token Description**:
-- `accessToken`：用户登录后获取的访问令牌，有效期 15 分钟 / Access token obtained after user login, valid for 15 minutes
-- `refreshToken`：刷新令牌，用于获取新的 accessToken，有效期 7 天 / Refresh token used to obtain a new accessToken, valid for 7 days
+**Token Description**:
+- `accessToken`: The access token obtained after user login, valid for 15 minutes
+- `refreshToken`: The refresh token used to obtain a new accessToken, valid for 7 days
 
-### 2.2 内部服务调用 / Internal Service Invocation
+### 2.2 Internal Service Calls
 
-微服务之间通过内部 Token 进行调用 / Microservices invoke each other via internal Token:
-
-```
-X-Internal-Token: {内部调用Token}
-```
-
-### 2.3 Webhook 认证 / Webhook Authentication
-
-Webhook 回调使用签名验证 / Webhook callbacks use signature verification:
+Microservices communicate with each other using internal tokens:
 
 ```
-X-Hub-Signature-256: {签名}        # GitHub Webhook
-X-Gitlab-Token: {签名}            # GitLab Webhook
-X-Jenkins-Token: {签名}            # Jenkins Webhook
+X-Internal-Token: {Internal Call Token}
 ```
 
-### 2.4 响应格式 / Response Format
+### 2.3 Webhook Authentication
 
-所有 API 采用统一的 JSON 响应格式 / All APIs use a unified JSON response format:
+Webhook callbacks use signature verification:
+
+```
+X-Hub-Signature-256: {signature}        # GitHub Webhook
+X-Gitlab-Token: {signature}            # GitLab Webhook
+X-Jenkins-Token: {signature}            # Jenkins Webhook
+```
+
+### 2.4 Response Format
+
+All APIs use a unified JSON response format:
 
 ```json
 {
@@ -73,13 +73,13 @@ X-Jenkins-Token: {签名}            # Jenkins Webhook
 }
 ```
 
-**code 说明 / Status Code Description**:
-- `200`：成功 / Success
-- 其他：业务错误码（见各模块错误码定义） / Others: Business error codes (see module-specific error codes)
+**Code Description**:
+- `200`: Success
+- Other: Business error codes (see each module's error code definitions)
 
-### 2.5 分页格式 / Pagination Format
+### 2.5 Pagination Format
 
-列表查询接口采用统一分页格式 / List query endpoints use a unified pagination format:
+List query interfaces use a unified pagination format:
 
 ```json
 {
@@ -94,48 +94,48 @@ X-Jenkins-Token: {签名}            # Jenkins Webhook
 }
 ```
 
-**分页参数 / Pagination Parameters**:
-| 参数 | 类型 | 说明 |
+**Pagination Parameters**:
+| Parameter | Type | Description |
 |------|------|------|
-| page | int | 页码，从 1 开始 / Page number, starting from 1 |
-| size | int | 每页条数，默认 20 / Page size, default 20 |
+| page | int | Page number, starting from 1 |
+| size | int | Number of items per page, default 20 |
 
-### 2.6 日期时间格式 / Date & Time Format
+### 2.6 Date and Time Format
 
-- 日期格式 / Date format: `YYYY-MM-DD`
-- 时间格式 / Time format: `YYYY-MM-DD HH:mm:ss`
-- 时间戳 / Timestamp: Unix timestamp (seconds)
+- Date format: `YYYY-MM-DD`
+- Time format: `YYYY-MM-DD HH:mm:ss`
+- Timestamp: Unix timestamp (seconds)
 
-### 2.7 通用错误码 / Common Error Codes
+### 2.7 Common Error Codes
 
-| 错误码 / Code | 说明 / Description |
+| Error Code | Description |
 |--------|------|
-| 9000 | VALIDATION_ERROR - 参数校验失败 |
-| 9001 | PARAM_MISSING - 缺少必需参数 |
-| 9002 | PARAM_TYPE_ERROR - 参数类型错误 |
-| 9500 | PERMISSION_DENIED - 权限不足 |
-| 9999 | SYSTEM_ERROR - 系统内部错误 |
-| 9998 | SERVICE_UNAVAILABLE - 服务暂不可用 |
+| 9000 | VALIDATION_ERROR - Parameter validation failed |
+| 9001 | PARAM_MISSING - Required parameter is missing |
+| 9002 | PARAM_TYPE_ERROR - Parameter type error |
+| 9500 | PERMISSION_DENIED - Insufficient permissions |
+| 9999 | SYSTEM_ERROR - Internal system error |
+| 9998 | SERVICE_UNAVAILABLE - Service temporarily unavailable |
 
 ---
 
-## 3. 认证服务 API / Auth Service API (lest-auth)
+## 3. Authentication Service API (lest-auth)
 
-**服务标识 / Service ID**: lest-auth
-**默认端口 / Default Port**: 8096
-**Base Path**：/auth, /organization, /dictionary, /operation-log
+**Service ID**: lest-auth
+**Default Port**: 8096
+**Base Path**: /auth, /organization, /dictionary, /operation-log
 
-### 3.1 认证接口 / Authentication Endpoints
+### 3.1 Authentication Interfaces
 
-#### 3.1.1 获取验证码 / Get Captcha
+#### 3.1.1 Get Captcha
 
-获取图形验证码，用于登录防暴力破解 / Get graphic captcha for login brute-force protection.
+Get a graphic captcha for login brute-force protection.
 
 ```
 GET /auth/captcha
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -148,14 +148,14 @@ GET /auth/captcha
 }
 ```
 
-#### 3.1.2 用户登录 / User Login
+#### 3.1.2 User Login
 
 ```
 POST /auth/login
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -166,7 +166,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -180,14 +180,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.1.3 刷新 Token / Refresh Token
+#### 3.1.3 Refresh Token
 
 ```
 POST /auth/refresh
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -195,7 +195,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -209,14 +209,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.1.4 获取当前用户信息 / Get Current User Info
+#### 3.1.4 Get Current User Info
 
 ```
 GET /auth/user
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -236,7 +236,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 3.1.5 修改密码 / Change Password
+#### 3.1.5 Change Password
 
 ```
 PUT /auth/password
@@ -244,7 +244,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -253,7 +253,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -263,14 +263,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.1.6 登出 / Logout
+#### 3.1.6 Logout
 
 ```
 POST /auth/logout
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -280,16 +280,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.2 用户管理接口 / User Management Endpoints
+### 3.2 User Management Interfaces
 
-#### 3.2.1 分页查询用户 / Paginated User Query
+#### 3.2.1 Paginated Query Users
 
 ```
 GET /auth/user/page?username=zhang&status=1&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -316,7 +316,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 3.2.2 创建用户 / Create User
+#### 3.2.2 Create User
 
 ```
 POST /auth/user
@@ -324,7 +324,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -338,7 +338,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -351,7 +351,7 @@ Content-Type: application/json
 }
 ```
 
-#### 3.2.3 更新用户 / Update User
+#### 3.2.3 Update User
 
 ```
 PUT /auth/user/{id}
@@ -359,7 +359,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -371,7 +371,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -381,14 +381,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.2.4 删除用户 / Delete User
+#### 3.2.4 Delete User
 
 ```
 DELETE /auth/user/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -398,7 +398,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 3.2.5 修改用户状态 / Change User Status
+#### 3.2.5 Change User Status
 
 ```
 PUT /auth/user/{id}/status
@@ -406,7 +406,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -414,7 +414,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -424,14 +424,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.2.6 重置密码 / Reset Password
+#### 3.2.6 Reset Password
 
 ```
 PUT /auth/user/{id}/password
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -441,16 +441,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.3 角色管理接口 / Role Management Endpoints
+### 3.3 Role Management Interfaces
 
-#### 3.3.1 分页查询角色 / Paginated Role Query
+#### 3.3.1 Paginated Query Roles
 
 ```
 GET /auth/role/page?roleName=开发&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-#### 3.3.2 创建角色 / Create Role
+#### 3.3.2 Create Role
 
 ```
 POST /auth/role
@@ -458,7 +458,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -469,7 +469,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -482,7 +482,7 @@ Content-Type: application/json
 }
 ```
 
-#### 3.3.3 更新角色 / Update Role
+#### 3.3.3 Update Role
 
 ```
 PUT /auth/role/{id}
@@ -490,7 +490,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -500,7 +500,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -510,14 +510,14 @@ Content-Type: application/json
 }
 ```
 
-#### 3.3.4 删除角色 / Delete Role
+#### 3.3.4 Delete Role
 
 ```
 DELETE /auth/role/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -527,16 +527,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.4 菜单管理接口 / Menu Management Endpoints
+### 3.4 Menu Management Interfaces
 
-#### 3.4.1 获取菜单树 / Get Menu Tree
+#### 3.4.1 Get Menu Tree
 
 ```
 GET /auth/menu/tree
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -557,14 +557,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 3.4.2 获取路由 / Get Routes
+#### 3.4.2 Get Routes
 
 ```
 GET /auth/menu/routes
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -585,16 +585,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.5 机构管理接口 / Organization Management Endpoints
+### 3.5 Organization Management Interfaces
 
-#### 3.5.1 获取机构树 / Get Organization Tree
+#### 3.5.1 Get Organization Tree
 
 ```
 GET /organization/tree
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -617,16 +617,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.6 字典管理接口 / Dictionary Management Endpoints
+### 3.6 Dictionary Management Interfaces
 
-#### 3.6.1 获取字典列表 / Get Dictionary List
+#### 3.6.1 Get Dictionary List
 
 ```
 GET /dictionary?dictCode=status
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -645,16 +645,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 3.7 操作日志接口 / Operation Log Endpoints
+### 3.7 Operation Log Interfaces
 
-#### 3.7.1 分页查询日志 / Paginated Log Query
+#### 3.7.1 Paginated Query Logs
 
 ```
 GET /operation-log/page?username=admin&module=用户管理&startTime=2026-05-01&endTime=2026-05-25&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -685,15 +685,15 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 4. 项目管理 API / Project Management API (lest-project)
+## 4. Project Management API (lest-project)
 
-**服务标识 / Service ID**: lest-project
-**默认端口 / Default Port**: 8082
-**Base Path**：/project, /iteration, /milestone
+**Service ID**: lest-project
+**Default Port**: 8082
+**Base Path**: /project, /iteration, /milestone
 
-### 4.1 项目管理接口 / Project Management Endpoints
+### 4.1 Project Management Interfaces
 
-#### 4.1.1 创建项目 / Create Project
+#### 4.1.1 Create Project
 
 ```
 POST /project
@@ -701,7 +701,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -714,7 +714,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -727,14 +727,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.1.2 分页查询项目 / Paginated Project Query
+#### 4.1.2 Paginated Query Projects
 
 ```
 GET /project/page?name=lest&status=active&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -766,14 +766,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.3 获取项目详情 / Get Project Detail
+#### 4.1.3 Get Project Details
 
 ```
 GET /project/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -806,7 +806,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.4 更新项目 / Update Project
+#### 4.1.4 Update Project
 
 ```
 PUT /project/{id}
@@ -814,7 +814,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -826,7 +826,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -836,14 +836,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.1.5 删除项目 / Delete Project
+#### 4.1.5 Delete Project
 
 ```
 DELETE /project/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -853,14 +853,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.6 归档项目 / Archive Project
+#### 4.1.6 Archive Project
 
 ```
 PUT /project/{id}/archive
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -870,14 +870,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.7 恢复项目 / Unarchive Project
+#### 4.1.7 Restore Project
 
 ```
 PUT /project/{id}/unarchive
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -887,16 +887,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 4.2 项目成员接口 / Project Member Endpoints
+### 4.2 Project Member Interfaces
 
-#### 4.2.1 获取项目成员列表 / Get Project Member List
+#### 4.2.1 Get Project Member List
 
 ```
 GET /project/{id}/member
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -915,7 +915,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.2.2 添加项目成员 / Add Project Member
+#### 4.2.2 Add Project Member
 
 ```
 POST /project/{id}/member
@@ -923,7 +923,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -932,7 +932,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -945,14 +945,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.2.3 移除项目成员 / Remove Project Member
+#### 4.2.3 Remove Project Member
 
 ```
 DELETE /project/{id}/member/{userId}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -962,7 +962,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.2.4 修改成员角色 / Update Member Role
+#### 4.2.4 Update Member Role
 
 ```
 PUT /project/{id}/member/{userId}/role
@@ -970,7 +970,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -978,7 +978,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -988,9 +988,9 @@ Content-Type: application/json
 }
 ```
 
-### 4.3 迭代管理接口 / Iteration Management Endpoints
+### 4.3 Iteration Management Interfaces
 
-#### 4.3.1 创建迭代 / Create Iteration
+#### 4.3.1 Create Iteration
 
 ```
 POST /project/{id}/iteration
@@ -998,7 +998,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1009,7 +1009,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1022,14 +1022,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.3.2 分页查询迭代 / Paginated Iteration Query
+#### 4.3.2 Paginated Query Iterations
 
 ```
 GET /project/{id}/iteration/page?status=active&page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1056,14 +1056,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.3.3 获取迭代详情 / Get Iteration Detail
+#### 4.3.3 Get Iteration Details
 
 ```
 GET /iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1085,7 +1085,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.3.4 更新迭代 / Update Iteration
+#### 4.3.4 Update Iteration
 
 ```
 PUT /iteration/{id}
@@ -1093,7 +1093,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1104,7 +1104,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1114,14 +1114,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.3.5 删除迭代 / Delete Iteration
+#### 4.3.5 Delete Iteration
 
 ```
 DELETE /iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1131,14 +1131,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.3.6 启动迭代 / Start Iteration
+#### 4.3.6 Start Iteration
 
 ```
 PUT /iteration/{id}/start
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1148,7 +1148,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.3.7 结束迭代 / Complete Iteration
+#### 4.3.7 Complete Iteration
 
 ```
 PUT /iteration/{id}/complete
@@ -1156,7 +1156,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1165,7 +1165,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1175,14 +1175,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.3.8 获取迭代任务列表 / Get Iteration Task List
+#### 4.3.8 Get Iteration Task List
 
 ```
 GET /iteration/{id}/task?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1208,9 +1208,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 4.4 里程碑接口 / Milestone Endpoints
+### 4.4 Milestone Interfaces
 
-#### 4.4.1 创建里程碑 / Create Milestone
+#### 4.4.1 Create Milestone
 
 ```
 POST /project/{id}/milestone
@@ -1218,7 +1218,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1228,7 +1228,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1241,14 +1241,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.4.2 分页查询里程碑 / Paginated Milestone Query
+#### 4.4.2 Paginated Query Milestones
 
 ```
 GET /project/{id}/milestone/page?page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1275,14 +1275,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.4.3 获取里程碑详情 / Get Milestone Detail
+#### 4.4.3 Get Milestone Details
 
 ```
 GET /milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1305,7 +1305,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.4.4 更新里程碑 / Update Milestone
+#### 4.4.4 Update Milestone
 
 ```
 PUT /milestone/{id}
@@ -1313,7 +1313,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1323,7 +1323,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1333,14 +1333,14 @@ Content-Type: application/json
 }
 ```
 
-#### 4.4.5 删除里程碑 / Delete Milestone
+#### 4.4.5 Delete Milestone
 
 ```
 DELETE /milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1350,7 +1350,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.4.6 关联迭代到里程碑 / Link Iteration to Milestone
+#### 4.4.6 Associate Iteration to Milestone
 
 ```
 POST /milestone/{id}/iteration
@@ -1358,7 +1358,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1366,7 +1366,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1378,15 +1378,15 @@ Content-Type: application/json
 
 ---
 
-## 5. 任务管理 API / Task Management API (lest-task)
+## 5. Task Management API (lest-task)
 
-**服务标识 / Service ID**: lest-task
-**默认端口 / Default Port**: 8083
-**Base Path**：/task
+**Service ID**: lest-task
+**Default Port**: 8083
+**Base Path**: /task
 
-### 5.1 任务管理接口 / Task Management Endpoints
+### 5.1 Task Management Interfaces
 
-#### 5.1.1 创建任务 / Create Task
+#### 5.1.1 Create Task
 
 ```
 POST /task
@@ -1394,7 +1394,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1412,7 +1412,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1425,14 +1425,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.1.2 分页查询任务 / Paginated Task Query
+#### 5.1.2 Paginated Query Tasks
 
 ```
 GET /task/page?projectId=1&iterationId=1&assigneeId=1&status=todo&priority=p1&labels=后端&keyword=登录&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1470,14 +1470,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.1.3 获取任务详情 / Get Task Detail
+#### 5.1.3 Get Task Details
 
 ```
 GET /task/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1517,7 +1517,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.1.4 更新任务 / Update Task
+#### 5.1.4 Update Task
 
 ```
 PUT /task/{id}
@@ -1525,7 +1525,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1536,7 +1536,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1546,14 +1546,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.1.5 删除任务 / Delete Task
+#### 5.1.5 Delete Task
 
 ```
 DELETE /task/{id}
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1563,7 +1563,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.1.6 更新任务状态 / Update Task Status
+#### 5.1.6 Update Task Status
 
 ```
 PUT /task/{id}/status
@@ -1571,7 +1571,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1579,7 +1579,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1589,7 +1589,7 @@ Content-Type: application/json
 }
 ```
 
-#### 5.1.7 分配任务 / Assign Task
+#### 5.1.7 Assign Task
 
 ```
 PUT /task/{id}/assign
@@ -1597,7 +1597,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1606,7 +1606,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1616,14 +1616,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.1.8 认领任务 / Claim Task
+#### 5.1.8 Claim Task
 
 ```
 POST /task/{id}/claim
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1633,16 +1633,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.2 看板接口 / Kanban Board Endpoints
+### 5.2 Kanban Interfaces
 
-#### 5.2.1 获取看板视图 / Get Kanban Board View
+#### 5.2.1 Get Kanban View
 
 ```
 GET /task/board?projectId=1&iterationId=1
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1675,7 +1675,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.2.2 拖拽任务更新列 / Drag Task to Update Column
+#### 5.2.2 Drag Task to Update Column
 
 ```
 PUT /task/{id}/move
@@ -1683,7 +1683,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1692,7 +1692,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1702,16 +1702,16 @@ Content-Type: application/json
 }
 ```
 
-### 5.3 甘特图接口 / Gantt Chart Endpoints
+### 5.3 Gantt Chart Interfaces
 
-#### 5.3.1 获取甘特图数据 / Get Gantt Chart Data
+#### 5.3.1 Get Gantt Chart Data
 
 ```
 GET /task/gantt?projectId=1&iterationId=1&startDate=2026-05-01&endDate=2026-05-31
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1743,9 +1743,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.4 父子任务接口 / Parent-Child Task Endpoints
+### 5.4 Parent-Child Task Interfaces
 
-#### 5.4.1 添加子任务 / Add Subtask
+#### 5.4.1 Add Subtask
 
 ```
 POST /task/{id}/subtask
@@ -1753,7 +1753,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1765,7 +1765,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1778,14 +1778,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.4.2 获取子任务列表 / Get Subtask List
+#### 5.4.2 Get Subtask List
 
 ```
 GET /task/{id}/subtask
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1803,9 +1803,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.5 任务依赖接口 / Task Dependency Endpoints
+### 5.5 Task Dependency Interfaces
 
-#### 5.5.1 添加前置任务 / Add Blocker Task
+#### 5.5.1 Add Blocker
 
 ```
 POST /task/{id}/dependency
@@ -1813,7 +1813,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1822,7 +1822,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1832,14 +1832,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.5.2 获取任务依赖 / Get Task Dependencies
+#### 5.5.2 Get Task Dependencies
 
 ```
 GET /task/{id}/dependency
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1858,9 +1858,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.6 工时接口 / Worklog Endpoints
+### 5.6 Worklog Interfaces
 
-#### 5.6.1 添加工时记录 / Add Worklog
+#### 5.6.1 Add Worklog
 
 ```
 POST /task/{id}/worklog
@@ -1868,7 +1868,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1878,7 +1878,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1891,14 +1891,14 @@ Content-Type: application/json
 }
 ```
 
-#### 5.6.2 获取工时记录 / Get Worklog List
+#### 5.6.2 Get Worklogs
 
 ```
 GET /task/{id}/worklog?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1924,16 +1924,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.7 标签接口 / Label Endpoints
+### 5.7 Label Interfaces
 
-#### 5.7.1 获取项目标签 / Get Project Labels
+#### 5.7.1 Get Project Labels
 
 ```
 GET /project/{projectId}/labels
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1954,7 +1954,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.7.2 创建标签 / Create Label
+#### 5.7.2 Create Label
 
 ```
 POST /project/{projectId}/label
@@ -1962,7 +1962,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -1971,7 +1971,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -1985,16 +1985,16 @@ Content-Type: application/json
 }
 ```
 
-### 5.8 任务-代码关联接口 / Task-Code Linking Endpoints
+### 5.8 Task-Code Association Interfaces
 
-#### 5.8.1 获取任务关联的提交 / Get Task Linked Commits
+#### 5.8.1 Get Commits Associated with Task
 
 ```
 GET /task/{id}/commits
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2019,14 +2019,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.8.2 获取任务关联的 MR/PR / Get Task Linked MR/PR
+#### 5.8.2 Get MR/PR Associated with Task
 
 ```
 GET /task/{id}/merge-requests
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2052,7 +2052,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 5.8.3 手动关联提交 / Manually Link Commit
+#### 5.8.3 Manually Link Commit
 
 ```
 POST /task/{id}/commit
@@ -2060,7 +2060,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -2069,7 +2069,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2078,7 +2078,7 @@ Content-Type: application/json
 }
 ```
 
-#### 5.8.4 手动关联 MR/PR / Manually Link MR/PR
+#### 5.8.4 Manually Link MR/PR
 
 ```
 POST /task/{id}/merge-request
@@ -2086,7 +2086,7 @@ Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -2094,7 +2094,7 @@ Content-Type: application/json
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2103,16 +2103,16 @@ Content-Type: application/json
 }
 ```
 
-### 5.9 任务-CI 关联接口 / Task-CI Linking Endpoints
+### 5.9 Task-CI Association Interfaces
 
-#### 5.9.1 获取任务关联的构建 / Get Task Linked Builds
+#### 5.9.1 Get Builds Associated with Task
 
 ```
 GET /task/{id}/pipelines
 Authorization: Bearer {accessToken}
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2140,17 +2140,17 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 5.10 Webhook 接口 / Webhook Endpoints
+### 5.10 Webhook Interfaces
 
-#### 5.10.1 CI 构建完成回调 / CI Build Completed Callback
+#### 5.10.1 CI Build Completed Callback
 
 ```
 POST /webhook/ci/build
 Content-Type: application/json
-X-Signature: {签名}
+X-Signature: {signature}
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -2165,7 +2165,7 @@ X-Signature: {签名}
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2174,15 +2174,15 @@ X-Signature: {签名}
 }
 ```
 
-#### 5.10.2 Git 提交推送回调 / Git Commit Push Callback
+#### 5.10.2 Git Commit Pushed Callback
 
 ```
 POST /webhook/git/commit
 Content-Type: application/json
-X-Signature: {签名}
+X-Signature: {signature}
 ```
 
-请求 / Request:
+Request:
 
 ```json
 {
@@ -2196,7 +2196,7 @@ X-Signature: {签名}
 }
 ```
 
-响应 / Response:
+Response:
 
 ```json
 {
@@ -2210,18 +2210,14 @@ X-Signature: {签名}
 
 ---
 
+## 13. Error Code Summary
 
----
+### 13.1 Authentication Module (1000-1999)
 
-## 13. 错误码汇总 / Error Codes Summary
-
-### 13.1 认证模块 (1000-1999) / Authentication Module (1000-1999)
-
-| 错误码 / Code | 说明 / Description |
+| Error Code | Description |
 |--------|------|
-| 1000 | AUTH_USERNAME_PASSWORD_ERROR - 用户名或密码错误 / Incorrect username or password |
-| 1001 | AUTH_CAPTCHA_EXPIRED - 验证码已过期 / Captcha expired |
-| 1002 | AUTH_CAPTCHA_ERROR - 验证码错误 / Incorrect captcha |
+| 1000 | AUTH_USERNAME_PASSWORD_ERROR - Incorrect username or password |
+| 1001 | AUTH_CAPTCHA_EXPIRED - Captcha has expired |
+| 1002 | AUTH_CAPTCHA_ERROR - Incorrect captcha |
 
 ---
-
