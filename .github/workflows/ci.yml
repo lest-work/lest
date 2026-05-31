@@ -57,22 +57,22 @@ jobs:
         with:
           name: backend-jars
           path: |
-            lest-gateway/target/lest-gateway-*.jar
-            lest-auth/target/lest-auth-*.jar
-            lest-modules/lest-system/target/lest-system-*.jar
-            lest-modules/lest-project/target/lest-project-*.jar
-            lest-modules/lest-task/target/lest-task-*.jar
-            lest-modules/lest-release/target/lest-release-*.jar
-            lest-modules/lest-job/target/lest-job-*.jar
-            lest-modules/lest-file/target/lest-file-*.jar
-            lest-modules/lest-meeting/target/lest-meeting-*.jar
-            lest-modules/lest-notification/target/lest-notification-*.jar
-            lest-modules/lest-ai/target/lest-ai-*.jar
-            lest-modules/lest-open/target/lest-open-*.jar
-            lest-modules/lest-performance/target/lest-performance-*.jar
-            lest-modules/lest-plugin/target/lest-plugin-*.jar
-            lest-modules/lest-wakapi/target/lest-wakapi-*.jar
-            lest-visual/lest-monitor/target/lest-monitor-*.jar
+            backend/lest-gateway/target/lest-gateway-*.jar
+            backend/lest-auth/target/lest-auth-*.jar
+            backend/lest-modules/lest-system/target/lest-system-*.jar
+            backend/lest-modules/lest-project/target/lest-project-*.jar
+            backend/lest-modules/lest-task/target/lest-task-*.jar
+            backend/lest-modules/lest-release/target/lest-release-*.jar
+            backend/lest-modules/lest-job/target/lest-job-*.jar
+            backend/lest-modules/lest-file/target/lest-file-*.jar
+            backend/lest-modules/lest-meeting/target/lest-meeting-*.jar
+            backend/lest-modules/lest-notification/target/lest-notification-*.jar
+            backend/lest-modules/lest-ai/target/lest-ai-*.jar
+            backend/lest-modules/lest-open/target/lest-open-*.jar
+            backend/lest-modules/lest-performance/target/lest-performance-*.jar
+            backend/lest-modules/lest-plugin/target/lest-plugin-*.jar
+            backend/lest-modules/lest-wakapi/target/lest-wakapi-*.jar
+            backend/lest-visual/lest-monitor/target/lest-monitor-*.jar
           retention-days: 1
 
   # ==================== 后端测试 ====================
