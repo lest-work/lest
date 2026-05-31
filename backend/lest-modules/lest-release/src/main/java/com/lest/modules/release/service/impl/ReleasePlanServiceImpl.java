@@ -79,7 +79,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
             plan.setIsStable(1);
         }
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setCreatedBy(userId);
+        plan.setCreateBy(String.valueOf(userId));
         return planMapper.insert(plan);
     }
 
@@ -93,7 +93,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
             throw new ServiceException("发布计划不存在");
         }
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
@@ -129,7 +129,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         plan.setStatus(STATUS_PUBLISHED);
         plan.setIsDraft(0);
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
@@ -144,7 +144,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         }
         plan.setStatus(STATUS_ARCHIVED);
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
@@ -163,7 +163,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         }
         plan.setStatus(STATUS_RELEASED);
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
@@ -187,7 +187,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         plan.setStatus(STATUS_BUILDING);
         plan.setBuildNumber(plan.getBuildNumber() + 1);
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
@@ -207,7 +207,7 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
         plan.setStatus(STATUS_RELEASED);
         plan.setDownloadUrl(downloadUrl);
         Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
-        plan.setUpdatedBy(userId);
+        plan.setUpdateBy(String.valueOf(userId));
         return planMapper.updateById(plan);
     }
 
