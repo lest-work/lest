@@ -11,12 +11,12 @@
 <p align="center">
 
 <!-- Badges row 1 -->
-<a href="https://github.com/yshan2028/Lest/releases/latest"><img src="https://img.shields.io/github/v/release/yshan2028/Lest?style=flat-square" alt="GitHub release"></a>
-<a href="https://github.com/yshan2028/Lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/yshan2028/Lest?style=flat-square" alt="License"></a>
-<a href="https://github.com/yshan2028/Lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yshan2028/Lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
-<a href="https://github.com/yshan2028/Lest/issues"><img src="https://img.shields.io/github/issues/yshan2028/Lest?style=flat-square" alt="Issues"></a>
-<a href="https://github.com/yshan2028/Lest/stargazers"><img src="https://img.shields.io/github/stars/yshan2028/Lest?style=flat-square" alt="Stars"></a>
-<a href="https://github.com/yshan2028/Lest/fork"><img src="https://img.shields.io/github/forks/yshan2028/Lest?style=flat-square" alt="Forks"></a>
+<a href="https://github.com/lest-work/lest/releases/latest"><img src="https://img.shields.io/github/v/release/lest-work/lest?style=flat-square" alt="GitHub release"></a>
+<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
+<a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
+<a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
+<a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/Lest?style=flat-square" alt="Stars"></a>
+<a href="https://github.com/lest-work/lest/fork"><img src="https://img.shields.io/github/forks/lest-work/lest?style=flat-square" alt="Forks"></a>
 
 <!-- Badges row 2 -->
 <a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
@@ -24,14 +24,14 @@
 <a href="https://v3.vuejs.org"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue"></a>
 <a href="https://nestjs.com"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript" alt="TypeScript"></a>
 <a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-24.x-2496ED?style=flat-square&logo=docker" alt="Docker"></a>
-<a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/Discussions-Welcome-blueviolet?style=flat-square" alt="Discussions"></a>
+<a href="https://github.com/lest-work/lest/discussions"><img src="https://img.shields.io/badge/Discussions-Welcome-blueviolet?style=flat-square" alt="Discussions"></a>
 </p>
 
 <p align="center">
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/文档-中文版-red?style=flat-square" alt="中文文档"></a>
-  <a href="https://github.com/yshan2028/Lest/releases"><img src="https://img.shields.io/badge/Releases-Changelog-brightgreen?style=flat-square" alt="Releases"></a>
-  <a href="https://github.com/yshan2028/Lest/discussions"><img src="https://img.shields.io/badge/Community-Discussions-blueviolet?style=flat-square" alt="Discussions"></a>
-  <a href="https://github.com/yshan2028/Lest/issues/new/choose"><img src="https://img.shields.io/badge/❮%20Issues-Report%20Bug-orange?style=flat-square" alt="Report Bug"></a>
+  <a href="https://github.com/lest-work/lest/releases"><img src="https://img.shields.io/badge/Releases-Changelog-brightgreen?style=flat-square" alt="Releases"></a>
+  <a href="https://github.com/lest-work/lest/discussions"><img src="https://img.shields.io/badge/Community-Discussions-blueviolet?style=flat-square" alt="Discussions"></a>
+  <a href="https://github.com/lest-work/lest/issues/new/choose"><img src="https://img.shields.io/badge/❮%20Issues-Report%20Bug-orange?style=flat-square" alt="Report Bug"></a>
 </p>
 
 ---
@@ -150,7 +150,7 @@ lest-platform/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yshan2028/Lest.git
+git clone https://github.com/lest-work/lest.git
 cd lest-platform
 
 # Start infrastructure services (Nacos, MinIO)
@@ -276,11 +276,11 @@ We welcome contributions! Please read our guidelines before submitting any work.
 
 ```bash
 # 1. Fork the repository and clone your fork
-git clone https://github.com/YOUR_USERNAME/Lest.git
+git clone https://github.com/YOUR_USERNAME/lest.git
 cd lest-platform
 
 # 2. Add the upstream remote
-git remote add upstream https://github.com/yshan2028/Lest.git
+git remote add upstream https://github.com/lest-work/lest.git
 
 # 3. Create a feature branch from develop
 git checkout -b feature/your-feature-name

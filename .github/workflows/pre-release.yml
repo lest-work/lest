@@ -76,21 +76,21 @@ jobs:
 
             ```bash
             # Pull the pre-release Docker image
-            docker pull ghcr.io/yshan2028/lest-platform/gateway:${{ github.event.inputs.version }}
+            docker pull ghcr.io/lest-work/lest/gateway:${{ github.event.inputs.version }}
 
             # Or clone and build from source
-            git clone https://github.com/yshan2028/Lest.git
+            git clone https://github.com/lest-work/lest.git
             cd Lest
             git checkout ${{ github.event.inputs.version }}
             ```
 
             ### Upgrade Notes
 
-            Please check the [CHANGELOG.md](https://github.com/yshan2028/Lest/blob/main/CHANGELOG.md) for breaking changes.
+            Please check the [CHANGELOG.md](https://github.com/lest-work/lest/blob/main/CHANGELOG.md) for breaking changes.
 
             ### Feedback
 
-            Report issues at: https://github.com/yshan2028/Lest/issues
+            Report issues at: https://github.com/lest-work/lest/issues
           draft: false
           prerelease: true
         continue-on-error: true

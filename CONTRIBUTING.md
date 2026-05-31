@@ -29,7 +29,7 @@ Thank you for your interest in contributing to LEST Platform! This document prov
 
 ```bash
 # 1. Clone and start infrastructure
-git clone https://github.com/yshan2028/Lest.git
+git clone https://github.com/lest-work/lest.git
 cd lest-platform
 docker compose -f backend/docker/docker-compose.local.yaml up -d
 

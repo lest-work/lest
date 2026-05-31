@@ -79,7 +79,7 @@ spring:
                 - StripPrefix=1
 
             - id: lest-monitor
-              uri: http://127.0.0.1:8081
+              uri: http://127.0.0.1:9100
               predicates:
                 - Path=/monitor/**
               filters:
@@ -106,12 +106,13 @@ spring:
               filters:
                 - StripPrefix=1
 
-            - id: lest-meeting
-              uri: http://127.0.0.1:8085
-              predicates:
-                - Path=/meeting/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-meeting
+            #   uri: http://127.0.0.1:8085
+            #   predicates:
+            #     - Path=/meeting/**
+            #   filters:
+            #     - StripPrefix=1
 
             - id: lest-file
               uri: http://127.0.0.1:8091
@@ -120,33 +121,34 @@ spring:
               filters:
                 - StripPrefix=1
 
-            - id: lest-notification
-              uri: http://127.0.0.1:8086
-              predicates:
-                - Path=/notification/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-notification
+            #   uri: http://127.0.0.1:8086
+            #   predicates:
+            #     - Path=/notification/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-ai
-              uri: http://127.0.0.1:8090
-              predicates:
-                - Path=/ai/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-ai
+            #   uri: http://127.0.0.1:8090
+            #   predicates:
+            #     - Path=/ai/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-performance
-              uri: http://127.0.0.1:8088
-              predicates:
-                - Path=/performance/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-performance
+            #   uri: http://127.0.0.1:8088
+            #   predicates:
+            #     - Path=/performance/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-open
-              uri: http://127.0.0.1:8094
-              predicates:
-                - Path=/open/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-open
+            #   uri: http://127.0.0.1:8094
+            #   predicates:
+            #     - Path=/open/**
+            #   filters:
+            #     - StripPrefix=1
 
             - id: lest-release
               uri: http://127.0.0.1:8087
@@ -155,19 +157,20 @@ spring:
               filters:
                 - StripPrefix=1
 
-            - id: lest-plugin
-              uri: http://127.0.0.1:8092
-              predicates:
-                - Path=/plugin/**
-              filters:
-                - StripPrefix=1
+            # === 预留模块（暂无 Controller，v0.3+ 实现）===
+            # - id: lest-plugin
+            #   uri: http://127.0.0.1:8092
+            #   predicates:
+            #     - Path=/plugin/**
+            #   filters:
+            #     - StripPrefix=1
 
-            - id: lest-wakapi
-              uri: http://127.0.0.1:8089
-              predicates:
-                - Path=/wakapi/**
-              filters:
-                - StripPrefix=1
+            # - id: lest-wakapi
+            #   uri: http://127.0.0.1:8089
+            #   predicates:
+            #     - Path=/wakapi/**
+            #   filters:
+            #     - StripPrefix=1
 
 # Actuator
 management:

@@ -237,27 +237,27 @@ public class ReleasePlanServiceImpl implements IReleasePlanService
 
     private String getStatusName(Integer status)
     {
-        if (status == null) return "Unknown";
+        if (status == null) return "未知";
         return switch (status) {
-            case STATUS_DRAFT -> "Draft";
-            case STATUS_PUBLISHED -> "Published";
-            case STATUS_BUILDING -> "Building";
-            case STATUS_RELEASED -> "Released";
-            case STATUS_ARCHIVED -> "Archived";
-            default -> "Unknown";
+            case STATUS_DRAFT -> "草稿";
+            case STATUS_PUBLISHED -> "待发布";
+            case STATUS_BUILDING -> "构建中";
+            case STATUS_RELEASED -> "已发布";
+            case STATUS_ARCHIVED -> "已归档";
+            default -> "未知";
         };
     }
 
     private String getReleaseTypeName(Integer type)
     {
-        if (type == null) return "Standard";
+        if (type == null) return "标准";
         return switch (type) {
-            case 0 -> "Standard";
-            case 1 -> "Hotfix";
-            case 2 -> "Feature";
+            case 0 -> "标准";
+            case 1 -> "热修复";
+            case 2 -> "特性";
             case 3 -> "Beta";
             case 4 -> "Alpha";
-            default -> "Standard";
+            default -> "标准";
         };
     }
 }

@@ -334,7 +334,7 @@ curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-comp
 chmod +x /usr/local/bin/docker-compose
 
 # 3. 克隆项目
-git clone https://github.com/yshan2028/Lest.git /opt/lest-platform
+git clone https://github.com/lest-work/lest.git /opt/lest-platform
 cd /opt/lest-platform/backend/docker
 ```
 

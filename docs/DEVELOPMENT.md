@@ -61,7 +61,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/lest-team/lest-platform.git
+git clone https://github.com/lest-work/lest.git
 
 # 进入项目目录
 cd lest-platform

@@ -2,13 +2,13 @@
 <template>
   <ele-text type="placeholder" class="ele-footer">
     <el-space :size="24">
-      <el-link underline="never" href="https://github.com/yshan2028/Lest" target="_blank">
+      <el-link underline="never" href="https://github.com/lest-work/lest" target="_blank">
         GitHub
       </el-link>
-      <el-link underline="never" href="https://github.com/yshan2028/Lest/issues" target="_blank">
+      <el-link underline="never" href="https://github.com/lest-work/lest/issues" target="_blank">
         反馈
       </el-link>
-      <el-link underline="never" href="https://github.com/yshan2028/Lest/blob/main/README.md" target="_blank">
+      <el-link underline="never" href="https://github.com/lest-work/lest/blob/main/README.md" target="_blank">
         文档
       </el-link>
     </el-space>

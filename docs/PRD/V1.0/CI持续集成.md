@@ -430,7 +430,7 @@ Body:
   },
   "project": {
     "id": 1,
-    "path_with_namespace": "lest-team/lest-platform"
+    "path_with_namespace": "lest-work/lest"
   }
 }
 ```

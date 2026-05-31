@@ -1,40 +1,40 @@
 # CODEOWNERS — Auto-assign code reviewers based on file paths
 
 # Default owner for most of the codebase
-*       @yshan2028
+*       @lest-work
 
 # Backend
-/backend/                              @yshan2028
-/backend/lest-auth/                   @yshan2028
-/backend/lest-gateway/                 @yshan2028
-/backend/lest-common/                  @yshan2028
-/backend/lest-modules/lest-system/     @yshan2028
-/backend/lest-modules/lest-project/    @yshan2028
-/backend/lest-modules/lest-task/       @yshan2028
-/backend/lest-modules/lest-release/    @yshan2028
-/backend/lest-modules/lest-job/       @yshan2028
-/backend/lest-modules/lest-file/       @yshan2028
-/backend/lest-modules/lest-meeting/   @yshan2028
-/backend/lest-modules/lest-notification/ @yshan2028
-/backend/lest-modules/lest-ai/         @yshan2028
-/backend/lest-modules/lest-open/       @yshan2028
-/backend/lest-modules/lest-performance/ @yshan2028
-/backend/lest-modules/lest-plugin/     @yshan2028
-/backend/lest-modules/lest-wakapi/    @yshan2028
-/backend/lest-visual/                  @yshan2028
-/backend/docker/                       @yshan2028
+/backend/                              @lest-work
+/backend/lest-auth/                   @lest-work
+/backend/lest-gateway/                 @lest-work
+/backend/lest-common/                  @lest-work
+/backend/lest-modules/lest-system/     @lest-work
+/backend/lest-modules/lest-project/    @lest-work
+/backend/lest-modules/lest-task/       @lest-work
+/backend/lest-modules/lest-release/    @lest-work
+/backend/lest-modules/lest-job/       @lest-work
+/backend/lest-modules/lest-file/       @lest-work
+/backend/lest-modules/lest-meeting/   @lest-work
+/backend/lest-modules/lest-notification/ @lest-work
+/backend/lest-modules/lest-ai/         @lest-work
+/backend/lest-modules/lest-open/       @lest-work
+/backend/lest-modules/lest-performance/ @lest-work
+/backend/lest-modules/lest-plugin/     @lest-work
+/backend/lest-modules/lest-wakapi/    @lest-work
+/backend/lest-visual/                  @lest-work
+/backend/docker/                       @lest-work
 
 # Frontend
-/frontend-pc/                          @yshan2028
-/frontend-h5/                          @yshan2028
-/frontend-app/                         @yshan2028
+/frontend-pc/                          @lest-work
+/frontend-h5/                          @lest-work
+/frontend-app/                         @lest-work
 
 # Documentation
-/docs/                                 @yshan2028
+/docs/                                 @lest-work
 
 # CI/CD
-/.github/workflows/                    @yshan2028
+/.github/workflows/                    @lest-work
 
 # Config files
-/pom.xml                               @yshan2028
-/backend/pom.xml                       @yshan2028
+/pom.xml                               @lest-work
+/backend/pom.xml                       @lest-work

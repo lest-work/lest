@@ -2013,7 +2013,7 @@ Authorization: Bearer {accessToken}
         "authorUsername": "zhangsan",
         "authorAvatar": "https://...",
         "committedAt": "2026-05-25 10:00:00",
-        "repositoryName": "lest-team/lest-platform",
+        "repositoryName": "lest-work/lest",
         "linkType": "auto"
       }
     ],
@@ -2046,7 +2046,7 @@ Authorization: Bearer {accessToken}
         "targetBranch": "main",
         "authorUsername": "zhangsan",
         "authorAvatar": "https://...",
-        "url": "https://github.com/lest-team/lest-platform/pull/45",
+        "url": "https://github.com/lest-work/lest/pull/45",
         "createdAt": "2026-05-25 10:00:00"
       }
     ],

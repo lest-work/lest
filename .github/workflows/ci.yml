@@ -143,8 +143,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn sonar:sonar \
-            -Dsonar.projectKey=yshan2028_Lest \
-            -Dsonar.organization=yshan2028 \
+            -Dsonar.projectKey=lest-work_lest \
+            -Dsonar.organization=lest-work \
             -Dsonar.sources=. \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.java.binaries=target/classes \
@@ -226,8 +226,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           npx sonarscanner \
-            -Dsonar.projectKey=yshan2028_Lest-frontend \
-            -Dsonar.organization=yshan2028 \
+            -Dsonar.projectKey=lest-work_lest-frontend \
+            -Dsonar.organization=lest-work \
             -Dsonar.sources=src \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts \
@@ -258,57 +258,55 @@ jobs:
 
       - name: Prepare artifacts for Docker build
         run: |
-          mkdir -p backend/lest-gateway/target
-          cp artifacts/backend-jars/lest-gateway*.jar backend/lest-gateway/target/ 2>/dev/null || true
-          mkdir -p backend/lest-auth/target
-          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-system/target
-          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-project/target
-          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-task/target
-          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-release/target
-          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-job/target
-          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-file/target
-          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-meeting/target
-          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-notification/target
-          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-ai/target
-          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-open/target
-          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-performance/target
-          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-plugin/target
-          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/target/ 2>/dev/null || true
-          mkdir -p backend/lest-modules/lest-wakapi/target
-          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/target/ 2>/dev/null || true
-          mkdir -p backend/lest-visual/lest-monitor/target
-          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/target/ 2>/dev/null || true
+          # All Dockerfiles expect JARs at ./jar/xxx.jar relative to build context ./backend
+          mkdir -p backend/jar
+          cp artifacts/backend-jars/lest-gateway*.jar backend/jar/lest-gateway.jar 2>/dev/null || true
+          mkdir -p backend/lest-auth/jar
+          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/jar/lest-auth.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-system/jar
+          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/jar/lest-system.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-project/jar
+          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/jar/lest-project.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-task/jar
+          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/jar/lest-task.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-release/jar
+          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/jar/lest-release.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-job/jar
+          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/jar/lest-job.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-file/jar
+          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/jar/lest-file.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-meeting/jar
+          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/jar/lest-meeting.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-notification/jar
+          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/jar/lest-notification.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-ai/jar
+          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/jar/lest-ai.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-open/jar
+          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/jar/lest-open.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-performance/jar
+          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/jar/lest-performance.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-plugin/jar
+          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/jar/lest-plugin.jar 2>/dev/null || true
+          mkdir -p backend/lest-modules/lest-wakapi/jar
+          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar 2>/dev/null || true
+          mkdir -p backend/lest-visual/lest-monitor/jar
+          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/jar/lest-monitor.jar 2>/dev/null || true
+          # nginx/html not used (frontend via CDN); placeholder only to avoid empty-dir errors
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ 2>/dev/null || true
 
       - name: Build gateway image
         run: |
           docker build \
-            --build-arg MODULE=backend/lest-gateway \
-            --build-arg SERVICE_PORT=8080 \
             -t lest-gateway:test \
-            -f backend/docker/lest/gateway/dockerfile \
+            -f docker/lest/gateway/dockerfile \
             ./backend
 
       - name: Build auth image
         run: |
           docker build \
-            --build-arg MODULE=backend/lest-auth \
-            --build-arg SERVICE_PORT=8096 \
             -t lest-auth:test \
-            -f backend/docker/lest/auth/dockerfile \
+            -f docker/lest/auth/dockerfile \
             ./backend
 
       - name: Build nginx image

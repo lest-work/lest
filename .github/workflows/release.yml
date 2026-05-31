@@ -243,56 +243,40 @@ jobs:
 
       - name: Prepare artifacts for Docker build
         run: |
-          # Restore backend JARs to their Maven target directory structure
-          # so the Dockerfiles can find them with /target/*.jar pattern
-          mkdir -p backend/lest-gateway/target
-          cp artifacts/backend-jars/lest-gateway*.jar backend/lest-gateway/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-auth/target
-          cp artifacts/backend-jars/lest-auth*.jar backend/lest-auth/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-system/target
-          cp artifacts/backend-jars/lest-system*.jar backend/lest-modules/lest-system/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-project/target
-          cp artifacts/backend-jars/lest-project*.jar backend/lest-modules/lest-project/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-task/target
-          cp artifacts/backend-jars/lest-task*.jar backend/lest-modules/lest-task/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-release/target
-          cp artifacts/backend-jars/lest-release*.jar backend/lest-modules/lest-release/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-job/target
-          cp artifacts/backend-jars/lest-job*.jar backend/lest-modules/lest-job/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-file/target
-          cp artifacts/backend-jars/lest-file*.jar backend/lest-modules/lest-file/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-meeting/target
-          cp artifacts/backend-jars/lest-meeting*.jar backend/lest-modules/lest-meeting/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-notification/target
-          cp artifacts/backend-jars/lest-notification*.jar backend/lest-modules/lest-notification/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-ai/target
-          cp artifacts/backend-jars/lest-ai*.jar backend/lest-modules/lest-ai/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-open/target
-          cp artifacts/backend-jars/lest-open*.jar backend/lest-modules/lest-open/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-performance/target
-          cp artifacts/backend-jars/lest-performance*.jar backend/lest-modules/lest-performance/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-plugin/target
-          cp artifacts/backend-jars/lest-plugin*.jar backend/lest-modules/lest-plugin/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-modules/lest-wakapi/target
-          cp artifacts/backend-jars/lest-wakapi*.jar backend/lest-modules/lest-wakapi/target/ 2>/dev/null || true
-
-          mkdir -p backend/lest-visual/lest-monitor/target
-          cp artifacts/backend-jars/lest-monitor*.jar backend/lest-visual/lest-monitor/target/ 2>/dev/null || true
-
+          # All Dockerfiles expect JARs at ./jar/xxx.jar relative to Docker context (repo root)
+          # Artifacts preserve upload path: backend jar/ -> artifacts/backend-jars/jar/
+          mkdir -p jar
+          cp artifacts/backend-jars/jar/lest-gateway.jar jar/lest-gateway.jar 2>/dev/null || true
+          mkdir -p lest-auth/jar
+          cp artifacts/backend-jars/lest-auth/jar/lest-auth.jar lest-auth/jar/lest-auth.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-system/jar
+          cp artifacts/backend-jars/lest-modules/lest-system/jar/lest-system.jar lest-modules/lest-system/jar/lest-system.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-project/jar
+          cp artifacts/backend-jars/lest-modules/lest-project/jar/lest-project.jar lest-modules/lest-project/jar/lest-project.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-task/jar
+          cp artifacts/backend-jars/lest-modules/lest-task/jar/lest-task.jar lest-modules/lest-task/jar/lest-task.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-release/jar
+          cp artifacts/backend-jars/lest-modules/lest-release/jar/lest-release.jar lest-modules/lest-release/jar/lest-release.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-job/jar
+          cp artifacts/backend-jars/lest-modules/lest-job/jar/lest-job.jar lest-modules/lest-job/jar/lest-job.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-file/jar
+          cp artifacts/backend-jars/lest-modules/lest-file/jar/lest-file.jar lest-modules/lest-file/jar/lest-file.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-meeting/jar
+          cp artifacts/backend-jars/lest-modules/lest-meeting/jar/lest-meeting.jar lest-modules/lest-meeting/jar/lest-meeting.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-notification/jar
+          cp artifacts/backend-jars/lest-modules/lest-notification/jar/lest-notification.jar lest-modules/lest-notification/jar/lest-notification.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-ai/jar
+          cp artifacts/backend-jars/lest-modules/lest-ai/jar/lest-ai.jar lest-modules/lest-ai/jar/lest-ai.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-open/jar
+          cp artifacts/backend-jars/lest-modules/lest-open/jar/lest-open.jar lest-modules/lest-open/jar/lest-open.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-performance/jar
+          cp artifacts/backend-jars/lest-modules/lest-performance/jar/lest-performance.jar lest-modules/lest-performance/jar/lest-performance.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-plugin/jar
+          cp artifacts/backend-jars/lest-modules/lest-plugin/jar/lest-plugin.jar lest-modules/lest-plugin/jar/lest-plugin.jar 2>/dev/null || true
+          mkdir -p lest-modules/lest-wakapi/jar
+          cp artifacts/backend-jars/lest-modules/lest-wakapi/jar/lest-wakapi.jar lest-modules/lest-wakapi/jar/lest-wakapi.jar 2>/dev/null || true
+          mkdir -p lest-visual/lest-monitor/jar
+          cp artifacts/backend-jars/lest-visual/lest-monitor/jar/lest-monitor.jar lest-visual/lest-monitor/jar/lest-monitor.jar 2>/dev/null || true
           # Restore frontend dist
           # 注：nginx/html 目录仅为预留，当前版本前端静态文件通过 CDN 分发或挂载到 gateway
 
@@ -341,9 +325,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            MODULE=${{ matrix.service.path }}
-            SERVICE_PORT=${{ matrix.service.port }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
