@@ -54,6 +54,8 @@
 
 ---
 
+
+
 ## [v0.2.0-alpha.1] — 2026-05-31 (W22)
 
 ### 本周主题
@@ -100,56 +102,80 @@
 - 项目燃尽图（ECharts）
 - 任务工时/评论详情面板
 - 看板拖拽排序
+
 
 ---
 
-
-## [v0.2.0-alpha.1] — 2026-05-31 (W22)
+## [v0.1.0] — 2026-05-29 (W22)
 
 ### 本周主题
-**项目与任务前端页面**
+**基础框架搭建**
 
 ### 新功能
 
-#### 数据库
-- `project`/`project_member`/`iteration`/`milestone`/`milestone_iteration` 建表 SQL 加入 `01_lest_platform_init.sql`
-- `task`/`label`/`task_label`/`task_watcher`/`task_worklog`/`task_comment`/`task_commit`/`task_dependency` 建表 SQL 加入统一初始化 SQL
-- `sys_menu` 新增项目管理与任务管理菜单及按钮权限数据
-
-#### 前端 API
-- `api/project/index.ts` 补全：Iteration CRUD、Milestone CRUD、Member 添加/移除
-- `api/project/model/index.ts` 补全：`Iteration`、`Milestone`、`IterationParam` 类型
-- `api/task/index.ts` 补全：Worklog、Comment、Label、子任务、Gantt、看板（类型化）
-- `api/task/model/index.ts` 补全：`TaskWorklog`、`TaskComment`、`Label`、`BoardColumn` 类型
-
-#### 前端页面
-- `views/project/index.vue` — 项目列表（卡片网格、新建/编辑/归档/删除）
-- `views/project/detail/index.vue` — 项目详情（概况/成员/迭代/里程碑四 Tab）
-- `views/task/index.vue` — 任务列表（搜索/分页/状态更改/详情抽屉）
-- `views/task/board/index.vue` — 任务看板（三列看板、按项目/迭代过滤、快捷状态流转）
-- `views/release/index.vue` — 发布列表页（卡片视图）
-- `views/release/detail/index.vue` — 发布详情（产物/关联 Issue）
-- `views/task/gantt/index.vue` — 甘特图视图（ECharts，支持新建任务）
-
-#### 发布管理 (`lest-release`)
-- 发布计划 CRUD（版本号/状态/目标日期/Git 信息）
-- 发布制品管理（Artifact 上传/下载/元数据）
-- 发布关联 Issue/Task（支持按 category 分类）
-- `api/release/index.ts` + `api/release/model/index.ts` 前端 API
-
 #### 后端
-- 修复 `lest-monitor` 路由端口（8081→9100）
-- 禁用 7 个空模块路由（meeting/notification/ai/performance/open/plugin/wakapi）
-- 统一所有模块 `NACOS_ENABLED=false`
-- 修复 `ReleasePlanServiceImpl` 状态名称返回中文
+- **认证服务** (`lest-auth`, port: 8096)
+  - 图形验证码登录 (`POST /auth/login`)
+  - JWT Token 签发与刷新
+  - 登出清除 Redis Session
+  - 获取当前用户信息+菜单权限
+- **系统管理服务** (`lest-system`, port: 8081)
+  - 用户/角色/菜单/部门/岗位 CRUD
+  - 字典类型与字典数据管理
+  - 系统参数配置
+  - 操作日志与登录日志
+  - 在线用户管理与强退
+  - 定时任务管理（Quartz）
+  - 公告管理
+  - 仪表盘 API：最新动态 + 小组成员在线状态
+- **项目管理服务** (`lest-project`, port: 8082)
+  - 项目 CRUD + 归档
+  - 项目成员管理
+  - 迭代管理
+  - 里程碑管理
+- **任务管理服务** (`lest-task`, port: 8083)
+  - 任务 CRUD + 状态流转
+  - 看板视图
+  - 甘特图数据
+  - 子任务
+  - 工时记录
+  - 关联代码提交
+  - GitLab/GitHub Webhook 接入
+  - 标签管理
+- **网关** (`lest-gateway`, port: 8080)
+  - 统一路由 StripPrefix=1
+  - 验证码过滤器（WebFlux）
+  - Token 鉴权过滤器
+  - 接口白名单配置
 
-### Bug 修复
-- 修复 `task/gantt/index.vue` 模板语法错误
+#### 前端 (`frontend-pc`)
+- Vue 3 + TypeScript + Element Plus + Vite 完整脚手架
+- 登录页（验证码）
+- 首页仪表盘：最新动态/小组成员/项目进度/我的任务 卡片
+- 系统管理全套页面：用户/角色/菜单/部门/岗位/字典/参数/公告
+- 监控中心：操作日志/登录日志/在线用户/定时任务
+- API 层类型化（TypeScript model/index.ts）
+- 响应格式对齐 RuoYi
+
+#### 数据库
+- 完整初始化 SQL（含初始数据）
+- 系统表：`sys_user/role/menu/dept/post/dict/config/log/notice/job` + 11张 Quartz 表
+
+#### 基础设施
+- Docker Compose 本地开发环境（14 个容器）
+  - MySQL 8.0, Redis 7, Nacos 2.x, Kafka, MinIO, Nginx Frontend
+  - Gateway, Auth, System, Project, Task, Release, File, Job 服务
+
+### 技术栈
+- Spring Boot `4.0.3` + Spring Cloud `2025.1.0` + Spring Cloud Alibaba `2025.1.0.0`
+- 原生 MyBatis + PageHelper（非 MyBatis-Plus）
+- 无 Lombok，手写 getter/setter
+- Vue 3 + TypeScript + Element Plus + EleAdmin Pro
 
 ### 已知待完成
-- 项目燃尽图（ECharts）
-- 任务工时/评论详情面板
-- 看板拖拽排序
+- 项目燃尽图（ECharts）尚未开发
+- 任务详情页工时/评论功能待完善
+
 
 ---
 

@@ -54,6 +54,8 @@
 
 ---
 
+
+
 ## [v0.2.0-alpha.1] — 2026-05-31 (W22)
 
 ### Sprint Theme
@@ -100,56 +102,80 @@
 - Project burndown chart (ECharts)
 - Task worklog & comment detail panel
 - Kanban drag-and-drop sorting
+
 
 ---
 
-
-## [v0.2.0-alpha.1] — 2026-05-31 (W22)
+## [v0.1.0] — 2026-05-29 (W22)
 
 ### Sprint Theme
-**Project & Task Frontend Pages (Milestone 2)**
+**Foundation & Infrastructure Setup**
 
 ### New Features
 
-#### Database
-- `project`/`project_member`/`iteration`/`milestone`/`milestone_iteration` DDL added to `01_lest_platform_init.sql`
-- `task`/`label`/`task_label`/`task_watcher`/`task_worklog`/`task_comment`/`task_commit`/`task_dependency` DDL added to unified init SQL
-- Added project & task menus with button permissions to `sys_menu`
-
-#### Frontend API
-- Extended `api/project/index.ts`: Iteration CRUD, Milestone CRUD, Member add/remove
-- Extended `api/project/model/index.ts`: `Iteration`, `Milestone`, `IterationParam` types
-- Extended `api/task/index.ts`: Worklog, Comment, Label, Subtask, Gantt, Kanban (typed)
-- Extended `api/task/model/index.ts`: `TaskWorklog`, `TaskComment`, `Label`, `BoardColumn` types
-
-#### Frontend Pages
-- `views/project/index.vue` — Project list with card grid, CRUD, archive
-- `views/project/detail/index.vue` — Project detail with 4-tab layout
-- `views/task/index.vue` — Task list with filters & detail drawer
-- `views/task/board/index.vue` — Kanban board with project/iteration filter
-- `views/release/index.vue` — Release list with card grid
-- `views/release/detail/index.vue` — Release detail (artifacts & linked issues)
-- `views/task/gantt/index.vue` — Gantt chart view with ECharts, supports new task creation
-
-#### Release Management (`lest-release`)
-- Release plan CRUD (version, status, target date, Git info)
-- Release artifact management (upload/download/metadata)
-- Release-issue linking (by category)
-- `api/release/index.ts` + `api/release/model/index.ts` frontend API
-
 #### Backend
-- Fix `lest-monitor` route port (8081→9100)
-- Disable routes for 7 unimplemented modules (meeting/notification/ai/performance/open/plugin/wakapi)
-- Unify all modules with `NACOS_ENABLED=false`
-- Fix `ReleasePlanServiceImpl` status names to return labels
+- **Auth Service** (`lest-auth`, port: 8096)
+  - Captcha-based login (`POST /auth/login`)
+  - JWT token issuance and refresh
+  - Logout with Redis session cleanup
+  - Get current user info with menu permissions
+- **System Service** (`lest-system`, port: 8081)
+  - User, Role, Menu, Dept, Post management
+  - Dictionary type and data management
+  - System parameter configuration
+  - Operation log and login log
+  - Online user management and force logout
+  - Scheduled job management (Quartz)
+  - Notice management
+  - Dashboard API: activities + member online status
+- **Project Service** (`lest-project`, port: 8082)
+  - Project CRUD + archive
+  - Project member management
+  - Sprint/iteration management
+  - Milestone management
+- **Task Service** (`lest-task`, port: 8083)
+  - Task CRUD + status lifecycle
+  - Kanban board view
+  - Gantt chart data
+  - Subtask support
+  - Work log tracking
+  - Git commit association
+  - GitLab/GitHub Webhook integration
+  - Label management
+- **Gateway** (`lest-gateway`, port: 8080)
+  - Unified routing with StripPrefix=1
+  - Captcha filter (WebFlux reactive)
+  - Token authentication filter
+  - Whitelist configuration
 
-### Bug Fixes
-- Fix template syntax error in `task/gantt/index.vue`
+#### Frontend (`frontend-pc`)
+- Vue 3 + TypeScript + Element Plus + Vite full scaffold
+- Login page with captcha
+- Home dashboard: recent activities, team members, project progress, my tasks
+- Full system admin pages: user/role/menu/dept/post/dict/config/notice
+- Monitor center: operation logs, login logs, online users, scheduled jobs
+- Typed API layer (TypeScript model/index.ts)
+- Response format aligned with RuoYi
+
+#### Database
+- Complete init SQL with seed data
+- System tables: `sys_user/role/menu/dept/post/dict/config/log/notice/job` + 11 Quartz tables
+
+#### Infrastructure
+- Local dev Docker Compose (14 containers)
+  - MySQL 8.0, Redis 7, Nacos 2.x, Kafka, MinIO, Nginx Frontend
+  - Gateway, Auth, System, Project, Task, Release, File, Job services
+
+### Tech Stack
+- Spring Boot `4.0.3` + Spring Cloud `2025.1.0` + Spring Cloud Alibaba `2025.1.0.0`
+- Native MyBatis + PageHelper (not MyBatis-Plus)
+- No Lombok, explicit accessors
+- Vue 3 + TypeScript + Element Plus + EleAdmin Pro
 
 ### Known Pending Items
-- Project burndown chart (ECharts)
-- Task worklog & comment detail panel
-- Kanban drag-and-drop sorting
+- Project burndown chart (ECharts) not yet built
+- Task worklog & comment detail panel pending
+
 
 ---
 
