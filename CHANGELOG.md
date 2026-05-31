@@ -23,6 +23,38 @@
 
 ---
 
+## [v0.2.1] — 2026-05-31 (W22)
+
+### 🐛 Bug Fixes
+
+- **CRITICAL - Runtime crashes**:
+  - `ProjectMemberMapper`: change soft-delete (`SET deleted=1`) to hard `DELETE` since `project_member` table has no `deleted` column
+  - `TaskCommentMapper`: same fix for `task_comment` table
+- **Backend logic bugs**:
+  - `IterationMapper`: add `deleted=0` filter to all SELECT queries, change `deleteById` to soft delete, add `deleted` column to resultMap/SELECT
+  - `IterationMapper.countDateConflicts`: exclude deleted iterations from date conflict checks
+  - `IterationMapper.countByProjectId`: only count non-deleted iterations
+  - `TaskMapper.selectByParentId`: add `deleted=0` filter
+  - `ReleasePlanMapper`: remove duplicate `createdBy`/`updatedBy` from resultMap (conflicts with `BaseEntity` fields), add `deleted` column to resultMap/SELECT
+  - `ReleasePlan.java`: remove duplicate `createdBy`/`updatedBy` fields (conflicts with `BaseEntity.String` vs `Long`)
+- **Frontend/backend API wiring**:
+  - `updateIteration`: fix `data.id` → `data.iterationId` (was undefined)
+  - `listWorklogs`: fix `/{id}/worklog` → `/{id}/worklog/list`
+  - `addWorklog`: fix `/worklog` → `/{id}/worklog` (taskId in path)
+  - `listComments`: fix `/{id}/comment` → `/{id}/comment/list`
+  - `addComment`/`removeComment`: fix URL paths, add taskId param
+  - `listLabels`/`addLabel`: fix `/label/*` → `/project/{id}/label/*`
+- **New backend endpoints**:
+  - `GET /{id}/comment/list` — query task comments
+  - `POST /{id}/comment` — add task comment
+  - `DELETE /{id}/comment/{commentId}` — remove task comment
+- **Code style**:
+  - `IterationServiceImpl`: add `STATUS_PLANNING/IN_PROGRESS/COMPLETED` constants
+  - `ProjectServiceImpl`: add `STATUS_ACTIVE/ARCHIVED` constants
+- **Database migration**: `migration_002_iteration_soft_delete.sql` — add `deleted` column to `iteration` table
+
+---
+
 ## [v0.1.0] — 2026-05-29 (W22)
 
 ### 🎯 本周主题 / Sprint Theme
@@ -95,7 +127,7 @@
 
 ---
 
-## [v0.2.0] — 2026-05-30 (W22)
+## [v0.2.0-alpha.1] — 2026-05-31 (W22)
 
 ### 🎯 本周主题 / Sprint Theme
 **项目与任务前端页面** — Project & Task Frontend Pages (Milestone 2)
@@ -120,23 +152,29 @@
 - `views/project/detail/index.vue` — 项目详情（概况/成员/迭代/里程碑四 Tab）/ Project detail with 4-tab layout
 - `views/task/index.vue` — 任务列表（搜索/分页/状态更改/详情抽屉）/ Task list with filters & drawer
 - `views/task/board/index.vue` — 任务看板（三列看板、按项目/迭代过滤、快捷状态流转）/ Kanban board
+- `views/release/index.vue` — 发布列表页（卡片视图）/ Release list with card grid
+- `views/release/detail/index.vue` — 发布详情（产物/关联 Issue）/ Release detail (artifacts & linked issues)
+- `views/task/gantt/index.vue` — 甘特图视图（ECharts，支持新建任务）/ Gantt chart view
+
+#### 发布管理 / Release Management (`lest-release`)
+- 发布计划 CRUD（版本号/状态/目标日期/Git 信息）/ Release plan CRUD
+- 发布制品管理（Artifact 上传/下载/元数据）/ Release artifact management
+- 发布关联 Issue/Task（支持按 category 分类）/ Release-issue linking
+- `api/release/index.ts` + `api/release/model/index.ts` 前端 API / Frontend API
+
+#### 后端 / Backend
+- Gateway 修复 `lest-monitor` 路由端口（8081→9100）
+- 禁用 7 个空模块路由（meeting/notification/ai/performance/open/plugin/wakapi）
+- 统一所有模块 `NACOS_ENABLED=false`
+- 修复 `ReleasePlanServiceImpl` 状态名称返回中文
+
+### 🐛 Bug Fixes
+
+- 修复 `task/gantt/index.vue` 模板语法错误 / Fix template syntax error in Gantt view
 
 ### ⚠️ 已知待完成 / Known Pending Items
 - 项目燃尽图（ECharts）/ Project burndown chart
 - 任务工时/评论详情面板 / Task worklog & comment panel
 - 看板拖拽排序 / Kanban drag-and-drop sorting
-
-## [Unreleased] — upcoming v0.3.0 (W23, 2026-06-05)
-
-### 🎯 计划主题 / Planned Theme
-**项目燃尽图与任务增强** — Burndown Chart & Task Enhancement
-
-### 📋 计划内容 / Planned Items
-- [ ] 项目燃尽图（ECharts）/ Project burndown chart
-- [ ] 任务详情面板（工时记录/评论区）/ Task detail panel with worklog & comments
-- [ ] 看板拖拽排序（HTML5 DnD / vuedraggable）/ Kanban drag-and-drop
-- [ ] 发布管理前端页面 / Release management UI pages
-
----
 
 > 📌 查看里程碑规划 / See milestone roadmap: [docs/MILESTONES.md](./docs/MILESTONES.md)

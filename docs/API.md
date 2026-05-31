@@ -1,7 +1,7 @@
 | 属性 | 内容 |
-| 版本 | V1.2 |
+| 版本 | V1.3 |
 | 创建日期 | 2026-05-26 |
-| 最后更新 | 2026-05-27 |
+| 最后更新 | 2026-05-31 |
 
 ---
 
@@ -11,24 +11,21 @@
 
 ### 服务端口概览
 
+> **注意**: API Gateway (`lest-gateway`, port 8080) 统一入口，所有服务通过 Gateway 路由（StripPrefix=1）。以下 Base Path 为 Gateway 路由前缀。
+
 | 服务名称 | 服务标识 | 默认端口 | Base Path |
 |---------|---------|---------|-----------|
-| API 网关 | lest-gateway | 8080 | / |
-| 认证服务 | lest-auth | 8096 | /auth |
-| 系统管理服务 | lest-system | 8081 | /system |
+| API 网关 | lest-gateway | 8080 | `/` (统一入口) |
+| 认证服务 | lest-auth | 8096 | `/auth` |
+| 系统管理服务 | lest-system | 8081 | `/system` |
+| 项目管理服务 | lest-project | 8082 | `/project` |
+| 任务管理服务 | lest-task | 8083 | `/task` |
+| 发布管理服务 | lest-release | 8087 | `/release` |
+| 定时任务服务 | lest-job | 9203 | `/jobs` |
+| 文件服务 | lest-file | 8091 | `/file` |
+| 监控服务 | lest-monitor | 9100 | `/monitor` |
 
-> 其他微服务（任务、项目、代码等）待实现，端口规划见下方。
-
-**规划端口**
-
-| 服务名称 | 服务标识 | 规划端口 |
-|---------|---------|----------|
-| 任务服务 | lest-task | 8082 |
-| 项目服务 | lest-project | 8083 |
-| 代码服务 | lest-code | 8084 |
-| CI 服务 | lest-ci | 8085 |
-| 通知服务 | lest-notification | 8086 |
-| AI 服务 | lest-ai | 8087 |
+> 未实现的服务（meeting/notification/ai/performance/open/plugin/wakapi）暂未启用，Gateway 路由已禁用。
 
 ---
 
