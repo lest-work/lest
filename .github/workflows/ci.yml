@@ -130,7 +130,6 @@ jobs:
 
       - name: Run tests
         run: mvn test -B --fail-at-end
-        continue-on-error: true
 
       - name: Upload test results
         if: always()
@@ -155,7 +154,7 @@ jobs:
     name: Backend SonarCloud Analysis
     runs-on: ubuntu-24.04
     needs: [backend-build]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: backend
@@ -172,11 +171,32 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           cache: 'maven'
 
+      - name: Build for SonarCloud analysis
+        if: github.event_name == 'push'
+        run: mvn compile test-compile -DskipTests -q
+
+      - name: Download backend JAR artifact
+        if: github.event_name == 'push'
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jars
+          path: .
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # For push (branch analysis): main/develop, no PR params
+          # For PR: add PR analysis params
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            EXTRA_ARGS="\
+              -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+              -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+              -Dsonar.pullrequest.base=${{ github.base_ref }} \
+              -Dsonar.pullrequest.github.repository=${{ github.repository }}"
+          fi
           mvn sonar:sonar \
             -Dsonar.projectKey=lest-work_lest \
             -Dsonar.organization=lest-work \
@@ -186,10 +206,7 @@ jobs:
             -Dsonar.tests=test \
             -Dsonar.test.inclusions=**/*Test.java \
             -Dsonar.coverage.jacoco.xmlReportsPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
-            -Dsonar.pullrequest.base=${{ github.base_ref }} \
-            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            $EXTRA_ARGS
         continue-on-error: true
 
   # ==================== 前端构建 ====================
@@ -236,7 +253,7 @@ jobs:
     name: Frontend SonarCloud Analysis
     runs-on: ubuntu-24.04
     needs: [frontend-build]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: frontend-pc
@@ -256,10 +273,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Download frontend dist artifact
+        if: github.event_name == 'push'
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: .
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          # For push (branch analysis): main/develop, no PR params
+          # For PR: add PR analysis params
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            EXTRA_ARGS="\
+              -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+              -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+              -Dsonar.pullrequest.base=${{ github.base_ref }} \
+              -Dsonar.pullrequest.github.repository=${{ github.repository }}"
+          fi
           npx sonarscanner \
             -Dsonar.projectKey=lest-work_lest-frontend \
             -Dsonar.organization=lest-work \
@@ -267,10 +301,7 @@ jobs:
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts \
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
-            -Dsonar.pullrequest.base=${{ github.base_ref }} \
-            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            $EXTRA_ARGS
         continue-on-error: true
 
   # ==================== Docker 镜像构建测试 ====================
@@ -295,22 +326,22 @@ jobs:
         run: |
           set -e
           # backend JARs: artifact contains backend/backend/jar/ structure
-          cp artifacts/backend-jars/backend/jar/lest-gateway.jar backend/jar/lest-gateway.jar
-          cp artifacts/backend-jars/backend/lest-auth/jar/lest-auth.jar backend/lest-auth/jar/lest-auth.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-system/jar/lest-system.jar     backend/lest-modules/lest-system/jar/lest-system.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-project/jar/lest-project.jar    backend/lest-modules/lest-project/jar/lest-project.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-task/jar/lest-task.jar          backend/lest-modules/lest-task/jar/lest-task.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-release/jar/lest-release.jar    backend/lest-modules/lest-release/jar/lest-release.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-job/jar/lest-job.jar            backend/lest-modules/lest-job/jar/lest-job.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-file/jar/lest-file.jar          backend/lest-modules/lest-file/jar/lest-file.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-meeting/jar/lest-meeting.jar    backend/lest-modules/lest-meeting/jar/lest-meeting.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-notification/jar/lest-notification.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-ai/jar/lest-ai.jar            backend/lest-modules/lest-ai/jar/lest-ai.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-open/jar/lest-open.jar          backend/lest-modules/lest-open/jar/lest-open.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-performance/jar/lest-performance.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-plugin/jar/lest-plugin.jar      backend/lest-modules/lest-plugin/jar/lest-plugin.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar      backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
-          cp artifacts/backend-jars/backend/lest-visual/lest-monitor/jar/lest-monitor.jar   backend/lest-visual/lest-monitor/jar/lest-monitor.jar
+          cp artifacts/backend-jars/jar/lest-gateway.jar backend/jar/lest-gateway.jar
+          cp artifacts/backend-jars/lest-auth/jar/lest-auth.jar backend/lest-auth/jar/lest-auth.jar
+          cp artifacts/backend-jars/lest-modules/lest-system/jar/lest-system.jar     backend/lest-modules/lest-system/jar/lest-system.jar
+          cp artifacts/backend-jars/lest-modules/lest-project/jar/lest-project.jar    backend/lest-modules/lest-project/jar/lest-project.jar
+          cp artifacts/backend-jars/lest-modules/lest-task/jar/lest-task.jar          backend/lest-modules/lest-task/jar/lest-task.jar
+          cp artifacts/backend-jars/lest-modules/lest-release/jar/lest-release.jar    backend/lest-modules/lest-release/jar/lest-release.jar
+          cp artifacts/backend-jars/lest-modules/lest-job/jar/lest-job.jar            backend/lest-modules/lest-job/jar/lest-job.jar
+          cp artifacts/backend-jars/lest-modules/lest-file/jar/lest-file.jar          backend/lest-modules/lest-file/jar/lest-file.jar
+          cp artifacts/backend-jars/lest-modules/lest-meeting/jar/lest-meeting.jar    backend/lest-modules/lest-meeting/jar/lest-meeting.jar
+          cp artifacts/backend-jars/lest-modules/lest-notification/jar/lest-notification.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
+          cp artifacts/backend-jars/lest-modules/lest-ai/jar/lest-ai.jar            backend/lest-modules/lest-ai/jar/lest-ai.jar
+          cp artifacts/backend-jars/lest-modules/lest-open/jar/lest-open.jar          backend/lest-modules/lest-open/jar/lest-open.jar
+          cp artifacts/backend-jars/lest-modules/lest-performance/jar/lest-performance.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
+          cp artifacts/backend-jars/lest-modules/lest-plugin/jar/lest-plugin.jar      backend/lest-modules/lest-plugin/jar/lest-plugin.jar
+          cp artifacts/backend-jars/lest-modules/lest-wakapi/jar/lest-wakapi.jar      backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
+          cp artifacts/backend-jars/lest-visual/lest-monitor/jar/lest-monitor.jar   backend/lest-visual/lest-monitor/jar/lest-monitor.jar
           # nginx/html: frontend via CDN; create placeholder
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
