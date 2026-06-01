@@ -70,63 +70,34 @@ jobs:
       - name: Build JARs
         run: mvn clean package -DskipTests -q
 
-      - name: Prepare JAR directories
+      - name: Prepare JAR directory
         run: |
+          # Flatten all service JARs into a single jar/ dir, named lest-<module>.jar
+          # to match each Dockerfile's `COPY ./jar/lest-<module>.jar`.
           mkdir -p jar
-          # lest-gateway
-          mkdir -p lest-gateway/jar
-          cp lest-gateway/target/lest-gateway-*.jar lest-gateway/jar/lest-gateway.jar
-          # lest-auth
-          mkdir -p lest-auth/jar
-          cp lest-auth/target/lest-auth-*.jar lest-auth/jar/lest-auth.jar
-          # lest-modules-system
-          mkdir -p lest-modules/lest-system/jar
-          cp lest-modules/lest-system/target/lest-system-*.jar lest-modules/lest-system/jar/lest-modules-system.jar
-          # lest-modules-job
-          mkdir -p lest-modules/lest-job/jar
-          cp lest-modules/lest-job/target/lest-job-*.jar lest-modules/lest-job/jar/lest-modules-job.jar
-          # lest-modules-file
-          mkdir -p lest-modules/lest-file/jar
-          cp lest-modules/lest-file/target/lest-file-*.jar lest-modules/lest-file/jar/lest-modules-file.jar
-          # lest-modules-project
-          mkdir -p lest-modules/lest-project/jar
-          cp lest-modules/lest-project/target/lest-project-*.jar lest-modules/lest-project/jar/lest-modules-project.jar
-          # lest-modules-task
-          mkdir -p lest-modules/lest-task/jar
-          cp lest-modules/lest-task/target/lest-task-*.jar lest-modules/lest-task/jar/lest-modules-task.jar
-          # lest-modules-release
-          mkdir -p lest-modules/lest-release/jar
-          cp lest-modules/lest-release/target/lest-release-*.jar lest-modules/lest-release/jar/lest-modules-release.jar
-          # lest-modules-meeting
-          mkdir -p lest-modules/lest-meeting/jar
-          cp lest-modules/lest-meeting/target/lest-meeting-*.jar lest-modules/lest-meeting/jar/lest-modules-meeting.jar
-          # lest-modules-notification
-          mkdir -p lest-modules/lest-notification/jar
-          cp lest-modules/lest-notification/target/lest-notification-*.jar lest-modules/lest-notification/jar/lest-modules-notification.jar
-          # lest-modules-ai
-          mkdir -p lest-modules/lest-ai/jar
-          cp lest-modules/lest-ai/target/lest-ai-*.jar lest-modules/lest-ai/jar/lest-modules-ai.jar
-          # lest-modules-open
-          mkdir -p lest-modules/lest-open/jar
-          cp lest-modules/lest-open/target/lest-open-*.jar lest-modules/lest-open/jar/lest-modules-open.jar
-          # lest-modules-performance
-          mkdir -p lest-modules/lest-performance/jar
-          cp lest-modules/lest-performance/target/lest-performance-*.jar lest-modules/lest-performance/jar/lest-modules-performance.jar
-          # lest-modules-plugin
-          mkdir -p lest-modules/lest-plugin/jar
-          cp lest-modules/lest-plugin/target/lest-plugin-*.jar lest-modules/lest-plugin/jar/lest-modules-plugin.jar
-          # lest-modules-wakapi
-          mkdir -p lest-modules/lest-wakapi/jar
-          cp lest-modules/lest-wakapi/target/lest-wakapi-*.jar lest-modules/lest-wakapi/jar/lest-modules-wakapi.jar
-          # lest-visual-monitor
-          mkdir -p lest-visual/lest-monitor/jar
-          cp lest-visual/lest-monitor/target/lest-monitor-*.jar lest-visual/lest-monitor/jar/lest-visual-monitor.jar
+          cp lest-gateway/target/lest-gateway-*.jar                          jar/lest-gateway.jar
+          cp lest-auth/target/lest-auth-*.jar                                jar/lest-auth.jar
+          cp lest-modules/lest-system/target/lest-system-*.jar               jar/lest-system.jar
+          cp lest-modules/lest-project/target/lest-project-*.jar             jar/lest-project.jar
+          cp lest-modules/lest-task/target/lest-task-*.jar                   jar/lest-task.jar
+          cp lest-modules/lest-release/target/lest-release-*.jar             jar/lest-release.jar
+          cp lest-modules/lest-job/target/lest-job-*.jar                     jar/lest-job.jar
+          cp lest-modules/lest-file/target/lest-file-*.jar                   jar/lest-file.jar
+          cp lest-modules/lest-meeting/target/lest-meeting-*.jar             jar/lest-meeting.jar
+          cp lest-modules/lest-notification/target/lest-notification-*.jar   jar/lest-notification.jar
+          cp lest-modules/lest-ai/target/lest-ai-*.jar                       jar/lest-ai.jar
+          cp lest-modules/lest-open/target/lest-open-*.jar                   jar/lest-open.jar
+          cp lest-modules/lest-performance/target/lest-performance-*.jar     jar/lest-performance.jar
+          cp lest-modules/lest-plugin/target/lest-plugin-*.jar               jar/lest-plugin.jar
+          cp lest-modules/lest-wakapi/target/lest-wakapi-*.jar               jar/lest-wakapi.jar
+          cp lest-visual/lest-monitor/target/lest-monitor-*.jar              jar/lest-monitor.jar
+          ls -la jar/
 
       - name: Upload JAR artifacts
         uses: actions/upload-artifact@v4
         with:
           name: backend-jars
-          path: jar/
+          path: backend/jar/
           retention-days: 2
 
   # ==================== 前端构建 ====================
@@ -163,7 +134,11 @@ jobs:
     name: Build & Push Docker Images
     runs-on: ubuntu-24.04
     needs: [backend-build, frontend-build, info]
+    permissions:
+      contents: read
+      packages: write
     strategy:
+      fail-fast: false
       matrix:
         service:
           - name: gateway
@@ -236,49 +211,35 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Download all artifacts
+      - name: Download backend JAR artifacts
         uses: actions/download-artifact@v4
         with:
+          name: backend-jars
           path: artifacts
 
-      - name: Prepare artifacts for Docker build
+      - name: Detect optional registry secrets
+        id: sec
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          ALIYUN_REGISTRY_SECRET: ${{ secrets.ALIYUN_REGISTRY }}
         run: |
-          # All Dockerfiles expect JARs at ./jar/xxx.jar relative to Docker context (repo root)
-          # Artifacts preserve upload path: backend jar/ -> artifacts/backend-jars/jar/
+          [ -n "$DOCKERHUB_TOKEN" ] && echo "has_dockerhub=true" >> "$GITHUB_OUTPUT" || echo "has_dockerhub=false" >> "$GITHUB_OUTPUT"
+          [ -n "$ALIYUN_REGISTRY_SECRET" ] && echo "has_aliyun=true" >> "$GITHUB_OUTPUT" || echo "has_aliyun=false" >> "$GITHUB_OUTPUT"
+
+      - name: Stage JAR for ${{ matrix.service.name }}
+        run: |
+          set -e
+          # Dockerfiles COPY ./jar/lest-<module>.jar relative to build context (repo root)
+          JAR_NAME="$(basename '${{ matrix.service.path }}')"   # e.g. lest-system, lest-gateway
+          SRC="$(find artifacts -name "${JAR_NAME}.jar" -type f | head -1)"
+          echo "Service ${{ matrix.service.name }} -> ${JAR_NAME}.jar (src: ${SRC})"
+          test -n "$SRC"
           mkdir -p jar
-          cp artifacts/backend-jars/jar/lest-gateway.jar jar/lest-gateway.jar 2>/dev/null || true
-          mkdir -p lest-auth/jar
-          cp artifacts/backend-jars/lest-auth/jar/lest-auth.jar lest-auth/jar/lest-auth.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-system/jar
-          cp artifacts/backend-jars/lest-modules/lest-system/jar/lest-system.jar lest-modules/lest-system/jar/lest-system.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-project/jar
-          cp artifacts/backend-jars/lest-modules/lest-project/jar/lest-project.jar lest-modules/lest-project/jar/lest-project.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-task/jar
-          cp artifacts/backend-jars/lest-modules/lest-task/jar/lest-task.jar lest-modules/lest-task/jar/lest-task.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-release/jar
-          cp artifacts/backend-jars/lest-modules/lest-release/jar/lest-release.jar lest-modules/lest-release/jar/lest-release.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-job/jar
-          cp artifacts/backend-jars/lest-modules/lest-job/jar/lest-job.jar lest-modules/lest-job/jar/lest-job.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-file/jar
-          cp artifacts/backend-jars/lest-modules/lest-file/jar/lest-file.jar lest-modules/lest-file/jar/lest-file.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-meeting/jar
-          cp artifacts/backend-jars/lest-modules/lest-meeting/jar/lest-meeting.jar lest-modules/lest-meeting/jar/lest-meeting.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-notification/jar
-          cp artifacts/backend-jars/lest-modules/lest-notification/jar/lest-notification.jar lest-modules/lest-notification/jar/lest-notification.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-ai/jar
-          cp artifacts/backend-jars/lest-modules/lest-ai/jar/lest-ai.jar lest-modules/lest-ai/jar/lest-ai.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-open/jar
-          cp artifacts/backend-jars/lest-modules/lest-open/jar/lest-open.jar lest-modules/lest-open/jar/lest-open.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-performance/jar
-          cp artifacts/backend-jars/lest-modules/lest-performance/jar/lest-performance.jar lest-modules/lest-performance/jar/lest-performance.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-plugin/jar
-          cp artifacts/backend-jars/lest-modules/lest-plugin/jar/lest-plugin.jar lest-modules/lest-plugin/jar/lest-plugin.jar 2>/dev/null || true
-          mkdir -p lest-modules/lest-wakapi/jar
-          cp artifacts/backend-jars/lest-modules/lest-wakapi/jar/lest-wakapi.jar lest-modules/lest-wakapi/jar/lest-wakapi.jar 2>/dev/null || true
-          mkdir -p lest-visual/lest-monitor/jar
-          cp artifacts/backend-jars/lest-visual/lest-monitor/jar/lest-monitor.jar lest-visual/lest-monitor/jar/lest-monitor.jar 2>/dev/null || true
-          # Restore frontend dist
-          # 注：nginx/html 目录仅为预留，当前版本前端静态文件通过 CDN 分发或挂载到 gateway
+          cp "$SRC" "jar/${JAR_NAME}.jar"
+          ls -la jar/
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -291,6 +252,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to Docker Hub
+        if: steps.sec.outputs.has_dockerhub == 'true'
         uses: docker/login-action@v3
         with:
           registry: docker.io
@@ -298,26 +260,36 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to Aliyun ACR
+        if: steps.sec.outputs.has_aliyun == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ secrets.ALIYUN_REGISTRY }}
           username: ${{ secrets.ALIYUN_USERNAME }}
           password: ${{ secrets.ALIYUN_PASSWORD }}
 
+      - name: Compute image targets
+        id: img
+        run: |
+          IMAGES="${GHCR_REGISTRY}/${{ matrix.service.name }}"
+          if [ "${{ steps.sec.outputs.has_dockerhub }}" = "true" ]; then
+            IMAGES="${IMAGES}"$'\n'"${DOCKERHUB_REGISTRY}/${{ matrix.service.name }}"
+          fi
+          if [ "${{ steps.sec.outputs.has_aliyun }}" = "true" ]; then
+            IMAGES="${IMAGES}"$'\n'"${ALIYUN_REGISTRY}/${{ matrix.service.name }}"
+          fi
+          { echo "images<<EOF"; printf '%s\n' "$IMAGES"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+
       - name: Extract metadata for ${{ matrix.service.name }}
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.GHCR_REGISTRY }}/${{ matrix.service.name }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ matrix.service.name }}
-            ${{ env.ALIYUN_REGISTRY }}/${{ matrix.service.name }}
+          images: ${{ steps.img.outputs.images }}
           tags: |
             type=semver,pattern={{version}},value=${{ needs.info.outputs.version }}
             type=sha,prefix=,suffix=-${{ needs.info.outputs.short_sha }}
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
 
-      - name: Build and push images
+      - name: Build and push ${{ matrix.service.name }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -327,7 +299,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
   # ==================== 生成变更日志 ====================
   changelog:
