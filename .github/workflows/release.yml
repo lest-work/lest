@@ -221,32 +221,15 @@ jobs:
         id: sec
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          ALIYUN_AK: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_USERNAME }}
           ALIYUN_REG: ${{ secrets.ALIYUN_REGISTRY }}
-          ALIYUN_REGION_OVERRIDE: ${{ secrets.ALIYUN_REGION_ID }}
-          ALIYUN_INSTANCE_OVERRIDE: ${{ secrets.ALIYUN_INSTANCE_ID }}
         run: |
           [ -n "$DOCKERHUB_TOKEN" ] && echo "has_dockerhub=true" >> "$GITHUB_OUTPUT" || echo "has_dockerhub=false" >> "$GITHUB_OUTPUT"
-          if [ -n "$ALIYUN_AK" ] && [ -n "$ALIYUN_REG" ]; then
+          if [ -n "$ALIYUN_USER" ] && [ -n "$ALIYUN_REG" ]; then
             echo "has_aliyun=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_aliyun=false" >> "$GITHUB_OUTPUT"
           fi
-          HOST="${ALIYUN_REG%%/*}"
-          # region-id: first cn-*/ap-*/... token in the host (fallback cn-hangzhou; override via secret)
-          REGION="$(printf '%s' "$HOST" | grep -oE '(cn|ap|us|eu|me|rus)-[a-z]+(-[0-9]+)?' | head -1)"
-          [ -z "$REGION" ] && REGION="cn-hangzhou"
-          [ -n "$ALIYUN_REGION_OVERRIDE" ] && REGION="$ALIYUN_REGION_OVERRIDE"
-          echo "aliyun_region=$REGION" >> "$GITHUB_OUTPUT"
-          # instance-id: required for instance-based editions (new personal: crpi-*, enterprise: cri-*)
-          FIRST="${HOST%%.*}"
-          case "$FIRST" in
-            crpi-*|cri-*) INSTANCE="$FIRST" ;;
-            *) INSTANCE="" ;;
-          esac
-          [ -n "$ALIYUN_INSTANCE_OVERRIDE" ] && INSTANCE="$ALIYUN_INSTANCE_OVERRIDE"
-          echo "aliyun_instance=$INSTANCE" >> "$GITHUB_OUTPUT"
-          echo "Aliyun resolved: region=$REGION instance=$INSTANCE host=$HOST"
 
       - name: Stage JAR for ${{ matrix.service.name }}
         run: |
@@ -283,17 +266,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to Aliyun ACR (via AccessKey)
+      - name: Log in to Aliyun ACR
         id: aliyun_login
         if: steps.sec.outputs.has_aliyun == 'true'
         continue-on-error: true
-        uses: aliyun/acr-login@v1
+        uses: docker/login-action@v3
         with:
-          login-server: ${{ secrets.ALIYUN_REGISTRY }}
-          region-id: ${{ steps.sec.outputs.aliyun_region }}
-          instance-id: ${{ steps.sec.outputs.aliyun_instance }}
-          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
 
       - name: Compute image targets
         id: img
