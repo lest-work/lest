@@ -401,6 +401,17 @@ jobs:
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
 
+      - name: Debug - check backend directory
+        run: |
+          echo "=== backend/ directory ==="
+          ls -la backend/
+          echo "=== backend/docker/ ==="
+          ls -la backend/docker/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== backend/docker/lest/ ==="
+          ls -la backend/docker/lest/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== backend/docker/lest/gateway/ ==="
+          ls -la backend/docker/lest/gateway/ 2>/dev/null || echo "NOT FOUND"
+
       - name: Build gateway image
         run: |
           docker build \
