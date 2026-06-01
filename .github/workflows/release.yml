@@ -223,6 +223,8 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           ALIYUN_AK: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
           ALIYUN_REG: ${{ secrets.ALIYUN_REGISTRY }}
+          ALIYUN_REGION_OVERRIDE: ${{ secrets.ALIYUN_REGION_ID }}
+          ALIYUN_INSTANCE_OVERRIDE: ${{ secrets.ALIYUN_INSTANCE_ID }}
         run: |
           [ -n "$DOCKERHUB_TOKEN" ] && echo "has_dockerhub=true" >> "$GITHUB_OUTPUT" || echo "has_dockerhub=false" >> "$GITHUB_OUTPUT"
           if [ -n "$ALIYUN_AK" ] && [ -n "$ALIYUN_REG" ]; then
@@ -230,10 +232,21 @@ jobs:
           else
             echo "has_aliyun=false" >> "$GITHUB_OUTPUT"
           fi
-          # Derive region-id from registry host (e.g. registry.cn-hangzhou.aliyuncs.com -> cn-hangzhou)
-          REGION="$(echo "$ALIYUN_REG" | sed -nE 's/^registry\.([a-z0-9-]+)\.aliyuncs\.com.*/\1/p')"
+          HOST="${ALIYUN_REG%%/*}"
+          # region-id: first cn-*/ap-*/... token in the host (fallback cn-hangzhou; override via secret)
+          REGION="$(printf '%s' "$HOST" | grep -oE '(cn|ap|us|eu|me|rus)-[a-z]+(-[0-9]+)?' | head -1)"
           [ -z "$REGION" ] && REGION="cn-hangzhou"
+          [ -n "$ALIYUN_REGION_OVERRIDE" ] && REGION="$ALIYUN_REGION_OVERRIDE"
           echo "aliyun_region=$REGION" >> "$GITHUB_OUTPUT"
+          # instance-id: required for instance-based editions (new personal: crpi-*, enterprise: cri-*)
+          FIRST="${HOST%%.*}"
+          case "$FIRST" in
+            crpi-*|cri-*) INSTANCE="$FIRST" ;;
+            *) INSTANCE="" ;;
+          esac
+          [ -n "$ALIYUN_INSTANCE_OVERRIDE" ] && INSTANCE="$ALIYUN_INSTANCE_OVERRIDE"
+          echo "aliyun_instance=$INSTANCE" >> "$GITHUB_OUTPUT"
+          echo "Aliyun resolved: region=$REGION instance=$INSTANCE host=$HOST"
 
       - name: Stage JAR for ${{ matrix.service.name }}
         run: |
@@ -274,6 +287,7 @@ jobs:
         with:
           login-server: ${{ secrets.ALIYUN_REGISTRY }}
           region-id: ${{ steps.sec.outputs.aliyun_region }}
+          instance-id: ${{ steps.sec.outputs.aliyun_instance }}
           access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
           access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
 
