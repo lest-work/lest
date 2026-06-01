@@ -329,7 +329,7 @@ jobs:
           echo "=== artifacts/backend-jars/ contents ==="
           ls -la artifacts/backend-jars/ 2>/dev/null || echo "NOT FOUND"
           echo "=== Recursive listing artifacts/backend-jars/ (maxdepth 3) ==="
-          find artifacts/backend-jars/ -maxdepth 3 | sort
+          find artifacts/backend-jars/ -maxdepth 3 2>/dev/null | sort || true
           echo "=== Find ALL jar files ==="
           find artifacts -name "*.jar" | sort
           echo "=== Find lest-gateway.jar anywhere ==="
