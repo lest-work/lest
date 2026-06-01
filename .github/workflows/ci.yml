@@ -322,7 +322,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Debug - list artifacts
+      - name: Debug - list artifact structure
+        run: |
+          echo "=== Top-level artifacts/ ==="
+          find artifacts -maxdepth 2 | head -30
+          echo "=== Contents of artifacts/backend-jars/ ==="
+          find artifacts/backend-jars -maxdepth 2 | head -30
+          echo "=== Looking for gateway jar ==="
+          find artifacts -name "lest-gateway.jar" | head -5
         run: |
           echo "=== Contents of artifacts/ ==="
           ls -la artifacts/ || echo "artifacts/ not found"
