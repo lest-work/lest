@@ -292,30 +292,82 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Debug - inspect artifact structure
+        run: |
+          echo "=== Top-level artifacts/ ==="
+          ls -la artifacts/
+          echo "=== artifacts/backend-jars/ contents ==="
+          ls -la artifacts/backend-jars/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== Recursive listing artifacts/backend-jars/ (maxdepth 3) ==="
+          find artifacts/backend-jars/ -maxdepth 3 | sort
+          echo "=== Find ALL jar files ==="
+          find artifacts -name "*.jar" | sort
+          echo "=== Find lest-gateway.jar anywhere ==="
+          find artifacts -name "lest-gateway.jar" 2>/dev/null || echo "NOT FOUND"
+
       - name: Prepare artifacts for Docker build
         run: |
           set -e
-          mkdir -p backend/jar
-          # Try exact path first
-          cp artifacts/backend-jars/backend/jar/lest-gateway.jar backend/jar/lest-gateway.jar || echo "NOT FOUND: artifacts/backend-jars/jar/lest-gateway.jar"
-          ls -la artifacts/backend-jars/ 2>/dev/null || echo "artifacts/backend-jars/ not found"
-          find artifacts -name "*.jar" 2>/dev/null | head -5 || echo "no jars found"
-          cp artifacts/backend-jars/backend/lest-auth/jar/lest-auth.jar backend/lest-auth/jar/lest-auth.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-system/jar/lest-system.jar     backend/lest-modules/lest-system/jar/lest-system.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-project/jar/lest-project.jar    backend/lest-modules/lest-project/jar/lest-project.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-task/jar/lest-task.jar          backend/lest-modules/lest-task/jar/lest-task.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-release/jar/lest-release.jar    backend/lest-modules/lest-release/jar/lest-release.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-job/jar/lest-job.jar            backend/lest-modules/lest-job/jar/lest-job.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-file/jar/lest-file.jar          backend/lest-modules/lest-file/jar/lest-file.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-meeting/jar/lest-meeting.jar    backend/lest-modules/lest-meeting/jar/lest-meeting.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-notification/jar/lest-notification.jar backend/lest-modules/lest-notification/jar/lest-notification.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-ai/jar/lest-ai.jar            backend/lest-modules/lest-ai/jar/lest-ai.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-open/jar/lest-open.jar          backend/lest-modules/lest-open/jar/lest-open.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-performance/jar/lest-performance.jar backend/lest-modules/lest-performance/jar/lest-performance.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-plugin/jar/lest-plugin.jar      backend/lest-modules/lest-plugin/jar/lest-plugin.jar
-          cp artifacts/backend-jars/backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar      backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
-          cp artifacts/backend-jars/backend/lest-visual/lest-monitor/jar/lest-monitor.jar   backend/lest-visual/lest-monitor/jar/lest-monitor.jar
-          # nginx/html: frontend via CDN; create placeholder
+          # Dynamically find all jars and copy to correct locations
+          echo "=== Finding all JAR files in artifacts ==="
+          find artifacts -name "*.jar" -type f > /tmp/all_jars.txt
+          cat /tmp/all_jars.txt
+          echo "=== Total jars found: $(wc -l < /tmp/all_jars.txt) ==="
+          # Copy each jar to its destination
+          # gateway
+          JAR=$(find artifacts -name "lest-gateway.jar" -type f | head -1)
+          echo "Gateway jar: $JAR"
+          mkdir -p backend/jar && cp "$JAR" backend/jar/lest-gateway.jar
+          # auth
+          JAR=$(find artifacts -name "lest-auth.jar" -type f | head -1)
+          echo "Auth jar: $JAR"
+          mkdir -p backend/lest-auth/jar && cp "$JAR" backend/lest-auth/jar/lest-auth.jar
+          # system
+          JAR=$(find artifacts -name "lest-system.jar" -type f | head -1)
+          echo "System jar: $JAR"
+          mkdir -p backend/lest-modules/lest-system/jar && cp "$JAR" backend/lest-modules/lest-system/jar/lest-system.jar
+          # project
+          JAR=$(find artifacts -name "lest-project.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-project/jar && cp "$JAR" backend/lest-modules/lest-project/jar/lest-project.jar
+          # task
+          JAR=$(find artifacts -name "lest-task.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-task/jar && cp "$JAR" backend/lest-modules/lest-task/jar/lest-task.jar
+          # release
+          JAR=$(find artifacts -name "lest-release.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-release/jar && cp "$JAR" backend/lest-modules/lest-release/jar/lest-release.jar
+          # job
+          JAR=$(find artifacts -name "lest-job.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-job/jar && cp "$JAR" backend/lest-modules/lest-job/jar/lest-job.jar
+          # file
+          JAR=$(find artifacts -name "lest-file.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-file/jar && cp "$JAR" backend/lest-modules/lest-file/jar/lest-file.jar
+          # meeting
+          JAR=$(find artifacts -name "lest-meeting.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-meeting/jar && cp "$JAR" backend/lest-modules/lest-meeting/jar/lest-meeting.jar
+          # notification
+          JAR=$(find artifacts -name "lest-notification.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-notification/jar && cp "$JAR" backend/lest-modules/lest-notification/jar/lest-notification.jar
+          # ai
+          JAR=$(find artifacts -name "lest-ai.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-ai/jar && cp "$JAR" backend/lest-modules/lest-ai/jar/lest-ai.jar
+          # open
+          JAR=$(find artifacts -name "lest-open.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-open/jar && cp "$JAR" backend/lest-modules/lest-open/jar/lest-open.jar
+          # performance
+          JAR=$(find artifacts -name "lest-performance.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-performance/jar && cp "$JAR" backend/lest-modules/lest-performance/jar/lest-performance.jar
+          # plugin
+          JAR=$(find artifacts -name "lest-plugin.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-plugin/jar && cp "$JAR" backend/lest-modules/lest-plugin/jar/lest-plugin.jar
+          # wakapi
+          JAR=$(find artifacts -name "lest-wakapi.jar" -type f | head -1)
+          mkdir -p backend/lest-modules/lest-wakapi/jar && cp "$JAR" backend/lest-modules/lest-wakapi/jar/lest-wakapi.jar
+          # monitor
+          JAR=$(find artifacts -name "lest-monitor.jar" -type f | head -1)
+          mkdir -p backend/lest-visual/lest-monitor/jar && cp "$JAR" backend/lest-visual/lest-monitor/jar/lest-monitor.jar
+          echo "=== All jars copied ==="
+          ls -la backend/jar/
+          # nginx/html: frontend
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
 
