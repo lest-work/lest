@@ -282,7 +282,9 @@ jobs:
         run: |
           IMAGES="${GHCR_REGISTRY}/${{ matrix.service.name }}"
           if [ "${{ steps.sec.outputs.has_dockerhub }}" = "true" ]; then
-            IMAGES="${IMAGES}"$'\n'"${DOCKERHUB_REGISTRY}/${{ matrix.service.name }}"
+            # Docker Hub only allows two-segment repos (user/repo), so flatten to
+            # <user>/lest-platform-<service> instead of <user>/lest-platform/<service>.
+            IMAGES="${IMAGES}"$'\n'"${DOCKERHUB_REGISTRY}-${{ matrix.service.name }}"
           fi
           if [ "${{ steps.sec.outputs.has_aliyun }}" = "true" ]; then
             IMAGES="${IMAGES}"$'\n'"${ALIYUN_REGISTRY}/${{ matrix.service.name }}"
