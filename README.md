@@ -10,21 +10,21 @@
 
 <p align="center">
 
-<!-- Badges row 1 -->
-<a href="https://github.com/lest-work/lest/releases/latest"><img src="https://img.shields.io/github/v/release/lest-work/lest?style=flat-square" alt="GitHub release"></a>
-<a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
-<a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
-<a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
-<a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/Lest?style=flat-square" alt="Stars"></a>
-<a href="https://github.com/lest-work/lest/fork"><img src="https://img.shields.io/github/forks/lest-work/lest?style=flat-square" alt="Forks"></a>
+<!-- Badges row 1: Project Status -->
+[![Tag](https://img.shields.io/github/v/tag/lest-work/lest?sort=semver&style=flat-square)](https://github.com/lest-work/lest/releases)
+[![License](https://img.shields.io/github/license/lest-work/lest?style=flat-square)](https://github.com/lest-work/lest/blob/main/LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square)](https://github.com/lest-work/lest/actions/workflows/ci.yml)
+[![Issues](https://img.shields.io/github/issues/lest-work/lest?style=flat-square)](https://github.com/lest-work/lest/issues)
+[![Stars](https://img.shields.io/github/stars/lest-work/lest?style=flat-square)](https://github.com/lest-work/lest/stargazers)
+[![Forks](https://img.shields.io/github/forks/lest-work/lest?style=flat-square)](https://github.com/lest-work/lest/fork)
 
-<!-- Badges row 2 -->
-<a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
-<a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring" alt="Spring Boot"></a>
-<a href="https://v3.vuejs.org"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue"></a>
-<a href="https://nestjs.com"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript" alt="TypeScript"></a>
-<a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-24.x-2496ED?style=flat-square&logo=docker" alt="Docker"></a>
-<a href="https://github.com/lest-work/lest/discussions"><img src="https://img.shields.io/badge/Discussions-Welcome-blueviolet?style=flat-square" alt="Discussions"></a>
+<!-- Badges row 2: Tech Stack -->
+[![JDK](https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk)](https://www.oracle.com/java/technologies/downloads/#java21)
+[![Spring](https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring)](https://spring.io/projects/spring-boot)
+[![Vue](https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs)](https://v3.vuejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript)](https://nestjs.com)
+[![Docker](https://img.shields.io/badge/Docker-2496ed?style=flat-square&logo=docker)](https://docker.com)
+
 </p>
 
 <p align="center">
