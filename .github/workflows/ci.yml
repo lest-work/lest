@@ -416,14 +416,14 @@ jobs:
         run: |
           docker build \
             -t lest-gateway:test \
-            -f docker/lest/gateway/dockerfile \
+            -f backend/docker/lest/gateway/dockerfile \
             ./backend
 
       - name: Build auth image
         run: |
           docker build \
             -t lest-auth:test \
-            -f docker/lest/auth/dockerfile \
+            -f backend/docker/lest/auth/dockerfile \
             ./backend
 
       - name: Build nginx image
