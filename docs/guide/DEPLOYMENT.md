@@ -44,8 +44,8 @@
 | 镜像仓库 | 地址格式 | 示例 |
 |----------|----------|------|
 | **GitHub Container Registry (GHCR)** | `ghcr.io/lest-work/lest-platform/<service>:<tag>` | `ghcr.io/lest-work/lest-platform/gateway:0.2.0` |
-| **Docker Hub** | `<username>/lest-platform-<service>:<tag>` | `<username>/lest-platform-gateway:0.2.0` |
-| **阿里云 ACR** | `<aliyun-registry>/lest-platform/<service>:<tag>` | `<aliyun-registry>/lest-platform/gateway:0.2.0` |
+| **Docker Hub** | `yshan2028/lest-platform-<service>:<tag>` | `yshan2028/lest-platform-gateway:0.2.0` |
+| **阿里云 ACR** | `crpi-qxx4stoxzuctl22y.cn-hangzhou.personal.cr.aliyuncs.com/lest-platform/<service>:<tag>` | `crpi-qxx4stoxzuctl22y.cn-hangzhou.personal.cr.aliyuncs.com/lest-platform/gateway:0.2.0` |
 
 ### 2.2 服务镜像列表
 
