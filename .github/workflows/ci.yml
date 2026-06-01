@@ -397,6 +397,13 @@ jobs:
           mkdir -p backend/lest-visual/lest-monitor/jar && cp "$JAR" backend/lest-visual/lest-monitor/jar/lest-monitor.jar
           echo "=== All jars copied ==="
           ls -la backend/jar/
+          # Place jars into docker-compose build contexts (see backend/docker/docker-compose.yml)
+          # gateway: context ./lest  -> COPY jar/lest-gateway.jar
+          mkdir -p backend/docker/lest/jar
+          cp "$(find artifacts -name lest-gateway.jar -type f | head -1)" backend/docker/lest/jar/lest-gateway.jar
+          # auth: context ./lest/auth -> COPY ./jar/lest-auth.jar
+          mkdir -p backend/docker/lest/auth/jar
+          cp "$(find artifacts -name lest-auth.jar -type f | head -1)" backend/docker/lest/auth/jar/lest-auth.jar
           # nginx/html: frontend
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
@@ -417,14 +424,14 @@ jobs:
           docker build \
             -t lest-gateway:test \
             -f backend/docker/lest/gateway/dockerfile \
-            ./backend
+            backend/docker/lest
 
       - name: Build auth image
         run: |
           docker build \
             -t lest-auth:test \
             -f backend/docker/lest/auth/dockerfile \
-            ./backend
+            backend/docker/lest/auth
 
       - name: Build nginx image
         if: false  # Disable nginx build in CI (no dockerfile exists)
