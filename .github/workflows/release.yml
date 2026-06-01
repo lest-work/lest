@@ -221,10 +221,19 @@ jobs:
         id: sec
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          ALIYUN_REGISTRY_SECRET: ${{ secrets.ALIYUN_REGISTRY }}
+          ALIYUN_AK: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          ALIYUN_REG: ${{ secrets.ALIYUN_REGISTRY }}
         run: |
           [ -n "$DOCKERHUB_TOKEN" ] && echo "has_dockerhub=true" >> "$GITHUB_OUTPUT" || echo "has_dockerhub=false" >> "$GITHUB_OUTPUT"
-          [ -n "$ALIYUN_REGISTRY_SECRET" ] && echo "has_aliyun=true" >> "$GITHUB_OUTPUT" || echo "has_aliyun=false" >> "$GITHUB_OUTPUT"
+          if [ -n "$ALIYUN_AK" ] && [ -n "$ALIYUN_REG" ]; then
+            echo "has_aliyun=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_aliyun=false" >> "$GITHUB_OUTPUT"
+          fi
+          # Derive region-id from registry host (e.g. registry.cn-hangzhou.aliyuncs.com -> cn-hangzhou)
+          REGION="$(echo "$ALIYUN_REG" | sed -nE 's/^registry\.([a-z0-9-]+)\.aliyuncs\.com.*/\1/p')"
+          [ -z "$REGION" ] && REGION="cn-hangzhou"
+          echo "aliyun_region=$REGION" >> "$GITHUB_OUTPUT"
 
       - name: Stage JAR for ${{ matrix.service.name }}
         run: |
@@ -259,13 +268,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to Aliyun ACR
+      - name: Log in to Aliyun ACR (via AccessKey)
         if: steps.sec.outputs.has_aliyun == 'true'
-        uses: docker/login-action@v3
+        uses: aliyun/acr-login@v1
         with:
-          registry: ${{ secrets.ALIYUN_REGISTRY }}
-          username: ${{ secrets.ALIYUN_USERNAME }}
-          password: ${{ secrets.ALIYUN_PASSWORD }}
+          login-server: ${{ secrets.ALIYUN_REGISTRY }}
+          region-id: ${{ steps.sec.outputs.aliyun_region }}
+          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
 
       - name: Compute image targets
         id: img
