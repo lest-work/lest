@@ -22,41 +22,7 @@
 
 ---
 
-## [v0.2.1] — 2026-05-31 (W22)
-
-### Bug 修复
-
-- **关键运行时崩溃修复**:
-  - `ProjectMemberMapper`: 将软删除 (`SET deleted=1`) 改为硬删除 (`DELETE`)，因表无 `deleted` 列
-  - `TaskCommentMapper`: 同上修复
-- **后端逻辑修复**:
-  - `IterationMapper`: 所有 SELECT 查询增加 `deleted=0` 过滤，`deleteById` 改为软删除，resultMap/SELECT 增加 `deleted` 列
-  - `IterationMapper.countDateConflicts`: 排除已删除迭代的日期冲突检查
-  - `IterationMapper.countByProjectId`: 仅统计未删除迭代
-  - `TaskMapper.selectByParentId`: 增加 `deleted=0` 过滤
-  - `ReleasePlanMapper`: 从 resultMap 移除重复的 `createdBy`/`updatedBy`（与 `BaseEntity` 字段冲突），resultMap/SELECT 增加 `deleted` 列
-  - `ReleasePlan.java`: 移除重复的 `createdBy`/`updatedBy` 字段（类型冲突：`BaseEntity` 为 `String`，此处为 `Long`）
-- **前后端 API 接线修复**:
-  - `updateIteration`: 修复 `data.id` → `data.iterationId`（原值为 undefined）
-  - `listWorklogs`: 修复 `/{id}/worklog` → `/{id}/worklog/list`
-  - `addWorklog`: 修复 `/worklog` → `/{id}/worklog`（taskId 置于路径）
-  - `listComments`: 修复 `/{id}/comment` → `/{id}/comment/list`
-  - `addComment`/`removeComment`: 修复 URL 路径，补充 taskId 参数
-  - `listLabels`/`addLabel`: 修复 `/label/*` → `/project/{id}/label/*`
-- **新增后端接口**:
-  - `GET /{id}/comment/list` — 查询任务评论
-  - `POST /{id}/comment` — 添加任务评论
-  - `DELETE /{id}/comment/{commentId}` — 删除任务评论
-- **代码规范**:
-  - `IterationServiceImpl`: 增加 `STATUS_PLANNING`/`IN_PROGRESS`/`COMPLETED` 状态常量
-  - `ProjectServiceImpl`: 增加 `STATUS_ACTIVE`/`ARCHIVED` 状态常量
-- **数据库迁移**: `migration_002_iteration_soft_delete.sql` — 为 `iteration` 表增加 `deleted` 列
-
----
-
-
-
-## [v0.2.0-alpha.1] — 2026-05-31 (W22)
+## [v0.2.0] — 2026-06-01 (W23)
 
 ### 本周主题
 **项目与任务前端页面**
@@ -96,7 +62,63 @@
 - 修复 `ReleasePlanServiceImpl` 状态名称返回中文
 
 ### Bug 修复
+- **关键运行时崩溃修复**:
+  - `ProjectMemberMapper`: 将软删除 (`SET deleted=1`) 改为硬删除 (`DELETE`)，因表无 `deleted` 列
+  - `TaskCommentMapper`: 同上修复
+- **后端逻辑修复**:
+  - `IterationMapper`: 所有 SELECT 查询增加 `deleted=0` 过滤，`deleteById` 改为软删除，resultMap/SELECT 增加 `deleted` 列
+  - `IterationMapper.countDateConflicts`: 排除已删除迭代的日期冲突检查
+  - `IterationMapper.countByProjectId`: 仅统计未删除迭代
+  - `TaskMapper.selectByParentId`: 增加 `deleted=0` 过滤
+  - `ReleasePlanMapper`: 从 resultMap 移除重复的 `createdBy`/`updatedBy`（与 `BaseEntity` 字段冲突），resultMap/SELECT 增加 `deleted` 列
+  - `ReleasePlan.java`: 移除重复的 `createdBy`/`updatedBy` 字段（类型冲突：`BaseEntity` 为 `String`，此处为 `Long`）
+- **前后端 API 接线修复**:
+  - `updateIteration`: 修复 `data.id` → `data.iterationId`（原值为 undefined）
+  - `listWorklogs`: 修复 `/{id}/worklog` → `/{id}/worklog/list`
+  - `addWorklog`: 修复 `/worklog` → `/{id}/worklog`（taskId 置于路径）
+  - `listComments`: 修复 `/{id}/comment` → `/{id}/comment/list`
+  - `addComment`/`removeComment`: 修复 URL 路径，补充 taskId 参数
+  - `listLabels`/`addLabel`: 修复 `/label/*` → `/project/{id}/label/*`
+- **新增后端接口**:
+  - `GET /{id}/comment/list` — 查询任务评论
+  - `POST /{id}/comment` — 添加任务评论
+  - `DELETE /{id}/comment/{commentId}` — 删除任务评论
+- **代码规范**:
+  - `IterationServiceImpl`: 增加 `STATUS_PLANNING`/`IN_PROGRESS`/`COMPLETED` 状态常量
+  - `ProjectServiceImpl`: 增加 `STATUS_ACTIVE`/`ARCHIVED` 状态常量
+- **数据库迁移**: `migration_002_iteration_soft_delete.sql` — 为 `iteration` 表增加 `deleted` 列
 - 修复 `task/gantt/index.vue` 模板语法错误
+
+### CI/CD 与发布
+
+#### 多仓库自动化 Docker 镜像发布
+每次发版自动构建并推送 **16 个 Docker 镜像**到三个镜像仓库：
+
+| 镜像仓库 | 地址格式 | 示例 |
+|----------|---------|------|
+| **GitHub Container Registry (GHCR)** | `ghcr.io/lest-work/lest-platform/<service>:<tag>` | `ghcr.io/lest-work/lest-platform/gateway:0.2.0` |
+| **Docker Hub** | `<username>/lest-platform-<service>:<tag>` | `<username>/lest-platform-gateway:0.2.0` |
+| **阿里云 ACR** | `<aliyun-registry>/lest-platform/<service>:<tag>` | `<aliyun-registry>/lest-platform/gateway:0.2.0` |
+
+16 个服务全部发布：`gateway`、`auth`、`modules-system`、`modules-project`、`modules-task`、`modules-release`、`modules-job`、`modules-file`、`modules-meeting`、`modules-notification`、`modules-ai`、`modules-open`、`modules-performance`、`modules-plugin`、`modules-wakapi`、`visual-monitor`。
+
+每个镜像均包含三种 tag：`x.y.z`（语义化版本）、`<sha>-<short-sha>`（Commit SHA）、`latest`。
+
+拉取镜像示例：
+
+```bash
+# GitHub Container Registry (推荐)
+docker pull ghcr.io/lest-work/lest-platform/gateway:0.2.0
+docker pull ghcr.io/lest-work/lest-platform/auth:0.2.0
+docker pull ghcr.io/lest-work/lest-platform/modules-system:0.2.0
+
+# 拉取所有模块镜像
+for svc in gateway auth modules-system modules-project modules-task modules-release modules-job modules-file modules-meeting modules-notification modules-ai modules-open modules-performance modules-plugin modules-wakapi visual-monitor; do
+  docker pull ghcr.io/lest-work/lest-platform/${svc}:0.2.0
+done
+```
+
+详细部署说明见 [docs/guide/DEPLOYMENT.md](./docs/guide/DEPLOYMENT.md)。
 
 ### 已知待完成
 - 项目燃尽图（ECharts）

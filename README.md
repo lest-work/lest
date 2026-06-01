@@ -20,6 +20,8 @@
 <a href="https://github.com/lest-work/lest/fork"><img src="https://img.shields.io/github/forks/lest-work/lest?style=flat-square" alt="Forks"></a>
 <br/>
 <!-- Badges row 2 -->
+<a href="https://github.com/lest-work/lest/pkgs/container/lest-platform"><img src="https://img.shields.io/badge/GHCR-ghcr.io/lest--work/lest--platform-2496ED?style=flat-square&logo=github" alt="GHCR"></a>
+<a href="https://hub.docker.com/u/lestwork"><img src="https://img.shields.io/badge/Docker%20Hub-lestwork-2496ED?style=flat-square&logo=docker" alt="Docker Hub"></a>
 <a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
 <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring" alt="Spring Boot"></a>
 <a href="https://v3.vuejs.org"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue"></a>
@@ -147,7 +149,21 @@ lest-platform/
 | Docker Compose | 2.x |
 | Node.js | 18+ |
 
-### Option 1 — Docker Compose (Recommended)
+### Option 1 — Pull Official Images (Recommended for Deployment)
+
+```bash
+# Pull all 16 service images from GitHub Container Registry (no login required for public repos)
+for svc in gateway auth modules-system modules-project modules-task modules-release modules-job modules-file modules-meeting modules-notification modules-ai modules-open modules-performance modules-plugin modules-wakapi visual-monitor; do
+  docker pull ghcr.io/lest-work/lest-platform/${svc}:latest
+done
+
+# Then start infrastructure services
+docker compose -f backend/docker/docker-compose.local.yaml up -d
+
+# See docs/guide/DEPLOYMENT.md for full deployment guide with image-based docker-compose.yml
+```
+
+### Option 2 — Build from Source (Recommended for Development)
 
 ```bash
 # Clone the repository
@@ -163,24 +179,6 @@ docker compose -f backend/docker/docker-compose.local.yaml up -d
 # The frontend dev server (hot-reload)
 cd frontend-pc
 npm install
-npm run dev
-```
-
-### Option 2 — Local Development
-
-```bash
-# 1. Start infrastructure (Nacos, Sentinel, MinIO)
-docker compose -f backend/docker/docker-compose.local.yaml up -d
-
-# 2. Build backend
-cd backend
-mvn clean install -DskipTests
-
-# 3. Start services individually (in separate terminals)
-# See backend/docker/bin/run-*.sh for per-service scripts
-
-# 4. Start frontend
-cd ../frontend-pc
 npm run dev
 ```
 

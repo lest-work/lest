@@ -147,7 +147,21 @@ lest-platform/
 | Docker Compose | 2.x |
 | Node.js | 18+ |
 
-### 方式一 — Docker Compose（推荐）
+### 方式一 — 拉取官方镜像（推荐用于部署）
+
+```bash
+# 从 GitHub Container Registry 拉取全部 16 个服务镜像（公开仓库无需登录）
+for svc in gateway auth modules-system modules-project modules-task modules-release modules-job modules-file modules-meeting modules-notification modules-ai modules-open modules-performance modules-plugin modules-wakapi visual-monitor; do
+  docker pull ghcr.io/lest-work/lest-platform/${svc}:latest
+done
+
+# 然后启动基础设施服务
+docker compose -f backend/docker/docker-compose.local.yaml up -d
+
+# 完整部署指南含基于镜像的 docker-compose.yml 示例，见 docs/guide/DEPLOYMENT.md
+```
+
+### 方式二 — 从源码构建（推荐用于开发）
 
 ```bash
 # 克隆仓库
@@ -160,26 +174,6 @@ docker compose -f backend/docker/docker-compose.local.yaml up -d
 # 启动前端开发服务器（热更新）
 cd frontend-pc
 npm install
-npm run dev
-```
-
-### 方式二 — 本地开发
-
-```bash
-# 1. 启动基础设施（MySQL、Redis、Nacos）
-docker compose -f backend/docker/docker-compose.local.yaml up mysql redis nacos -d
-
-# 2. 构建后端
-cd backend
-mvn clean install -DskipTests
-
-# 3. 分别启动各服务（各开一个终端）
-详见 backend/docker/README.md
-./bin/run-gateway.sh
-./bin/run-system.sh
-
-# 4. 启动前端
-cd ../frontend-pc
 npm run dev
 ```
 

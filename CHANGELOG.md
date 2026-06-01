@@ -22,44 +22,10 @@
 
 ---
 
-## [v0.2.1] — 2026-05-31 (W22)
-
-### Bug Fixes
-
-- **Critical runtime crash fixes**:
-  - `ProjectMemberMapper`: Change soft-delete (`SET deleted=1`) to hard `DELETE` — table has no `deleted` column
-  - `TaskCommentMapper`: Same fix for `task_comment` table
-- **Backend logic fixes**:
-  - `IterationMapper`: Add `deleted=0` filter to all SELECT queries, change `deleteById` to soft delete, add `deleted` column to resultMap/SELECT
-  - `IterationMapper.countDateConflicts`: Exclude deleted iterations from date conflict checks
-  - `IterationMapper.countByProjectId`: Only count non-deleted iterations
-  - `TaskMapper.selectByParentId`: Add `deleted=0` filter
-  - `ReleasePlanMapper`: Remove duplicate `createdBy`/`updatedBy` from resultMap (conflicts with `BaseEntity`), add `deleted` to resultMap/SELECT
-  - `ReleasePlan.java`: Remove duplicate `createdBy`/`updatedBy` fields (type conflict: `BaseEntity.String` vs `Long`)
-- **Frontend/backend API wiring fixes**:
-  - `updateIteration`: Fix `data.id` → `data.iterationId` (was undefined)
-  - `listWorklogs`: Fix `/{id}/worklog` → `/{id}/worklog/list`
-  - `addWorklog`: Fix `/worklog` → `/{id}/worklog` (taskId in path)
-  - `listComments`: Fix `/{id}/comment` → `/{id}/comment/list`
-  - `addComment`/`removeComment`: Fix URL paths, add taskId parameter
-  - `listLabels`/`addLabel`: Fix `/label/*` → `/project/{id}/label/*`
-- **New backend endpoints**:
-  - `GET /{id}/comment/list` — Query task comments
-  - `POST /{id}/comment` — Add task comment
-  - `DELETE /{id}/comment/{commentId}` — Delete task comment
-- **Code style**:
-  - `IterationServiceImpl`: Add `STATUS_PLANNING`/`IN_PROGRESS`/`COMPLETED` status constants
-  - `ProjectServiceImpl`: Add `STATUS_ACTIVE`/`ARCHIVED` status constants
-- **Database migration**: `migration_002_iteration_soft_delete.sql` — Add `deleted` column to `iteration` table
-
----
-
-
-
-## [v0.2.0-alpha.1] — 2026-05-31 (W22)
+## [v0.2.0] — 2026-06-01 (W23)
 
 ### Sprint Theme
-**Project & Task Frontend Pages (Milestone 2)**
+**Project & Task Frontend (Milestone 2)**
 
 ### New Features
 
@@ -96,7 +62,49 @@
 - Fix `ReleasePlanServiceImpl` status names to return labels
 
 ### Bug Fixes
+- **Critical runtime crash fixes**:
+  - `ProjectMemberMapper`: Change soft-delete (`SET deleted=1`) to hard `DELETE` — table has no `deleted` column
+  - `TaskCommentMapper`: Same fix for `task_comment` table
+- **Backend logic fixes**:
+  - `IterationMapper`: Add `deleted=0` filter to all SELECT queries, change `deleteById` to soft delete, add `deleted` column to resultMap/SELECT
+  - `IterationMapper.countDateConflicts`: Exclude deleted iterations from date conflict checks
+  - `IterationMapper.countByProjectId`: Only count non-deleted iterations
+  - `TaskMapper.selectByParentId`: Add `deleted=0` filter
+  - `ReleasePlanMapper`: Remove duplicate `createdBy`/`updatedBy` from resultMap (conflicts with `BaseEntity`), add `deleted` to resultMap/SELECT
+  - `ReleasePlan.java`: Remove duplicate `createdBy`/`updatedBy` fields (type conflict: `BaseEntity.String` vs `Long`)
+- **Frontend/backend API wiring fixes**:
+  - `updateIteration`: Fix `data.id` → `data.iterationId` (was undefined)
+  - `listWorklogs`: Fix `/{id}/worklog` → `/{id}/worklog/list`
+  - `addWorklog`: Fix `/worklog` → `/{id}/worklog` (taskId in path)
+  - `listComments`: Fix `/{id}/comment` → `/{id}/comment/list`
+  - `addComment`/`removeComment`: Fix URL paths, add taskId parameter
+  - `listLabels`/`addLabel`: Fix `/label/*` → `/project/{id}/label/*`
+- **New backend endpoints**:
+  - `GET /{id}/comment/list` — Query task comments
+  - `POST /{id}/comment` — Add task comment
+  - `DELETE /{id}/comment/{commentId}` — Delete task comment
+- **Code style**:
+  - `IterationServiceImpl`: Add `STATUS_PLANNING`/`IN_PROGRESS`/`COMPLETED` status constants
+  - `ProjectServiceImpl`: Add `STATUS_ACTIVE`/`ARCHIVED` status constants
+- **Database migration**: `migration_002_iteration_soft_delete.sql` — Add `deleted` column to `iteration` table
 - Fix template syntax error in `task/gantt/index.vue`
+
+### CI/CD & Release
+
+#### Automated Multi-Registry Docker Image Publishing
+Every release automatically builds and pushes **16 Docker images** across three registries:
+
+| Registry | Address Format | Example |
+|----------|---------------|---------|
+| **GitHub Container Registry (GHCR)** | `ghcr.io/lest-work/lest-platform/<service>:<tag>` | `ghcr.io/lest-work/lest-platform/gateway:0.2.0` |
+| **Docker Hub** | `<username>/lest-platform-<service>:<tag>` | `<username>/lest-platform-gateway:0.2.0` |
+| **Aliyun ACR** | `<aliyun-registry>/lest-platform/<service>:<tag>` | `<aliyun-registry>/lest-platform/gateway:0.2.0` |
+
+All 16 services are published: `gateway`, `auth`, `modules-system`, `modules-project`, `modules-task`, `modules-release`, `modules-job`, `modules-file`, `modules-meeting`, `modules-notification`, `modules-ai`, `modules-open`, `modules-performance`, `modules-plugin`, `modules-wakapi`, `visual-monitor`.
+
+Each image is tagged with: `x.y.z` (semver), `<sha>-<short-sha>` (commit), and `latest`.
+
+See [docs/guide/DEPLOYMENT.md](./docs/guide/DEPLOYMENT.md) for pull instructions.
 
 ### Known Pending Items
 - Project burndown chart (ECharts)
@@ -179,4 +187,4 @@
 
 ---
 
-> 📌 See milestone roadmap: [docs/MILESTONES.md](./docs/MILESTONES.md)
+> See milestone roadmap: [docs/MILESTONES.md](./docs/MILESTONES.md)
