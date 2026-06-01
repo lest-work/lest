@@ -322,6 +322,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Debug - list artifacts
+        run: |
+          echo "=== Contents of artifacts/ ==="
+          ls -la artifacts/ || echo "artifacts/ not found"
+          echo "=== Contents of artifacts/backend-jars/ ==="
+          ls -la artifacts/backend-jars/ || echo "backend-jars not found"
+          echo "=== Find all .jar files ==="
+          find artifacts -name "*.jar" | head -20 || echo "no jars"
+
       - name: Prepare artifacts for Docker build
         run: |
           set -e
