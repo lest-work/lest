@@ -9,15 +9,16 @@
 </p>
 
 <p align="center">
-
 <!-- Badges row 1 -->
-<a href="https://github.com/lest-work/lest/releases"><img src="https://img.shields.io/github/v/tag/lest-work/lest?sort=semver&style=flat-square" alt="Latest tag"></a>
+<a href="https://github.com/lest-work/lest/tags"><img src="https://img.shields.io/github/v/tag/lest-work/lest?sort=semver&style=flat-square" alt="Latest tag"></a>
+<a href="https://github.com/lest-work/lest/releases"><img src="https://img.shields.io/github/v/release/lest-work/lest?sort=semver&style=flat-square&label=release" alt="Latest release"></a>
+<a href="https://github.com/lest-work/lest/releases"><img src="https://img.shields.io/github/release-date/lest-work/lest?style=flat-square&label=released" alt="Release date"></a>
 <a href="https://github.com/lest-work/lest/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lest-work/lest?style=flat-square" alt="License"></a>
 <a href="https://github.com/lest-work/lest/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/lest-work/lest/ci.yml?branch=main&style=flat-square" alt="CI"></a>
 <a href="https://github.com/lest-work/lest/issues"><img src="https://img.shields.io/github/issues/lest-work/lest?style=flat-square" alt="Issues"></a>
 <a href="https://github.com/lest-work/lest/stargazers"><img src="https://img.shields.io/github/stars/lest-work/lest?style=flat-square" alt="Stars"></a>
 <a href="https://github.com/lest-work/lest/fork"><img src="https://img.shields.io/github/forks/lest-work/lest?style=flat-square" alt="Forks"></a>
-
+<br/>
 <!-- Badges row 2 -->
 <a href="https://www.oracle.com/java/technologies/downloads/#java21"><img src="https://img.shields.io/badge/JDK-21+-blue?style=flat-square&logo=openjdk" alt="JDK"></a>
 <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=flat-square&logo=spring" alt="Spring Boot"></a>
