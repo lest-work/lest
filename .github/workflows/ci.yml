@@ -89,7 +89,6 @@ jobs:
           cp lest-visual/lest-monitor/target/lest-monitor-*.jar         lest-visual/lest-monitor/jar/lest-monitor.jar
 
       - name: Upload backend JAR artifacts
-        working-directory: .
         uses: actions/upload-artifact@v4
         with:
           name: backend-jars
@@ -131,7 +130,6 @@ jobs:
 
       - name: Run tests
         run: mvn test -B --fail-at-end
-        continue-on-error: true
 
       - name: Upload test results
         if: always()
@@ -140,7 +138,7 @@ jobs:
           name: backend-test-results
           path: '**/target/surefire-reports/'
           retention-days: 7
-          ignore-no-files: true
+          if-no-files-found: warn
 
       - name: Upload coverage
         if: always()
@@ -149,14 +147,14 @@ jobs:
           name: backend-coverage
           path: '**/target/site/jacoco/'
           retention-days: 7
-          ignore-no-files: true
+          if-no-files-found: warn
 
   # ==================== 后端代码分析 (SonarCloud) ====================
   backend-sonar:
     name: Backend SonarCloud Analysis
     runs-on: ubuntu-24.04
     needs: [backend-build]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: backend
@@ -173,11 +171,32 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           cache: 'maven'
 
+      - name: Build for SonarCloud analysis
+        if: github.event_name == 'push'
+        run: mvn compile test-compile -DskipTests -q
+
+      - name: Download backend JAR artifact
+        if: github.event_name == 'push'
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jars
+          path: .
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # For push (branch analysis): main/develop, no PR params
+          # For PR: add PR analysis params
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            EXTRA_ARGS="\
+              -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+              -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+              -Dsonar.pullrequest.base=${{ github.base_ref }} \
+              -Dsonar.pullrequest.github.repository=${{ github.repository }}"
+          fi
           mvn sonar:sonar \
             -Dsonar.projectKey=lest-work_lest \
             -Dsonar.organization=lest-work \
@@ -187,10 +206,7 @@ jobs:
             -Dsonar.tests=test \
             -Dsonar.test.inclusions=**/*Test.java \
             -Dsonar.coverage.jacoco.xmlReportsPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
-            -Dsonar.pullrequest.base=${{ github.base_ref }} \
-            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            $EXTRA_ARGS
         continue-on-error: true
 
   # ==================== 前端构建 ====================
@@ -237,7 +253,7 @@ jobs:
     name: Frontend SonarCloud Analysis
     runs-on: ubuntu-24.04
     needs: [frontend-build]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: frontend-pc
@@ -257,10 +273,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Download frontend dist artifact
+        if: github.event_name == 'push'
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: .
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          # For push (branch analysis): main/develop, no PR params
+          # For PR: add PR analysis params
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            EXTRA_ARGS="\
+              -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+              -Dsonar.pullrequest.branch=${{ github.head_ref }} \
+              -Dsonar.pullrequest.base=${{ github.base_ref }} \
+              -Dsonar.pullrequest.github.repository=${{ github.repository }}"
+          fi
           npx sonarscanner \
             -Dsonar.projectKey=lest-work_lest-frontend \
             -Dsonar.organization=lest-work \
@@ -268,10 +301,7 @@ jobs:
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts \
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.head_ref }} \
-            -Dsonar.pullrequest.base=${{ github.base_ref }} \
-            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            $EXTRA_ARGS
         continue-on-error: true
 
   # ==================== Docker 镜像构建测试 ====================
@@ -292,6 +322,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Debug - inspect artifact structure
+        run: |
+          echo "=== Top-level artifacts/ ==="
+          ls -la artifacts/
+          echo "=== artifacts/backend-jars/ contents ==="
+          ls -la artifacts/backend-jars/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== Recursive listing artifacts/backend-jars/ (maxdepth 3) ==="
+          find artifacts/backend-jars/ -maxdepth 3 | sort
+          echo "=== Find ALL jar files ==="
+          find artifacts -name "*.jar" | sort
+          echo "=== Find lest-gateway.jar anywhere ==="
+          find artifacts -name "lest-gateway.jar" 2>/dev/null || echo "NOT FOUND"
 
       - name: Prepare artifacts for Docker build
         run: |
@@ -359,19 +401,29 @@ jobs:
           mkdir -p backend/docker/nginx/html
           cp -r artifacts/frontend-dist/* backend/docker/nginx/html/ || true
 
+      - name: Debug - check backend directory
+        run: |
+          echo "=== backend/ directory ==="
+          ls -la backend/
+          echo "=== backend/docker/ ==="
+          ls -la backend/docker/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== backend/docker/lest/ ==="
+          ls -la backend/docker/lest/ 2>/dev/null || echo "NOT FOUND"
+          echo "=== backend/docker/lest/gateway/ ==="
+          ls -la backend/docker/lest/gateway/ 2>/dev/null || echo "NOT FOUND"
 
       - name: Build gateway image
         run: |
           docker build \
             -t lest-gateway:test \
-            -f docker/lest/gateway/dockerfile \
+            -f backend/docker/lest/gateway/dockerfile \
             ./backend
 
       - name: Build auth image
         run: |
           docker build \
             -t lest-auth:test \
-            -f docker/lest/auth/dockerfile \
+            -f backend/docker/lest/auth/dockerfile \
             ./backend
 
       - name: Build nginx image
