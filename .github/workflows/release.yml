@@ -274,7 +274,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to Docker Hub
+        id: dockerhub_login
         if: steps.sec.outputs.has_dockerhub == 'true'
+        continue-on-error: true
         uses: docker/login-action@v3
         with:
           registry: docker.io
@@ -282,7 +284,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to Aliyun ACR (via AccessKey)
+        id: aliyun_login
         if: steps.sec.outputs.has_aliyun == 'true'
+        continue-on-error: true
         uses: aliyun/acr-login@v1
         with:
           login-server: ${{ secrets.ALIYUN_REGISTRY }}
@@ -295,12 +299,13 @@ jobs:
         id: img
         run: |
           IMAGES="${GHCR_REGISTRY}/${{ matrix.service.name }}"
-          if [ "${{ steps.sec.outputs.has_dockerhub }}" = "true" ]; then
+          # Only target an optional registry if its login actually succeeded.
+          if [ "${{ steps.dockerhub_login.outcome }}" = "success" ]; then
             # Docker Hub only allows two-segment repos (user/repo), so flatten to
             # <user>/lest-platform-<service> instead of <user>/lest-platform/<service>.
             IMAGES="${IMAGES}"$'\n'"${DOCKERHUB_REGISTRY}-${{ matrix.service.name }}"
           fi
-          if [ "${{ steps.sec.outputs.has_aliyun }}" = "true" ]; then
+          if [ "${{ steps.aliyun_login.outcome }}" = "success" ]; then
             IMAGES="${IMAGES}"$'\n'"${ALIYUN_REGISTRY}/${{ matrix.service.name }}"
           fi
           { echo "images<<EOF"; printf '%s\n' "$IMAGES"; echo "EOF"; } >> "$GITHUB_OUTPUT"
