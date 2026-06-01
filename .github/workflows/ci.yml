@@ -338,11 +338,21 @@ jobs:
           echo "=== Find all .jar files ==="
           find artifacts -name "*.jar" | head -20 || echo "no jars"
 
+      - name: Debug - find all jars in artifacts
+        run: |
+          echo "=== All files in artifacts/backend-jars ==="
+          find artifacts/backend-jars -type f | sort
+          echo "=== Looking for gateway jar specifically ==="
+          find artifacts -name "lest-gateway.jar" -o -name "gateway*.jar" | sort
+
       - name: Prepare artifacts for Docker build
         run: |
           set -e
-          # backend JARs: artifact contains backend/backend/jar/ structure
-          cp artifacts/backend-jars/jar/lest-gateway.jar backend/jar/lest-gateway.jar
+          mkdir -p backend/jar
+          # Try exact path first
+          cp artifacts/backend-jars/jar/lest-gateway.jar backend/jar/lest-gateway.jar || echo "NOT FOUND: artifacts/backend-jars/jar/lest-gateway.jar"
+          ls -la artifacts/backend-jars/ 2>/dev/null || echo "artifacts/backend-jars/ not found"
+          find artifacts -name "*.jar" 2>/dev/null | head -5 || echo "no jars found"
           cp artifacts/backend-jars/lest-auth/jar/lest-auth.jar backend/lest-auth/jar/lest-auth.jar
           cp artifacts/backend-jars/lest-modules/lest-system/jar/lest-system.jar     backend/lest-modules/lest-system/jar/lest-system.jar
           cp artifacts/backend-jars/lest-modules/lest-project/jar/lest-project.jar    backend/lest-modules/lest-project/jar/lest-project.jar
