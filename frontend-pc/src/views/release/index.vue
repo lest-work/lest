@@ -25,84 +25,114 @@
       </el-form>
     </ele-card>
 
-    <!-- 发布列表 -->
+    <!-- 发布卡片网格 -->
     <ele-card>
-      <el-table v-loading="loading" :data="list" stripe row-key="releasePlanId" style="width: 100%">
-        <el-table-column prop="name" label="发布名称" min-width="180" show-overflow-tooltip>
-          <template #default="{ row }">
-            <el-link type="primary" underline="never" @click="goDetail(row)">{{ row.name }}</el-link>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="STATUS_TAG[row.status]" size="small">{{ STATUS_LABEL[row.status] || row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="releaseType" label="发布类型" width="100">
-          <template #default="{ row }">
-            {{ RELEASE_TYPE_LABEL[row.releaseType] || '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="releaseDate" label="计划日期" width="120" />
-        <el-table-column prop="gitTag" label="Git Tag" width="140" show-overflow-tooltip />
-        <el-table-column prop="gitBranch" label="分支" width="120" show-overflow-tooltip />
-        <el-table-column prop="artifactCount" label="产物数" width="80" align="center" />
-        <el-table-column prop="issueCount" label="关联问题" width="90" align="center" />
-        <el-table-column prop="buildNumber" label="构建号" width="80" align="center" />
-        <el-table-column label="操作" width="220" fixed="right">
-          <template #default="{ row }">
-            <el-link type="primary" underline="never" @click="goDetail(row)">详情</el-link>
-            <el-divider direction="vertical" />
-            <el-link
-              v-if="row.status === 0 || row.status === 1"
-              type="success"
-              underline="never"
-              @click="handlePublish(row)"
+      <ele-loading :loading="loading" style="min-height: 200px">
+        <div v-if="list.length === 0 && !loading" style="text-align: center; padding: 60px 0; color: #999">
+          暂无发布计划
+        </div>
+        <el-row :gutter="16">
+          <el-col
+            v-for="item in list"
+            :key="item.releasePlanId"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            style="margin-bottom: 16px"
+          >
+            <el-card
+              shadow="hover"
+              style="cursor: pointer; min-height: 160px; display: flex; flex-direction: column"
+              @click="goDetail(item)"
             >
-              发布
-            </el-link>
-            <el-link
-              v-if="row.status === 0"
-              type="primary"
-              underline="never"
-              @click="openEditDialog(row)"
-            >
-              编辑
-            </el-link>
-            <el-divider v-if="row.status === 0" direction="vertical" />
-            <el-link
-              v-if="row.status === 0 || row.status === 3"
-              type="warning"
-              underline="never"
-              @click="handleArchive(row)"
-            >
-              归档
-            </el-link>
-            <el-link
-              v-if="row.status === 4"
-              type="primary"
-              underline="never"
-              @click="handleRestore(row)"
-            >
-              恢复
-            </el-link>
-            <el-divider direction="vertical" />
-            <el-link type="danger" underline="never" @click="handleDelete(row)">删除</el-link>
-          </template>
-        </el-table-column>
-      </el-table>
+              <!-- 头部：名称 + 状态标签 + 下拉菜单 -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start">
+                <div style="flex: 1; overflow: hidden">
+                  <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                    {{ item.name }}
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                    <el-tag :type="STATUS_TAG[item.status]" size="small">
+                      {{ STATUS_LABEL[item.status] || item.status }}
+                    </el-tag>
+                    <el-tag type="primary" size="small">
+                      {{ RELEASE_TYPE_LABEL[item.releaseType] || '-' }}
+                    </el-tag>
+                  </div>
+                </div>
+                <el-dropdown @click.stop>
+                  <el-icon style="cursor: pointer; padding: 4px; flex-shrink: 0"><IconElMore /></el-icon>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item @click.stop="openEditDialog(item)">编辑</el-dropdown-item>
+                      <el-dropdown-item
+                        v-if="item.status === 0 || item.status === 1"
+                        @click.stop="handlePublish(item)"
+                      >
+                        发布
+                      </el-dropdown-item>
+                      <el-dropdown-item
+                        v-if="item.status === 0 || item.status === 3"
+                        @click.stop="handleArchive(item)"
+                      >
+                        归档
+                      </el-dropdown-item>
+                      <el-dropdown-item
+                        v-if="item.status === 4"
+                        @click.stop="handleRestore(item)"
+                      >
+                        恢复
+                      </el-dropdown-item>
+                      <el-dropdown-item
+                        style="color: #f56c6c"
+                        @click.stop="handleDelete(item)"
+                      >
+                        删除
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
 
-      <!-- 分页 -->
-      <div style="display: flex; justify-content: flex-end; margin-top: 12px">
-        <el-pagination
-          v-model:current-page="query.pageNum"
-          v-model:page-size="query.pageSize"
-          :total="total"
-          :page-sizes="[20, 50, 100]"
-          layout="total, sizes, prev, pager, next"
-          @change="fetchList"
-        />
-      </div>
+              <!-- 描述 -->
+              <div
+                style="
+                  flex: 1;
+                  margin-top: 10px;
+                  font-size: 13px;
+                  color: #666;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                "
+              >
+                {{ item.description || '暂无描述' }}
+              </div>
+
+              <!-- 底部信息 -->
+              <div style="margin-top: 10px; font-size: 12px; color: #999; display: flex; gap: 12px; flex-wrap: wrap">
+                <span v-if="item.releaseDate">计划日期：{{ item.releaseDate }}</span>
+                <span v-if="item.gitTag">Tag：{{ item.gitTag }}</span>
+                <span v-if="item.artifactCount">产物：{{ item.artifactCount }}</span>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+
+        <!-- 分页 -->
+        <div v-if="total > 0" style="display: flex; justify-content: flex-end; margin-top: 8px">
+          <el-pagination
+            v-model:current-page="query.pageNum"
+            v-model:page-size="query.pageSize"
+            :total="total"
+            :page-sizes="[12, 24, 48]"
+            layout="total, sizes, prev, pager, next"
+            @change="fetchList"
+          />
+        </div>
+      </ele-loading>
     </ele-card>
 
     <!-- 新增/编辑弹窗 -->
@@ -194,7 +224,7 @@
 
   const query = reactive({
     pageNum: 1,
-    pageSize: 20,
+    pageSize: 12,
     name: undefined,
     status: undefined
   });

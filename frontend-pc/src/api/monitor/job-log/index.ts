@@ -28,13 +28,13 @@ export interface JobLogParam extends PageParam {
 export async function pageJobLogs(params?: JobLogParam): Promise<TableDataInfo<JobLog>> {
   const res = await request.get<TableDataInfo<JobLog>>('/job/log/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeJobLogs(ids: number[]): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/job/log/' + ids.join());
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function exportJobLogs(params?: JobLogParam) {
@@ -45,6 +45,6 @@ export async function exportJobLogs(params?: JobLogParam) {
 
 export async function clearJoblogs(): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/job/log/clean');
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

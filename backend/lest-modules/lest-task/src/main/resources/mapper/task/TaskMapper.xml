@@ -24,12 +24,20 @@
         <result property="updateBy"         column="update_by"       />
         <result property="updateTime"        column="update_time"     />
         <result property="deleted"         column="deleted"        />
+        <result property="isSubtask"      column="is_subtask"     />
+        <result property="rootId"         column="root_id"        />
+        <result property="deletedBy"       column="deleted_by"     />
+        <result property="deletedAt"       column="deleted_at"     />
+        <result property="deletedReason"   column="deleted_reason" />
+        <result property="storyPoints"     column="story_points"   />
+        <result property="remainingHours"  column="remaining_hours"/>
     </resultMap>
 
     <sql id="selectTaskVo">
         select task_id, title, description, project_id, iteration_id, parent_id, task_type, priority, status,
                assignee_id, start_time, completed_at, estimated_hours, actual_hours, due_date, sort,
-               create_by, create_time, update_by, update_time, deleted
+               create_by, create_time, update_by, update_time, deleted,
+               is_subtask, root_id, deleted_by, deleted_at, deleted_reason, story_points, remaining_hours
         from task where deleted = 0
     </sql>
 
@@ -78,11 +86,12 @@
 
     <insert id="insert" parameterType="com.lest.modules.task.domain.Task" useGeneratedKeys="true" keyProperty="taskId">
         insert into task (title, description, project_id, iteration_id, parent_id, task_type, priority,
-                         status, assignee_id, start_time, estimated_hours, due_date, sort,
-                         create_by, create_time, update_by, update_time)
+                         status, assignee_id, start_time, estimated_hours, due_date, sort, story_points,
+                         create_by, create_time, update_by, update_time, is_subtask, root_id)
         values (#{title}, #{description}, #{projectId}, #{iterationId}, #{parentId}, #{taskType}, #{priority},
-                #{status}, #{assigneeId}, #{startTime}, #{estimatedHours}, #{dueDate}, #{sort},
-                #{createBy}, now(), #{updateBy}, now())
+                #{status}, #{assigneeId}, #{startTime}, #{estimatedHours}, #{dueDate}, #{sort}, #{storyPoints},
+                #{createBy}, now(), #{updateBy}, now(),
+                COALESCE(#{isSubtask}, 0), #{rootId})
     </insert>
 
     <update id="updateById" parameterType="com.lest.modules.task.domain.Task">
@@ -102,6 +111,10 @@
             <if test="actualHours != null">actual_hours = #{actualHours},</if>
             <if test="dueDate != null">due_date = #{dueDate},</if>
             <if test="sort != null">sort = #{sort},</if>
+            <if test="isSubtask != null">is_subtask = #{isSubtask},</if>
+            <if test="rootId != null">root_id = #{rootId},</if>
+            <if test="storyPoints != null">story_points = #{storyPoints},</if>
+            <if test="remainingHours != null">remaining_hours = #{remainingHours},</if>
             update_by = #{updateBy},
             update_time = now()
         </set>
@@ -109,8 +122,35 @@
     </update>
 
     <update id="deleteById">
-        update task set deleted = 1 where task_id = #{taskId}
+        update task set deleted = 1, deleted_by = #{deletedBy}, deleted_at = NOW() where task_id = #{taskId}
     </update>
+
+    <select id="selectDeletedList" resultMap="TaskResult">
+        select * from task
+        <where>
+            deleted = 1
+            <if test="projectId != null">and project_id = #{projectId}</if>
+        </where>
+        order by deleted_at desc
+    </select>
+
+    <update id="restoreById">
+        update task set deleted = 0, deleted_by = NULL, deleted_at = NULL, deleted_reason = NULL
+        where task_id = #{taskId}
+    </update>
+
+    <update id="permanentDeleteById">
+        update task set deleted = 2 where task_id = #{taskId}
+    </update>
+
+    <update id="softDeleteChildren">
+        update task set deleted = 1, deleted_by = #{deletedBy}, deleted_at = NOW()
+        where (parent_id = #{taskId} OR root_id = #{taskId}) and deleted = 0
+    </update>
+
+    <select id="selectByRootId" resultMap="TaskResult">
+        select * from task where root_id = #{rootId} and deleted = 0
+    </select>
 
     <select id="countByParentId" resultType="int">
         select count(*) from task where parent_id = #{parentId} and deleted = 0

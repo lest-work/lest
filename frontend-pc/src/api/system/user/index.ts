@@ -15,7 +15,7 @@ export async function pageUsers(
   if (res.data.code === 200) {
     return res.data;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -27,7 +27,7 @@ export async function getUser(id: number): Promise<UserDetailResult> {
   if (res.data.code === 200) {
     return res.data;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -36,9 +36,9 @@ export async function getUser(id: number): Promise<UserDetailResult> {
 export async function addUser(data: User): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/user', data);
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -47,9 +47,9 @@ export async function addUser(data: User): Promise<string> {
 export async function updateUser(data: User): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/user', data);
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -58,9 +58,9 @@ export async function updateUser(data: User): Promise<string> {
 export async function removeUser(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/user/' + id);
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -71,9 +71,9 @@ export async function removeUsers(ids: number[]): Promise<string> {
     '/system/user/' + ids.join()
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -88,9 +88,9 @@ export async function updateUserStatus(
     { userId, status }
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -105,9 +105,9 @@ export async function updateUserPassword(
     password
   });
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -152,9 +152,9 @@ export async function importUsers(
     formData
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -168,7 +168,7 @@ export async function getUserRole(id: number): Promise<UserRoleResult> {
   if (res.data.code === 200) {
     return res.data;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -183,7 +183,7 @@ export async function setUserRole(data: {
     toFormData(data)
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

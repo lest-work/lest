@@ -23,4 +23,8 @@
         from task_worklog where task_id = #{taskId} order by work_date desc
     </select>
 
+    <delete id="deleteByTaskId">
+        delete from task_worklog where task_id = #{taskId}
+    </delete>
+
 </mapper>

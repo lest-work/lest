@@ -21,41 +21,41 @@ export interface CacheKey {
 export async function getCache(): Promise<CacheInfo> {
   const res = await request.get<AjaxResult<CacheInfo>>('/monitor/cache');
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function getCacheNames(): Promise<CacheKey[]> {
   const res = await request.get<AjaxResult<CacheKey[]>>('/monitor/cache/getNames');
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function getCacheKeys(name: string): Promise<string[]> {
   const res = await request.get<AjaxResult<string[]>>('/monitor/cache/getKeys/' + name);
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function getCacheValue(name: string, key: string): Promise<CacheKey> {
   const res = await request.get<AjaxResult<CacheKey>>(`/monitor/cache/getValue/${name}/${key}`);
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function clearCacheName(name: string): Promise<any> {
   const res = await request.delete<AjaxResult<unknown>>('/monitor/cache/clearCacheName/' + name);
   if (res.data.code === 200) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function clearCacheKey(key: string): Promise<any> {
   const res = await request.delete<AjaxResult<unknown>>('/monitor/cache/clearCacheKey/' + key);
   if (res.data.code === 200) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function clearCacheAll(): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/monitor/cache/clearCacheAll');
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

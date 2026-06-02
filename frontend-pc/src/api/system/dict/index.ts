@@ -10,7 +10,7 @@ import type { Dict } from './model';
 export async function pageDicts(params?: PageParam & { dictName?: string; dictType?: string; status?: string }): Promise<TableDataInfo<Dict>> {
   const res = await request.get<TableDataInfo<Dict>>('/system/dict/type/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -20,7 +20,7 @@ export async function pageDicts(params?: PageParam & { dictName?: string; dictTy
 export async function getDict(id: number): Promise<Dict> {
   const res = await request.get<AjaxResult<Dict>>('/system/dict/type/' + id);
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -30,7 +30,7 @@ export async function getDict(id: number): Promise<Dict> {
 export async function listDicts(): Promise<Dict[]> {
   const res = await request.get<AjaxResult<Dict[]>>('/system/dict/type/optionselect');
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -45,24 +45,24 @@ export async function exportDicts(params?: Record<string, any>) {
 
 export async function addDict(data: Dict): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/dict/type', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function updateDict(data: Dict): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/dict/type', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeDict(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/dict/type/' + id);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function refreshDicts(): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/dict/type/refreshCache');
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

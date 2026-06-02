@@ -35,7 +35,7 @@ export interface NoticeParam extends PageParam {
 export async function getNotice(id: number): Promise<Notice> {
   const res = await request.get<AjaxResult<Notice>>('/system/notice/' + id);
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -46,7 +46,7 @@ export async function getNotice(id: number): Promise<Notice> {
 export async function listTop(): Promise<NoticeTopResult> {
   const res = await request.get<NoticeTopResult>('/system/notice/listTop');
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -55,8 +55,8 @@ export async function listTop(): Promise<NoticeTopResult> {
  */
 export async function markRead(noticeId: number): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/notice/markRead', null, { params: { noticeId } });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -65,36 +65,36 @@ export async function markRead(noticeId: number): Promise<string> {
  */
 export async function markReadAll(ids: string): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/notice/markReadAll', null, { params: { ids } });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function pageNotices(params?: NoticeParam): Promise<TableDataInfo<Notice>> {
   const res = await request.get<TableDataInfo<Notice>>('/system/notice/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function addNotice(data: Notice): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/notice', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function updateNotice(data: Notice): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/notice', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeNotice(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/notice/' + id);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeNotices(ids: number[]): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/notice/' + ids.join());
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

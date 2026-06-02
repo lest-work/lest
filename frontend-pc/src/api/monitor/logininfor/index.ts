@@ -29,7 +29,7 @@ export interface LogininforParam extends PageParam {
 export async function pageLogininfors(params?: LogininforParam): Promise<TableDataInfo<Logininfor>> {
   const res = await request.get<TableDataInfo<Logininfor>>('/system/logininfor/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -46,8 +46,8 @@ export async function exportLogininfors(params?: LogininforParam) {
  */
 export async function removeLogininfors(ids: number[]): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/logininfor/' + ids.join());
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -55,8 +55,8 @@ export async function removeLogininfors(ids: number[]): Promise<string> {
  */
 export async function clearLogininfors(): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/logininfor/clean');
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -64,6 +64,6 @@ export async function clearLogininfors(): Promise<string> {
  */
 export async function unlockLogininfors(userName: string): Promise<string> {
   const res = await request.get<AjaxResult<unknown>>('/system/logininfor/unlock/' + userName);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

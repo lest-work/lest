@@ -156,4 +156,4 @@
 ---
 
 > 📌 See full version history: [CHANGELOG.md](../CHANGELOG.md)
-> 📌 See development tasks: [TASKS/README.md](./TASKS/README.md)
+> 📌 See development tasks: [2-tasks/README.md](./2-tasks/README.md)

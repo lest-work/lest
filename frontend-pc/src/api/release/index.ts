@@ -43,7 +43,7 @@ export const ISSUE_CATEGORY_LABEL: Record<number, string> = {
 export async function pageReleasePlans(params?: ReleasePlanParam): Promise<TableDataInfo<ReleasePlan>> {
   const res = await request.get<TableDataInfo<ReleasePlan>>('/release/plan/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -52,7 +52,7 @@ export async function pageReleasePlans(params?: ReleasePlanParam): Promise<Table
 export async function getReleasePlan(id: number): Promise<ReleasePlan> {
   const res = await request.get<AjaxResult<ReleasePlan>>(`/release/plan/${id}`);
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -60,8 +60,8 @@ export async function getReleasePlan(id: number): Promise<ReleasePlan> {
  */
 export async function addReleasePlan(data: ReleasePlan): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/release/plan', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -69,8 +69,8 @@ export async function addReleasePlan(data: ReleasePlan): Promise<string> {
  */
 export async function updateReleasePlan(data: ReleasePlan): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/release/plan', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -78,8 +78,8 @@ export async function updateReleasePlan(data: ReleasePlan): Promise<string> {
  */
 export async function removeReleasePlan(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>(`/release/plan/${id}`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -87,8 +87,8 @@ export async function removeReleasePlan(id: number): Promise<string> {
  */
 export async function publishReleasePlan(id: number): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>(`/release/plan/${id}/publish`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -96,8 +96,8 @@ export async function publishReleasePlan(id: number): Promise<string> {
  */
 export async function archiveReleasePlan(id: number): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>(`/release/plan/${id}/archive`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -105,8 +105,8 @@ export async function archiveReleasePlan(id: number): Promise<string> {
  */
 export async function restoreReleasePlan(id: number): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>(`/release/plan/${id}/restore`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -114,8 +114,8 @@ export async function restoreReleasePlan(id: number): Promise<string> {
  */
 export async function startBuild(id: number): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>(`/release/plan/${id}/build/start`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -125,8 +125,8 @@ export async function completeBuild(id: number, downloadUrl?: string): Promise<s
   const res = await request.post<AjaxResult<unknown>>(`/release/plan/${id}/build/complete`, null, {
     params: downloadUrl ? { downloadUrl } : {}
   });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -135,7 +135,7 @@ export async function completeBuild(id: number, downloadUrl?: string): Promise<s
 export async function getUpcomingReleases(): Promise<ReleasePlan[]> {
   const res = await request.get<AjaxResult<ReleasePlan[]>>('/release/plan/upcoming');
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -146,7 +146,7 @@ export async function getRecentReleases(projectId?: number, limit?: number): Pro
     params: { projectId, limit }
   });
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -157,7 +157,7 @@ export async function listArtifacts(releasePlanId: number): Promise<ReleaseArtif
     params: { releasePlanId }
   });
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -165,8 +165,8 @@ export async function listArtifacts(releasePlanId: number): Promise<ReleaseArtif
  */
 export async function addArtifact(data: ReleaseArtifact): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/release/artifact', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -174,8 +174,8 @@ export async function addArtifact(data: ReleaseArtifact): Promise<string> {
  */
 export async function removeArtifact(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>(`/release/artifact/${id}`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -186,7 +186,7 @@ export async function listIssues(releasePlanId: number): Promise<ReleaseIssue[]>
     params: { releasePlanId }
   });
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -194,8 +194,8 @@ export async function listIssues(releasePlanId: number): Promise<ReleaseIssue[]>
  */
 export async function addIssue(data: ReleaseIssue): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/release/issue', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -215,8 +215,8 @@ export async function batchAddIssues(
       notes: opts?.notes
     }
   });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -224,6 +224,6 @@ export async function batchAddIssues(
  */
 export async function removeIssue(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>(`/release/issue/${id}`);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

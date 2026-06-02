@@ -43,6 +43,21 @@ public class TaskServiceImpl implements ITaskService
     @Autowired
     private TaskCommentMapper commentMapper;
 
+    @Autowired
+    private IssueLinkMapper issueLinkMapper;
+
+    @Autowired
+    private IssueLinkTypeMapper issueLinkTypeMapper;
+
+    @Autowired
+    private AttachmentMapper attachmentMapper;
+
+    @Autowired
+    private TaskVoteMapper taskVoteMapper;
+
+    @Autowired
+    private AutomationMapper automationMapper;
+
     @Override
     public List<Task> selectTaskList(Task task)
     {
@@ -129,26 +144,18 @@ public class TaskServiceImpl implements ITaskService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteTaskById(Long taskId)
+    public int deleteTaskById(Long taskId, Long deletedBy)
     {
         Task task = taskMapper.selectById(taskId);
         if (task == null)
         {
             throw new ServiceException("任务不存在");
         }
-        int childCount = taskMapper.countByParentId(taskId);
-        if (childCount > 0)
-        {
-            throw new ServiceException("任务下存在子任务，无法删除");
-        }
-        int depCount = dependencyMapper.countByTaskId(taskId);
-        if (depCount > 0)
-        {
-            throw new ServiceException("任务存在依赖关系，无法删除");
-        }
+        // 子任务也需要级联软删除
+        taskMapper.softDeleteChildren(taskId, deletedBy);
         taskLabelMapper.deleteByTaskId(taskId);
         watcherMapper.deleteByTaskId(taskId);
-        return taskMapper.deleteById(taskId);
+        return taskMapper.deleteById(taskId, deletedBy);
     }
 
     @Override
@@ -523,5 +530,265 @@ public class TaskServiceImpl implements ITaskService
             tw.setUserId(userId);
             watcherMapper.insert(tw);
         }
+    }
+
+    // ===== Recycle Bin =====
+    @Override
+    public List<Task> selectDeletedTasks(Long projectId)
+    {
+        return taskMapper.selectDeletedList(projectId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int restoreTask(Long taskId)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null)
+        {
+            throw new ServiceException("任务不存在");
+        }
+        return taskMapper.restoreById(taskId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int permanentDeleteTask(Long taskId)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null)
+        {
+            throw new ServiceException("任务不存在");
+        }
+        // Clean up all related data
+        taskLabelMapper.deleteByTaskId(taskId);
+        watcherMapper.deleteByTaskId(taskId);
+        worklogMapper.deleteByTaskId(taskId);
+        commentMapper.deleteByTaskId(taskId);
+        commitMapper.deleteByTaskId(taskId);
+        dependencyMapper.deleteByTaskId(taskId);
+        issueLinkMapper.deleteByTaskId(taskId);
+        taskVoteMapper.deleteByTaskId(taskId);
+        attachmentMapper.selectByTaskId(taskId).forEach(a -> attachmentMapper.permanentDeleteById(a.getAttachmentId()));
+        return taskMapper.permanentDeleteById(taskId);
+    }
+
+    // ===== Issue Link =====
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addIssueLink(Long taskId, IssueLink link)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        Task target = taskMapper.selectById(link.getTargetTaskId());
+        if (target == null) throw new ServiceException("目标任务不存在");
+        if (taskId.equals(link.getTargetTaskId())) throw new ServiceException("不能关联自身");
+
+        link.setSourceTaskId(taskId);
+        link.setCreatedBy(com.lest.common.security.utils.SecurityUtils.getUserId());
+        return issueLinkMapper.insert(link);
+    }
+
+    @Override
+    public List<IssueLink> selectIssueLinks(Long taskId)
+    {
+        return issueLinkMapper.selectLinksWithDetails(taskId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int removeIssueLink(Long linkId)
+    {
+        return issueLinkMapper.deleteById(linkId);
+    }
+
+    @Override
+    public List<IssueLinkType> selectIssueLinkTypes()
+    {
+        return issueLinkTypeMapper.selectAllActive();
+    }
+
+    // ===== Attachment =====
+    @Override
+    public List<Attachment> selectAttachments(Long taskId)
+    {
+        return attachmentMapper.selectByTaskId(taskId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int uploadAttachment(Long taskId, Attachment attachment)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        attachment.setTaskId(taskId);
+        attachment.setUploadedBy(com.lest.common.security.utils.SecurityUtils.getUserId());
+        Long maxVersion = attachmentMapper.getMaxVersionByFileName(taskId, attachment.getFileName());
+        attachment.setVersion(maxVersion != null ? maxVersion + 1 : 1);
+        return attachmentMapper.insert(attachment);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteAttachment(Long attachmentId)
+    {
+        Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
+        return attachmentMapper.softDeleteById(attachmentId, userId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int restoreAttachment(Long attachmentId)
+    {
+        return attachmentMapper.restoreById(attachmentId);
+    }
+
+    // ===== Vote =====
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int voteTask(Long taskId)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
+        if (taskVoteMapper.selectByTaskAndUser(taskId, userId) != null)
+            throw new ServiceException("已投票");
+        TaskVote vote = new TaskVote();
+        vote.setTaskId(taskId);
+        vote.setUserId(userId);
+        return taskVoteMapper.insert(vote);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int unvoteTask(Long taskId)
+    {
+        Long userId = com.lest.common.security.utils.SecurityUtils.getUserId();
+        return taskVoteMapper.deleteByTaskAndUser(taskId, userId);
+    }
+
+    @Override
+    public int getVoteCount(Long taskId)
+    {
+        return taskVoteMapper.countByTaskId(taskId);
+    }
+
+    @Override
+    public List<TaskVote> selectVoters(Long taskId)
+    {
+        return taskVoteMapper.selectByTaskId(taskId);
+    }
+
+    // ===== Automation =====
+    @Override
+    public List<AutomationRule> selectAutomationRules(Long projectId)
+    {
+        return automationMapper.selectRuleList(projectId);
+    }
+
+    @Override
+    public AutomationRule selectAutomationRuleById(Long ruleId)
+    {
+        return automationMapper.selectRuleById(ruleId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int createAutomationRule(AutomationRule rule)
+    {
+        rule.setCreatedBy(com.lest.common.security.utils.SecurityUtils.getUserId());
+        return automationMapper.insertRule(rule);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateAutomationRule(AutomationRule rule)
+    {
+        return automationMapper.updateRule(rule);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteAutomationRule(Long ruleId)
+    {
+        return automationMapper.deleteRuleById(ruleId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int toggleAutomationRule(Long ruleId, Integer isEnabled)
+    {
+        return automationMapper.toggleRuleEnabled(ruleId, isEnabled);
+    }
+
+    @Override
+    public List<AutomationExecutionLog> selectAutomationLogs(Long ruleId)
+    {
+        return automationMapper.selectLogList(ruleId);
+    }
+
+    @Override
+    public List<AutomationExecutionLog> selectAutomationLogsByTask(Long taskId)
+    {
+        return automationMapper.selectLogListByTaskId(taskId);
+    }
+
+    // ===== Time Tracking =====
+    @Override
+    public int updateTaskEstimate(Long taskId, Map<String, Object> params)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        Object val = params.get("estimatedHours");
+        if (val == null) throw new ServiceException("预估工时不能为空");
+        BigDecimal hours = new BigDecimal(val.toString());
+        task.setEstimatedHours(hours);
+        task.setRemainingHours(hours);
+        return taskMapper.updateById(task);
+    }
+
+    @Override
+    public int updateTaskRemaining(Long taskId, Map<String, Object> params)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        Object val = params.get("remainingHours");
+        if (val == null) throw new ServiceException("剩余工时不能为空");
+        task.setRemainingHours(new BigDecimal(val.toString()));
+        return taskMapper.updateById(task);
+    }
+
+    @Override
+    public int updateTaskStoryPoints(Long taskId, Map<String, Object> params)
+    {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) throw new ServiceException("任务不存在");
+        Object val = params.get("storyPoints");
+        if (val != null)
+        {
+            task.setStoryPoints(new BigDecimal(val.toString()));
+        }
+        return taskMapper.updateById(task);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchMoveToIteration(Map<String, Object> params)
+    {
+        @SuppressWarnings("unchecked")
+        List<Long> taskIds = (List<Long>) params.get("taskIds");
+        Long iterationId = Long.valueOf(params.get("iterationId").toString());
+        if (taskIds == null || taskIds.isEmpty()) return 0;
+        int count = 0;
+        for (Long taskId : taskIds)
+        {
+            Task task = taskMapper.selectById(taskId);
+            if (task != null)
+            {
+                task.setIterationId(iterationId);
+                count += taskMapper.updateById(task);
+            }
+        }
+        return count;
     }
 }

@@ -13,6 +13,15 @@
 
 ## [Unreleased]
 
+### 文档体系
+
+- **重构文档目录结构** — 新建 `docs/1-prd/`（产品需求）、`docs/2-tasks/`（开发任务）、`docs/3-guide/`（开发指南）、`docs/4-reference/`（技术参考），原 `PRD/` → `1-prd/`，`TASKS/` → `2-tasks/`
+- **新增 `docs/1-prd/SCHEME-REFERENCE.md`** — Jira Scheme 完整参考手册，涵盖 Issue Type / Workflow / Screen / Field Configuration / Board / 模板的完整设计
+- **全面 Jira 化改造** — 所有 PRD 文档添加 Jira 概念映射头部，建立 Jira 概念对照表，全面对标 Jira 产品结构
+- **任务管理 V2.0** — 升级为 Jira EAV 完整方案：25 种自定义字段类型、EAV 存储、Screen/Scheme 多层映射、工作流引擎（条件/校验/动作/全局转换/循环检测/草稿发布）、Issue Security、Issue Link（8 种关系）、批量操作、Backlog 视图、Sidebar 增强（Epic Link/Story Points/Version）、自动化规则、Resolution、工时增强、投票/分享、快捷键、JQL、**82% Jira 功能对齐**
+- **项目管理 V2.0** — 升级为 Jira Project Scheme 体系：Issue Type / Workflow / Screen / Field Configuration / **Permission** / **Notification** / **Priority** Scheme，Project Settings Tab UI（15 个 Tab）、Project Insights、**82% Jira 功能对齐**
+- **新增 `docs/1-prd/V2.0/插件架构与功能分层.md`** — 明确 Core 核心层 vs 插件边界，设计官方插件矩阵（V1.0 7 个、V2.0 8 个、V3.0 6 个），确定工时/CI-CD/WakaTime/IM 集成/会议/发布/绩效等全部插件化
+
 ### 基础设施
 
 - **新增域名规划** — 注册 `lest.work`（产品平台）和 `lest.top`（官网），建立子域名架构。详见 [docs/guide/DOMAIN_PLAN.md](./docs/guide/DOMAIN_PLAN.md)
@@ -197,6 +206,18 @@ done
 ### 已知待完成
 - 项目燃尽图（ECharts）尚未开发
 - 任务详情页工时/评论功能待完善
+
+- **2026-06-01（第九轮）**：文档目录 Core vs Plugin 分离重组——`1-prd/` 下新建 `core/` 和 `plugins/` 目录，Core 核心包含 5 个模块（V1.0）+ 3 个模块（V2.0），Plugins 包含 21 个插件（13 个 V1.0 + 8 个 V2.0）；`2-tasks/` 下同步分离为 `core/` 和 `plugins/`；所有 README 索引和交叉引用重新更新；`docs/README.md` 目录树和快速导航表全面更新；`docs/1-prd/README.md` 重写为 Core/Plugin 双层结构索引
+
+
+- **2026-06-01（第十轮）**：Jira 产品审查与补全——发现并修复 6 大类 20+ 问题；新建 `core/V3.0/`（任务管理 V3.0 + 敏捷看板增强）；任务管理 V3.0 补全 Issue Link（8 种链接类型）、附件管理、时间追踪（预估/剩余/工时）、子任务增强、自动化执行引擎、回收站；敏捷看板增强补全泳道、WIP 限制、燃尽图、CFD、Velocity、Control Chart、团队容量、史诗进度；插件 SDK V1.1 增强补充 24 个完整扩展点（13 个前端 + 11 个后端）、数据隔离设计、SDK V2.0 改进清单；更新所有 README 索引包含 V3.0
+
+
+- **2026-06-01（第十一轮）**：PRD vs Tasks 一致性核对与修复——修复 V2.0 任务管理_tasks（路径引用/Phase 3 看板命名/Phase 4-5 优先级/泳道移至 V3.0）；修复 V2.0 项目管理_tasks（路径引用/补充缺失的 Board Scheme Phase 3）；新建 `docs/2-tasks/core/V3.0/任务管理_tasks.md`（6 Phase：Issue Link/Attachment/Time Tracking/Sub-task/Automation 执行/回收站）；新建 `docs/2-tasks/core/V3.0/敏捷看板_tasks.md`（5 Phase：泳道/WIP/燃尽图/CFD/速度图+控制图+容量+史诗进度）；更新 V3.0 README 补充开发任务单索引；修复 TASKS/README.md 的 V2.0 路径引用
+
+
+- **2026-06-01（第十二轮）**：Jira 功能全面审查与修复——逐一核对全部 47 个功能点，创建 `_JIRA-ALIGNMENT-REVIEW.md`（完整对齐审查报告）；V1.0 任务管理补充 Comment（US-027~030）、Watch（US-031~032）、Clone（US-033）、批量操作（US-034）共 8 个用户故事；V2.0 任务管理补充 Issue Security Level 完整设计（安全方案+安全级别+API）；V2.0 任务管理补充批量操作设计（US-BATCH-001~002）；V2.0 项目管理补充 Project Avatar/Color 字段到表设计；V2.0 项目管理补充 Project Insights 完整设计（用户故事+数据库+API）；更新各 PRD 对齐率
+
 
 
 ---

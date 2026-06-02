@@ -38,7 +38,7 @@ export interface OperlogParam extends PageParam {
 export async function pageOperlogs(params?: OperlogParam): Promise<TableDataInfo<Operlog>> {
   const res = await request.get<TableDataInfo<Operlog>>('/system/operlog/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -55,8 +55,8 @@ export async function exportOperlogs(params?: OperlogParam) {
  */
 export async function removeOperlogs(ids: number[]): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/operlog/' + ids.join());
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -64,6 +64,6 @@ export async function removeOperlogs(ids: number[]): Promise<string> {
  */
 export async function clearOperlogs(): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/operlog/clean');
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

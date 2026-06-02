@@ -72,6 +72,28 @@ public class Task extends BaseEntity
     /** 逻辑删除标记 */
     private Integer deleted;
 
+    /** 是否为子任务 */
+    private Integer isSubtask;
+
+    /** 根任务ID */
+    private Long rootId;
+
+    /** 删除人用户ID */
+    private Long deletedBy;
+
+    /** 删除时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date deletedAt;
+
+    /** 删除原因 */
+    private String deletedReason;
+
+    /** 故事点 */
+    private BigDecimal storyPoints;
+
+    /** 剩余工时（小时） */
+    private BigDecimal remainingHours;
+
     /** 标签ID列表（非数据库字段） */
     private List<Long> labelIds;
 
@@ -316,4 +338,25 @@ public class Task extends BaseEntity
     {
         this.hasBlockers = hasBlockers;
     }
+
+    public Integer getIsSubtask() { return isSubtask; }
+    public void setIsSubtask(Integer isSubtask) { this.isSubtask = isSubtask; }
+
+    public Long getRootId() { return rootId; }
+    public void setRootId(Long rootId) { this.rootId = rootId; }
+
+    public Long getDeletedBy() { return deletedBy; }
+    public void setDeletedBy(Long deletedBy) { this.deletedBy = deletedBy; }
+
+    public Date getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(Date deletedAt) { this.deletedAt = deletedAt; }
+
+    public String getDeletedReason() { return deletedReason; }
+    public void setDeletedReason(String deletedReason) { this.deletedReason = deletedReason; }
+
+    public BigDecimal getStoryPoints() { return storyPoints; }
+    public void setStoryPoints(BigDecimal storyPoints) { this.storyPoints = storyPoints; }
+
+    public BigDecimal getRemainingHours() { return remainingHours; }
+    public void setRemainingHours(BigDecimal remainingHours) { this.remainingHours = remainingHours; }
 }

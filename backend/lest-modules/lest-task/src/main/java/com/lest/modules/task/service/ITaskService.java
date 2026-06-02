@@ -8,6 +8,12 @@ import com.lest.modules.task.domain.TaskComment;
 import com.lest.modules.task.domain.TaskCommit;
 import com.lest.modules.task.domain.TaskDependency;
 import com.lest.modules.task.domain.TaskWorklog;
+import com.lest.modules.task.domain.IssueLink;
+import com.lest.modules.task.domain.IssueLinkType;
+import com.lest.modules.task.domain.Attachment;
+import com.lest.modules.task.domain.TaskVote;
+import com.lest.modules.task.domain.AutomationRule;
+import com.lest.modules.task.domain.AutomationExecutionLog;
 
 /**
  * 任务 服务层
@@ -24,7 +30,7 @@ public interface ITaskService
 
     public int updateTask(Task task);
 
-    public int deleteTaskById(Long taskId);
+    public int deleteTaskById(Long taskId, Long deletedBy);
 
     public int updateStatus(Long taskId, String status);
 
@@ -65,4 +71,64 @@ public interface ITaskService
     public int addCommit(Long taskId, TaskCommit commit);
 
     public int addMergeRequest(Long taskId, TaskCommit mr);
+
+    // Recycle Bin
+    public List<Task> selectDeletedTasks(Long projectId);
+
+    public int restoreTask(Long taskId);
+
+    public int permanentDeleteTask(Long taskId);
+
+    // Issue Link
+    public int addIssueLink(Long taskId, IssueLink link);
+
+    public List<IssueLink> selectIssueLinks(Long taskId);
+
+    public int removeIssueLink(Long linkId);
+
+    public List<IssueLinkType> selectIssueLinkTypes();
+
+    // Attachment
+    public List<Attachment> selectAttachments(Long taskId);
+
+    public int uploadAttachment(Long taskId, Attachment attachment);
+
+    public int deleteAttachment(Long attachmentId);
+
+    public int restoreAttachment(Long attachmentId);
+
+    // Vote
+    public int voteTask(Long taskId);
+
+    public int unvoteTask(Long taskId);
+
+    public int getVoteCount(Long taskId);
+
+    public List<TaskVote> selectVoters(Long taskId);
+
+    // Automation
+    public List<AutomationRule> selectAutomationRules(Long projectId);
+
+    public AutomationRule selectAutomationRuleById(Long ruleId);
+
+    public int createAutomationRule(AutomationRule rule);
+
+    public int updateAutomationRule(AutomationRule rule);
+
+    public int deleteAutomationRule(Long ruleId);
+
+    public int toggleAutomationRule(Long ruleId, Integer isEnabled);
+
+    public List<AutomationExecutionLog> selectAutomationLogs(Long ruleId);
+
+    public List<AutomationExecutionLog> selectAutomationLogsByTask(Long taskId);
+
+    // Time Tracking
+    public int updateTaskEstimate(Long taskId, Map<String, Object> params);
+
+    public int updateTaskRemaining(Long taskId, Map<String, Object> params);
+
+    public int updateTaskStoryPoints(Long taskId, Map<String, Object> params);
+
+    public int batchMoveToIteration(Map<String, Object> params);
 }

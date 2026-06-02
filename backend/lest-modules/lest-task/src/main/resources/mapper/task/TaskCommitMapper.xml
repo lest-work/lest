@@ -38,4 +38,8 @@
         select task_id from task_commit where commit_hash = #{commitHash} and type = 'commit' limit 1
     </select>
 
+    <delete id="deleteByTaskId">
+        delete from task_commit where task_id = #{taskId}
+    </delete>
+
 </mapper>

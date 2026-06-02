@@ -18,4 +18,6 @@ public interface TaskWorklogMapper
     int insert(TaskWorklog worklog);
 
     List<TaskWorklog> selectByTaskId(@Param("taskId") Long taskId);
+
+    int deleteByTaskId(@Param("taskId") Long taskId);
 }

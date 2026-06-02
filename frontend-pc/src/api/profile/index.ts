@@ -17,7 +17,7 @@ export interface ProfileResult {
 export async function getUserProfile(): Promise<ProfileResult> {
   const res = await request.get<ProfileResult>('/system/user/profile');
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -26,8 +26,8 @@ export async function getUserProfile(): Promise<ProfileResult> {
  */
 export async function updateUserProfile(data: User): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/user/profile', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '修改成功';
+  return Promise.reject(new Error(res.data.msg || '修改失败'));
 }
 
 /**
@@ -36,8 +36,8 @@ export async function updateUserProfile(data: User): Promise<string> {
  */
 export async function updateUserPwd(oldPassword: string, newPassword: string): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/user/profile/updatePwd', { oldPassword, newPassword });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '密码修改成功';
+  return Promise.reject(new Error(res.data.msg || '密码修改失败'));
 }
 
 /**
@@ -47,5 +47,5 @@ export async function updateUserPwd(oldPassword: string, newPassword: string): P
 export async function uploadAvatar(data: FormData): Promise<{ imgUrl: string }> {
   const res = await request.post<AjaxResult<unknown>>('/system/user/profile/avatar', data);
   if (res.data.code === 200) return res.data as unknown as { imgUrl: string };
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

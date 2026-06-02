@@ -13,7 +13,7 @@ export async function listDictDatas(type: string): Promise<DictData[]> {
   if (res.data.code === 200 && res.data.data) {
     return res.data.data;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -29,7 +29,7 @@ export async function pageDictDatas(
   if (res.data.code === 200) {
     return res.data;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -41,9 +41,9 @@ export async function addDictData(data: DictData): Promise<string> {
     data
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -52,9 +52,9 @@ export async function addDictData(data: DictData): Promise<string> {
 export async function updateDictData(data: DictData): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/dict/data', data);
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -65,9 +65,9 @@ export async function removeDictData(id: number): Promise<string> {
     '/system/dict/data/' + id
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -78,9 +78,9 @@ export async function removeDictDataBatch(ids: number[]): Promise<string> {
     '/system/dict/data/' + ids.join()
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**

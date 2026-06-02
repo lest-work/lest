@@ -22,4 +22,6 @@ public interface TaskCommitMapper
     List<TaskCommit> selectMRsByTaskId(@Param("taskId") Long taskId);
 
     Long selectTaskIdByCommitHash(@Param("commitHash") String commitHash);
+
+    int deleteByTaskId(@Param("taskId") Long taskId);
 }

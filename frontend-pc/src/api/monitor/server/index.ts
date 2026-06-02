@@ -16,5 +16,5 @@ export interface ServerInfo {
 export async function getServer(): Promise<ServerInfo> {
   const res = await request.get<AjaxResult<ServerInfo>>('/monitor/server');
   if (res.data.code === 200) return res.data.data!;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

@@ -59,67 +59,100 @@
       </el-form>
     </ele-card>
 
-    <!-- 任务表格 / Task table -->
+    <!-- 任务卡片网格 / Task card grid -->
     <ele-card>
-      <el-table
-        v-loading="loading"
-        :data="list"
-        stripe
-        row-key="taskId"
-        style="width: 100%"
-      >
-        <el-table-column prop="title" label="任务标题" min-width="200" show-overflow-tooltip>
-          <template #default="{ row }">
-            <el-link type="primary" underline="never" @click="openDetail(row)">{{ row.title }}</el-link>
-          </template>
-        </el-table-column>
-        <el-table-column prop="taskType" label="类型" width="90">
-          <template #default="{ row }">
-            <el-tag :type="TYPE_TAG[row.taskType]" size="small">{{ TYPE_LABEL[row.taskType] || row.taskType }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="80">
-          <template #default="{ row }">
-            <el-tag :type="PRIORITY_TAG[row.priority]" size="small">{{ row.priority?.toUpperCase() }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="STATUS_TAG[row.status]" size="small">{{ STATUS_LABEL[row.status] || row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="assigneeName" label="负责人" width="100" />
-        <el-table-column prop="dueDate" label="截止日期" width="110" />
-        <el-table-column prop="estimatedHours" label="预估(h)" width="90" align="center" />
-        <el-table-column label="操作" width="140" fixed="right">
-          <template #default="{ row }">
-            <el-link type="primary" underline="never" @click="openEditDialog(row)">编辑</el-link>
-            <el-divider direction="vertical" />
-            <el-link type="primary" underline="never" @click="handleChangeStatus(row)">改状态</el-link>
-            <el-divider direction="vertical" />
-            <el-link
-              v-permission="['task:task:remove']"
-              type="danger"
-              underline="never"
-              @click="handleDelete(row)"
+      <ele-loading :loading="loading" style="min-height: 200px">
+        <div v-if="list.length === 0 && !loading" style="text-align: center; padding: 60px 0; color: #999">
+          暂无任务
+        </div>
+        <el-row :gutter="16">
+          <el-col
+            v-for="item in list"
+            :key="item.taskId"
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="6"
+            style="margin-bottom: 16px"
+          >
+            <el-card
+              shadow="hover"
+              style="cursor: pointer; min-height: 160px; display: flex; flex-direction: column"
+              @click="openDetail(item)"
             >
-              删除
-            </el-link>
-          </template>
-        </el-table-column>
-      </el-table>
+              <!-- 头部：标题 + 下拉菜单 -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start">
+                <div style="flex: 1; overflow: hidden">
+                  <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                    {{ item.title }}
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                    <el-tag :type="TYPE_TAG[item.taskType]" size="small">
+                      {{ TYPE_LABEL[item.taskType] || item.taskType }}
+                    </el-tag>
+                    <el-tag :type="PRIORITY_TAG[item.priority]" size="small">
+                      {{ item.priority?.toUpperCase() }}
+                    </el-tag>
+                    <el-tag :type="STATUS_TAG[item.status]" size="small">
+                      {{ STATUS_LABEL[item.status] || item.status }}
+                    </el-tag>
+                  </div>
+                </div>
+                <el-dropdown @click.stop>
+                  <el-icon style="cursor: pointer; padding: 4px; flex-shrink: 0"><IconElMore /></el-icon>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item @click.stop="openEditDialog(item)">编辑</el-dropdown-item>
+                      <el-dropdown-item @click.stop="handleChangeStatus(item)">改状态</el-dropdown-item>
+                      <el-dropdown-item
+                        v-permission="['task:task:remove']"
+                        style="color: #f56c6c"
+                        @click.stop="handleDelete(item)"
+                      >
+                        删除
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
 
-      <!-- 分页 -->
-      <div style="display: flex; justify-content: flex-end; margin-top: 12px">
-        <el-pagination
-          v-model:current-page="query.pageNum"
-          v-model:page-size="query.pageSize"
-          :total="total"
-          :page-sizes="[20, 50, 100]"
-          layout="total, sizes, prev, pager, next"
-          @change="fetchList"
-        />
-      </div>
+              <!-- 描述 -->
+              <div
+                style="
+                  flex: 1;
+                  margin-top: 10px;
+                  font-size: 13px;
+                  color: #666;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                "
+              >
+                {{ item.description || '暂无描述' }}
+              </div>
+
+              <!-- 底部：负责人 + 截止日期 -->
+              <div style="margin-top: 10px; font-size: 12px; color: #999; display: flex; gap: 12px; flex-wrap: wrap">
+                <span v-if="item.assigneeName">负责人：{{ item.assigneeName }}</span>
+                <span v-if="item.dueDate">截止：{{ item.dueDate }}</span>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+
+        <!-- 分页 / Pagination -->
+        <div v-if="total > 0" style="display: flex; justify-content: flex-end; margin-top: 8px">
+          <el-pagination
+            v-model:current-page="query.pageNum"
+            v-model:page-size="query.pageSize"
+            :total="total"
+            :page-sizes="[12, 24, 48]"
+            layout="total, sizes, prev, pager, next"
+            @change="fetchList"
+          />
+        </div>
+      </ele-loading>
     </ele-card>
 
     <!-- 新增/编辑弹窗 / Add/Edit dialog -->
@@ -251,7 +284,7 @@
 
   const query = reactive({
     pageNum: 1,
-    pageSize: 20,
+    pageSize: 12,
     title: undefined,
     projectId: undefined,
     status: undefined,

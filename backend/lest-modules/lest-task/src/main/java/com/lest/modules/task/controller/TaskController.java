@@ -23,6 +23,8 @@ import com.lest.modules.task.domain.TaskComment;
 import com.lest.modules.task.domain.TaskCommit;
 import com.lest.modules.task.domain.TaskDependency;
 import com.lest.modules.task.domain.TaskWorklog;
+import com.lest.modules.task.domain.Attachment;
+import com.lest.modules.task.domain.IssueLink;
 import com.lest.modules.task.service.ITaskService;
 
 /**
@@ -82,14 +84,14 @@ public class TaskController extends BaseController
     }
 
     /**
-     * 删除任务
+     * 删除任务（软删除）
      */
     @RequiresPermissions("task:task:remove")
     @Log(title = "任务管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public AjaxResult remove(@PathVariable Long id)
     {
-        return toAjax(taskService.deleteTaskById(id));
+        return toAjax(taskService.deleteTaskById(id, com.lest.common.security.utils.SecurityUtils.getUserId()));
     }
 
     /**
@@ -293,5 +295,50 @@ public class TaskController extends BaseController
     public AjaxResult addMergeRequest(@PathVariable Long id, @RequestBody TaskCommit mr)
     {
         return toAjax(taskService.addMergeRequest(id, mr));
+    }
+
+    // ===== Time Tracking =====
+    /**
+     * 设置预估工时
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "预估工时", businessType = BusinessType.UPDATE)
+    @PutMapping("/{id}/estimate")
+    public AjaxResult setEstimate(@PathVariable Long id, @RequestBody Map<String, Object> params)
+    {
+        return toAjax(taskService.updateTaskEstimate(id, params));
+    }
+
+    /**
+     * 设置剩余工时
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "剩余工时", businessType = BusinessType.UPDATE)
+    @PutMapping("/{id}/remaining")
+    public AjaxResult setRemaining(@PathVariable Long id, @RequestBody Map<String, Object> params)
+    {
+        return toAjax(taskService.updateTaskRemaining(id, params));
+    }
+
+    /**
+     * 设置故事点
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "故事点", businessType = BusinessType.UPDATE)
+    @PutMapping("/{id}/storypoints")
+    public AjaxResult setStoryPoints(@PathVariable Long id, @RequestBody Map<String, Object> params)
+    {
+        return toAjax(taskService.updateTaskStoryPoints(id, params));
+    }
+
+    /**
+     * 批量移动任务到迭代
+     */
+    @RequiresPermissions("task:task:edit")
+    @Log(title = "批量移动任务", businessType = BusinessType.UPDATE)
+    @PutMapping("/batch/move-to-iteration")
+    public AjaxResult batchMoveToIteration(@RequestBody Map<String, Object> params)
+    {
+        return toAjax(taskService.batchMoveToIteration(params));
     }
 }

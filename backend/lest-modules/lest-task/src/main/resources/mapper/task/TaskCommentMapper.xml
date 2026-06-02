@@ -40,4 +40,8 @@
         select count(*) from task_comment where parent_id = #{parentId}
     </select>
 
+    <delete id="deleteByTaskId">
+        delete from task_comment where task_id = #{taskId}
+    </delete>
+
 </mapper>

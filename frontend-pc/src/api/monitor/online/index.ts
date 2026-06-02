@@ -25,7 +25,7 @@ export interface OnlineParam {
 export async function pageOnlines(params?: OnlineParam): Promise<TableDataInfo<OnlineUser>> {
   const res = await request.get<TableDataInfo<OnlineUser>>('/system/online/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -34,6 +34,6 @@ export async function pageOnlines(params?: OnlineParam): Promise<TableDataInfo<O
  */
 export async function kickoutOnline(tokenId: string): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/online/' + tokenId);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

@@ -25,5 +25,7 @@ public interface TaskCommentMapper
 
     int deleteById(@Param("taskCommentId") Long taskCommentId);
 
+    int deleteByTaskId(@Param("taskId") Long taskId);
+
     int countByParentId(@Param("parentId") Long parentId);
 }

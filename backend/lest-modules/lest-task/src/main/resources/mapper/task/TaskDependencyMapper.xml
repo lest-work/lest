@@ -29,4 +29,8 @@
         select count(*) from task_dependency where task_id = #{taskId} or dependency_task_id = #{taskId}
     </select>
 
+    <delete id="deleteByTaskId">
+        delete from task_dependency where task_id = #{taskId} or dependency_task_id = #{taskId}
+    </delete>
+
 </mapper>

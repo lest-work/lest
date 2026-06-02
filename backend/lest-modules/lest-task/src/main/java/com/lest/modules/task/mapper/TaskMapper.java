@@ -35,7 +35,17 @@ public interface TaskMapper
 
     int updateById(Task task);
 
-    int deleteById(@Param("taskId") Long taskId);
+    int deleteById(@Param("taskId") Long taskId, @Param("deletedBy") Long deletedBy);
+
+    List<Task> selectDeletedList(@Param("projectId") Long projectId);
+
+    int restoreById(@Param("taskId") Long taskId);
+
+    int permanentDeleteById(@Param("taskId") Long taskId);
+
+    int softDeleteChildren(@Param("taskId") Long taskId, @Param("deletedBy") Long deletedBy);
+
+    List<Task> selectByRootId(@Param("rootId") Long rootId);
 
     int countByParentId(@Param("parentId") Long parentId);
 

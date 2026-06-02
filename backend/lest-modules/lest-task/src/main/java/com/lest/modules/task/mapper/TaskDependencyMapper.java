@@ -24,4 +24,6 @@ public interface TaskDependencyMapper
     List<Long> selectBlockedByTaskIds(@Param("taskId") Long taskId);
 
     int countByTaskId(@Param("taskId") Long taskId);
+
+    int deleteByTaskId(@Param("taskId") Long taskId);
 }

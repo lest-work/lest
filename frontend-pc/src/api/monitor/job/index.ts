@@ -29,37 +29,37 @@ export interface JobParam extends PageParam {
 export async function pageJobs(params?: JobParam): Promise<TableDataInfo<Job>> {
   const res = await request.get<TableDataInfo<Job>>('/job/list', { params });
   if (res.data.code === 200) return res.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function addJob(data: Job): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/job', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function updateJob(data: Job): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/job', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeJob(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/job/' + id);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeJobs(ids: number[]): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/job/' + ids.join());
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function updateJobStatus(jobId: number, status: string): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/job/changeStatus', { jobId, status });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function exportJobs(params?: JobParam) {
@@ -70,6 +70,6 @@ export async function exportJobs(params?: JobParam) {
 
 export async function runJob(jobId: number, jobGroup: string): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/job/run', { jobId, jobGroup });
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

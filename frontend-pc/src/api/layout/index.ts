@@ -12,7 +12,7 @@ export async function getUserInfo(): Promise<UserInfoResult> {
   if (res.data.code === 200) {
     return res.data as UserInfoResult;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -71,7 +71,7 @@ export async function getUserMenu(): Promise<any[]> {
       return result;
     });
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -86,9 +86,9 @@ export async function updatePassword(data: {
     data
   );
   if (res.data.code === 200) {
-    return res.data.msg;
+    return res.data.msg || '操作成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /** 若依默认菜单图标名称 */

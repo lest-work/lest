@@ -9,7 +9,7 @@ import type { Dept, DeptParam } from './model';
 export async function getDept(id: number): Promise<Dept> {
   const res = await request.get<AjaxResult<Dept>>('/system/dept/' + id);
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -19,29 +19,29 @@ export async function getDept(id: number): Promise<Dept> {
 export async function listExcludeDepts(deptId: number): Promise<Dept[]> {
   const res = await request.get<AjaxResult<Dept[]>>('/system/dept/list/exclude/' + deptId);
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function listDepts(params?: DeptParam): Promise<Dept[]> {
   const res = await request.get<AjaxResult<Dept[]>>('/system/dept/list', { params });
   if (res.data.code === 200 && res.data.data) return res.data.data;
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function addDept(data: Dept): Promise<string> {
   const res = await request.post<AjaxResult<unknown>>('/system/dept', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function updateDept(data: Dept): Promise<string> {
   const res = await request.put<AjaxResult<unknown>>('/system/dept', data);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 export async function removeDept(id: number): Promise<string> {
   const res = await request.delete<AjaxResult<unknown>>('/system/dept/' + id);
-  if (res.data.code === 200) return res.data.msg;
-  return Promise.reject(new Error(res.data.msg));
+  if (res.data.code === 200) return res.data.msg || '操作成功';
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

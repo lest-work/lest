@@ -144,52 +144,93 @@
               <el-option v-for="it in iterations" :key="it.iterationId" :label="it.name" :value="it.iterationId" />
             </el-select>
           </div>
-          <el-table v-loading="taskLoading" :data="taskList" stripe style="width: 100%">
-            <el-table-column prop="title" label="任务标题" min-width="200" show-overflow-tooltip>
-              <template #default="{ row }">
-                <el-link type="primary" underline="never">{{ row.title }}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="taskType" label="类型" width="90">
-              <template #default="{ row }">
-                <el-tag :type="TASK_TYPE_TAG[row.taskType]" size="small">{{ TASK_TYPE_LABEL[row.taskType] || row.taskType }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="priority" label="优先级" width="80">
-              <template #default="{ row }">
-                <el-tag :type="TASK_PRIORITY_TAG[row.priority]" size="small">{{ row.priority?.toUpperCase() }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" label="状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="TASK_STATUS_TAG[row.status]" size="small">{{ TASK_STATUS_LABEL[row.status] || row.status }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="assigneeName" label="负责人" width="100" />
-            <el-table-column prop="dueDate" label="截止" width="110" />
-            <el-table-column label="操作" width="80" fixed="right">
-              <template #default="{ row }">
-                <el-link
-                  v-permission="['task:task:remove']"
-                  type="danger"
-                  underline="never"
-                  @click="handleDeleteTask(row)"
+
+          <!-- 任务卡片网格 -->
+          <ele-loading :loading="taskLoading" style="min-height: 200px">
+            <div v-if="taskList.length === 0 && !taskLoading" style="text-align: center; padding: 60px 0; color: #999">
+              暂无任务
+            </div>
+            <el-row :gutter="16">
+              <el-col
+                v-for="item in taskList"
+                :key="item.taskId"
+                :xs="24"
+                :sm="12"
+                :md="8"
+                :lg="6"
+                style="margin-bottom: 16px"
+              >
+                <el-card
+                  shadow="hover"
+                  style="cursor: pointer; min-height: 140px; display: flex; flex-direction: column"
+                  @click="openTaskEdit(item)"
                 >
-                  删除
-                </el-link>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div style="display: flex; justify-content: flex-end; margin-top: 12px">
-            <el-pagination
-              v-model:current-page="taskQuery.pageNum"
-              v-model:page-size="taskQuery.pageSize"
-              :total="taskTotal"
-              :page-sizes="[20, 50]"
-              layout="total, sizes, prev, pager, next"
-              @change="fetchTasks"
-            />
-          </div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start">
+                    <div style="flex: 1; overflow: hidden">
+                      <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                        {{ item.title }}
+                      </div>
+                      <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                        <el-tag :type="TASK_TYPE_TAG[item.taskType]" size="small">
+                          {{ TASK_TYPE_LABEL[item.taskType] || item.taskType }}
+                        </el-tag>
+                        <el-tag :type="TASK_PRIORITY_TAG[item.priority]" size="small">
+                          {{ item.priority?.toUpperCase() }}
+                        </el-tag>
+                        <el-tag :type="TASK_STATUS_TAG[item.status]" size="small">
+                          {{ TASK_STATUS_LABEL[item.status] || item.status }}
+                        </el-tag>
+                      </div>
+                    </div>
+                    <el-dropdown @click.stop>
+                      <el-icon style="cursor: pointer; padding: 4px; flex-shrink: 0"><IconElMore /></el-icon>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item
+                            v-permission="['task:task:remove']"
+                            style="color: #f56c6c"
+                            @click.stop="handleDeleteTask(item)"
+                          >
+                            删除
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </div>
+                  <div
+                    style="
+                      flex: 1;
+                      margin-top: 10px;
+                      font-size: 13px;
+                      color: #666;
+                      overflow: hidden;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2;
+                      -webkit-box-orient: vertical;
+                    "
+                  >
+                    {{ item.description || '暂无描述' }}
+                  </div>
+                  <div style="margin-top: 10px; font-size: 12px; color: #999; display: flex; gap: 12px; flex-wrap: wrap">
+                    <span v-if="item.assigneeName">负责人：{{ item.assigneeName }}</span>
+                    <span v-if="item.dueDate">截止：{{ item.dueDate }}</span>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+
+            <!-- 分页 -->
+            <div v-if="taskTotal > 0" style="display: flex; justify-content: flex-end; margin-top: 8px">
+              <el-pagination
+                v-model:current-page="taskQuery.pageNum"
+                v-model:page-size="taskQuery.pageSize"
+                :total="taskTotal"
+                :page-sizes="[12, 24, 48]"
+                layout="total, sizes, prev, pager, next"
+                @change="fetchTasks"
+              />
+            </div>
+          </ele-loading>
         </el-tab-pane>
 
         <!-- 里程碑 -->
@@ -265,7 +306,7 @@
     </el-dialog>
 
     <!-- 新建任务弹窗 / Task dialog -->
-    <el-dialog v-model="taskDialogVisible" title="新建任务" width="520px" destroy-on-close>
+    <el-dialog v-model="taskDialogVisible" :title="taskForm.taskId ? '编辑任务' : '新建任务'" width="520px" destroy-on-close>
       <el-form ref="taskFormRef" :model="taskForm" :rules="taskRules" label-width="90px">
         <el-form-item label="任务标题" prop="title">
           <el-input v-model="taskForm.title" maxlength="200" show-word-limit />
@@ -333,7 +374,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { ElMessageBox } from 'element-plus';
   import { EleMessage } from 'ele-admin-plus';
-  import { ArrowLeftOutlined, PlusOutlined, AppstoreOutlined as KanbanIcon } from '@/components/icons';
+  import { ArrowLeftOutlined, PlusOutlined, AppstoreOutlined as KanbanIcon, IconElMore } from '@/components/icons';
   import {
     getProject,
     getProjectMembers,
@@ -346,7 +387,7 @@
     addMilestone,
     removeMilestone
   } from '@/api/project';
-  import { pageTasks, addTask, removeTask } from '@/api/task';
+  import { pageTasks, addTask, updateTask, removeTask } from '@/api/task';
 
   const route = useRoute();
   const router = useRouter();
@@ -555,12 +596,29 @@
     taskDialogVisible.value = true;
   }
 
+  function openTaskEdit(item) {
+    Object.assign(taskForm, {
+      taskId: item.taskId,
+      projectId: getProjectId(),
+      iterationId: item.iterationId,
+      title: item.title,
+      taskType: item.taskType || 'task',
+      priority: item.priority || 'p2',
+      status: item.status || 'todo',
+      dueDate: item.dueDate,
+      estimatedHours: item.estimatedHours,
+      description: item.description
+    });
+    taskDialogVisible.value = true;
+  }
+
   function handleSaveTask() {
     taskFormRef.value?.validate().then(() => {
       taskSaveLoading.value = true;
-      addTask(taskForm)
+      const fn = taskForm.taskId ? updateTask(taskForm) : addTask(taskForm);
+      fn
         .then(() => {
-          EleMessage.success({ message: '新建成功', plain: true });
+          EleMessage.success({ message: taskForm.taskId ? '修改成功' : '新建成功', plain: true });
           taskDialogVisible.value = false;
           fetchTasks();
         })

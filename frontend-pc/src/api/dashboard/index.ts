@@ -13,7 +13,7 @@ export async function getDashboardActivities(limit = 15): Promise<ActivityItem[]
     params: { limit }
   });
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
 
 /**
@@ -23,5 +23,5 @@ export async function getDashboardActivities(limit = 15): Promise<ActivityItem[]
 export async function getDashboardMembers(): Promise<MemberItem[]> {
   const res = await request.get<AjaxResult<MemberItem[]>>('/system/dashboard/members');
   if (res.data.code === 200) return res.data.data ?? [];
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }

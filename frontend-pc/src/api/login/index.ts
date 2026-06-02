@@ -12,9 +12,9 @@ export async function login(data: LoginParam): Promise<string> {
   const res = await request.post<AjaxResult<LoginTokenResult>>('/auth/login', data);
   if (res.data.code === 200 && res.data.data) {
     setToken('Bearer ' + res.data.data.access_token, data.remember);
-    return res.data.msg;
+    return res.data.msg || '登录成功';
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '登录失败'));
 }
 
 /**
@@ -26,5 +26,5 @@ export async function getCaptcha(): Promise<CaptchaResult> {
   if (res.data.code === 200) {
     return res.data as unknown as CaptchaResult;
   }
-  return Promise.reject(new Error(res.data.msg));
+  return Promise.reject(new Error(res.data.msg || '操作失败'));
 }
