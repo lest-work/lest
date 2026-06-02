@@ -258,7 +258,7 @@
 
 ---
 
-> 📌 See full version history: [CHANGELOG.md](../CHANGELOG.md)
+> 📌 See full version history: [CHANGELOG.md](../../CHANGELOG.md)
 > 📌 See development tasks: [2-tasks/README.md](./2-tasks/README.md)
 > 📌 See product requirements: [1-prd/README.md](./1-prd/README.md)
 

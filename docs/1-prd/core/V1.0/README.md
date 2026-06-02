@@ -12,7 +12,7 @@
 | [通知与消息](./通知与消息.md) | Jira Notifications | 通知框架、事件总线（IM 渠道放插件）| ✅ PRD 已完成 |
 | [系统设置](./系统设置.md) | Jira System Administration | 平台配置（精简版：邮件、安全、审计）+ 安全增强（2FA/API Token）| ✅ PRD 已完成 |
 | [系统管理迁移方案](./系统管理迁移方案.md) | — | 前端/后端迁移方案（从 V1.0 OA 思路迁移到 Jira 敏捷思路）| ✅ PRD 已完成 |
-| [安全增强](../V1.0/安全增强.md) | — | 2FA/MFA、API Token、可信网络、防暴力破解 | ✅ PRD 已完成 |
+| [安全增强](./安全增强.md) | — | 2FA/MFA、API Token、可信网络、防暴力破解 | ✅ PRD 已完成 |
 
 ## Core 定位说明
 
