@@ -267,7 +267,7 @@ public enum DeploymentStrategy {
 
 #### 4.1.1 创建版本
 ```
-POST /release/version
+POST /api/plugin/lest-release/version
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -399,7 +399,7 @@ Authorization: Bearer {accessToken}
 
 #### 4.1.4 提交发布申请
 ```
-POST /release/apply
+POST /api/plugin/lest-release/apply
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -424,7 +424,7 @@ Content-Type: application/json
 
 #### 4.1.5 审批发布
 ```
-POST /release/{id}/approve
+POST /api/plugin/lest-release/{id}/approve
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -443,7 +443,7 @@ Content-Type: application/json
 
 #### 4.1.6 执行发布
 ```
-POST /release/{id}/deploy
+POST /api/plugin/lest-release/{id}/deploy
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -465,7 +465,7 @@ Content-Type: application/json
 
 #### 4.1.7 回滚发布
 ```
-POST /release/{id}/rollback
+POST /api/plugin/lest-release/{id}/rollback
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 

@@ -303,9 +303,10 @@ public enum MetricType {
 
 
 
-## 3.X 绩效图表增强（V2.0/V3.0）
+## 4. 绩效图表增强（V2.0/V3.0）
 
-### 3.X.1 Burndown Chart 燃尽图（V2.0）
+### 4.X.1 Burndown Chart 燃尽图（V2.0）
+
 
 Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 
@@ -317,7 +318,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 
 **触发时机：** Sprint 启动时开始计算，每日凌晨更新。
 
-### 3.X.2 Burnup Chart 燃起图（V2.0）
+### 4.X.2 Burnup Chart 燃起图（V2.0）
+
 
 与燃尽图互补，展示已完成工作量的增长：
 
@@ -327,7 +329,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 | 实际完成线 | 每天结束时已完成故事点 |
 | 范围线 | 展示总故事点的变化（范围变化时）|
 
-### 3.X.3 Control Chart 控制图（V3.0）
+### 4.X.3 Control Chart 控制图（V3.0）
+
 
 展示每个 Issue 从创建到完成的周期时间分布：
 
@@ -338,7 +341,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 | P85/P95 周期时间 | 85%/95% Issue 的完成时长 |
 | 周期时间趋势 | 按月/周统计周期时间变化 |
 
-### 3.X.4 Cumulative Flow Diagram 累积流图（V3.0）
+### 4.X.4 Cumulative Flow Diagram 累积流图（V3.0）
+
 
 看板各列的任务数量随时间变化的可视化：
 
@@ -348,7 +352,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 - 带宽越宽：该状态任务堆积越多
 - 用途：识别流程瓶颈
 
-### 3.X.5 Velocity Chart 速度图（V2.0）
+### 4.X.5 Velocity Chart 速度图（V2.0）
+
 
 展示团队每个 Sprint 完成的故事点：
 
@@ -359,7 +364,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 | 预测速度 | 基于平均值预测未来 Sprint |
 | 速度趋势 | 速度提升/下降趋势线 |
 
-### 3.X.6 Team Capacity 团队容量（V2.0）
+### 4.X.6 Team Capacity 团队容量（V2.0）
+
 
 每个 Sprint 的团队可用容量计算：
 
@@ -373,7 +379,8 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 
 **容量不足预警：** 承诺故事点 > 可用容量时提示风险。
 
-### 3.X.7 跨项目绩效报告（V3.0）
+### 4.X.7 跨项目绩效报告（V3.0）
+
 
 支持跨多个项目汇总绩效数据：
 
@@ -384,11 +391,11 @@ Sprint 燃尽图展示迭代内剩余工作量的变化趋势：
 | 质量指标 | Bug 率（Bug 数 / 总 Issue 数）|
 | 发布频率 | 每月/每周发布次数趋势 |
 
-## 4. 接口设计
+## 5. 接口设计
 
-### 4.1 绩效接口
+### 5.1 绩效接口
 
-#### 4.1.1 获取个人绩效数据
+#### 5.1.1 获取个人绩效数据
 ```
 GET /performance/personal?userId=1&startDate=2026-05-01&endDate=2026-05-31
 Authorization: Bearer {accessToken}
@@ -428,7 +435,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.2 获取团队绩效数据
+#### 5.1.2 获取团队绩效数据
 ```
 GET /performance/team?projectId=1&startDate=2026-05-01&endDate=2026-05-31
 Authorization: Bearer {accessToken}
@@ -470,7 +477,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.3 登记工作日志
+#### 5.1.3 登记工作日志
 ```
 POST /performance/worklog
 Authorization: Bearer {accessToken}
@@ -499,9 +506,9 @@ Content-Type: application/json
 
 ---
 
-## 5. 数据库设计
+## 6. 数据库设计
 
-### 5.1 表结构
+### 6.1 表结构
 
 #### perf_work_log 工作日志表
 
@@ -556,7 +563,7 @@ Content-Type: application/json
 
 ---
 
-## 6. 验收标准
+## 7. 验收标准
 
 | 用例 | 验收标准 |
 |------|---------|
@@ -569,9 +576,9 @@ Content-Type: application/json
 
 ---
 
-## 7. 错误码
+## 8. 错误码
 
-### 7.1 绩效模块错误码 (14000-14999)
+### 8.1 绩效模块错误码 (14000-14999)
 
 | 错误码 | 枚举常量 | HTTP 状态码 | 说明 |
 |---------|----------|-------------|------|
@@ -583,7 +590,7 @@ Content-Type: application/json
 
 ---
 
-## 8. 版本历史
+## 9. 版本历史
 
 | 版本 | 日期 | 修改内容 | 作者 |
 |------|------|---------|------|

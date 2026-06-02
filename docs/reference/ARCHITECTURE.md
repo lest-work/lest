@@ -1872,9 +1872,9 @@ public class TaskController {
 
 | 文档 | 路径 |
 |------|------|
-| 项目需求文档 | `docs/PRD/V1.0/` |
+| 项目需求文档 | `docs/1-prd/` |
 | 数据库设计文档 | `docs/reference/DATABASE.md` |
-| API 接口文档 | `docs/reference/api/API.md` |
+| API 接口文档 | `docs/API.md` |
 | 部署指南 | `docs/guide/DEPLOYMENT.md` |
 | 开发规范 | `docs/guide/DEVELOPMENT.md` |
 

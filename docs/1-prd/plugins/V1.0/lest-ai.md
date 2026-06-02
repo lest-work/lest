@@ -3,7 +3,7 @@
 >
 > **功能定位**：AI 网关、代码审查、任务助手、会议总结、绩效洞察。
 >
-> **📌 注意**：V1.0 为 AI 服务基础版，V2.0（`../core/V2.0/AI服务.md`）为 AI-Native 重构版，中央智能引擎架构。
+> **📌 注意**：V1.0 为 AI 服务基础版，V2.0（`../plugins/V2.0/lest-ai.md`）为 AI-Native 重构版，中央智能引擎架构。
 
 
 >
@@ -660,7 +660,7 @@ export interface AIWorkflowNodeExtension extends PluginExtension {
 
 #### 4.1.1 通用聊天接口
 ```
-POST /ai/chat
+POST /api/plugin/lest-ai/chat
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -701,7 +701,7 @@ Content-Type: application/json
 
 #### 4.1.2 代码审查接口
 ```
-POST /ai/code-review
+POST /api/plugin/lest-release/ai/code-review
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -737,7 +737,7 @@ Content-Type: application/json
 
 #### 4.1.3 会议总结接口
 ```
-POST /ai/meeting-summary
+POST /api/plugin/lest-ai/meeting-summary
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -818,7 +818,7 @@ Authorization: Bearer {accessToken}
 
 ### 5.1 表结构
 
-#### ai_model_config AI 模型配置表
+#### pl_ai_model_config AI 模型配置表
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -832,7 +832,7 @@ Authorization: Bearer {accessToken}
 | created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | 创建时间 |
 | updated_at | DATETIME | ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
 
-#### ai_prompt_template AI 提示词模板表
+#### pl_ai_prompt_template AI 提示词模板表
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -849,7 +849,7 @@ Authorization: Bearer {accessToken}
 | **索引** | | | |
 | uk_code | | UNIQUE | 模板代码唯一索引 |
 
-#### ai_conversation AI 对话记录表
+#### pl_ai_conversation AI 对话记录表
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -870,7 +870,7 @@ Authorization: Bearer {accessToken}
 | idx_user_id | | | 用户 ID 索引 |
 | idx_scene | | | 场景索引 |
 
-#### ai_code_review AI 代码审查记录表
+#### pl_ai_code_review AI 代码审查记录表
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -886,7 +886,7 @@ Authorization: Bearer {accessToken}
 | **索引** | | | |
 | idx_mr_id | | | MR ID 索引 |
 
-#### ai_meeting_summary AI 会议总结记录表
+#### pl_ai_meeting_summary AI 会议总结记录表
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|

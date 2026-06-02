@@ -54,7 +54,7 @@ CREATE TABLE issue_type_scheme_issue_type (
   issue_type_id    BIGINT NOT NULL,
   sub_task_type_id BIGINT,              -- 该类型的子任务类型
   sort             INT DEFAULT 0,
-  FOREIGN KEY (scheme_id) REFERENCES issue_type(scheme_id)
+  FOREIGN KEY (scheme_id) REFERENCES issue_type_scheme(scheme_id)
 );
 
 -- issue_type（类型定义）
@@ -65,9 +65,14 @@ CREATE TABLE issue_type (
   description     TEXT,
   icon            VARCHAR(64),
   color           VARCHAR(16),
-  is_system       TINYINT DEFAULT 0,     -- 1=内置不可删除
+  default_workflow_id  BIGINT FK,    -- 默认关联的工作流
+  default_screen_id    BIGINT FK,    -- 默认关联的 Screen
+  default_field_config_id BIGINT FK, -- 默认字段配置
+  is_system       TINYINT DEFAULT 0,  -- 1=内置不可删除
+  is_enabled      TINYINT DEFAULT 1,  -- 1=启用，0=禁用
   sort            INT DEFAULT 0,
-  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME ON UPDATE CURRENT_TIMESTAMP
 );
 ```
 
@@ -483,13 +488,14 @@ CREATE TABLE board_column (
   FOREIGN KEY (board_id) REFERENCES board(board_id)
 );
 
--- board_swimlane（泳道配置）
+-- board_swimlane（泳道配置，V3.0版本）
 CREATE TABLE board_swimlane (
-  swimlane_id  BIGINT PRIMARY KEY AUTO_INCREMENT,
-  board_id     BIGINT NOT NULL,
-  field_key    VARCHAR(64),
-  is_default   TINYINT DEFAULT 0,
-  sort         INT DEFAULT 0,
+  swimlane_id     BIGINT PRIMARY KEY AUTO_INCREMENT,
+  board_id        BIGINT NOT NULL,
+  group_by        VARCHAR(32) NOT NULL,    -- assignee / epic / label / version / custom_field
+  custom_field_id BIGINT,
+  is_collapsed    TINYINT DEFAULT 0,      -- 默认折叠状态
+  sort            INT DEFAULT 0,
   FOREIGN KEY (board_id) REFERENCES board(board_id)
 );
 ```
@@ -633,6 +639,18 @@ project
   └── board_id ───→ board
                       └── board_columns[]
 ```
+
+---
+
+## 10. 相关表引用
+
+以下核心表在本参考手册中未重复定义，详见对应 PRD：
+
+| 表名 | 定义位置 |
+|------|---------|
+| `sys_user`（用户表）| 见 [认证系统与系统管理](../core/V1.0/认证系统与系统管理.md) |
+| `project`（项目表）| 见 [项目管理](../core/V1.0/项目管理.md) |
+| `issue`（任务表）| 见 [任务管理 V1.0](../core/V1.0/任务管理.md) |
 
 ---
 

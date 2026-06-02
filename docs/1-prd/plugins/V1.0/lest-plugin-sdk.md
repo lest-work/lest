@@ -1,9 +1,13 @@
 # 插件系统 PRD
 > **📌 Jira 映射**：Atlassian Marketplace Apps + VS Code Extensions
 >
-> **功能定位**：插件 SDK、声明式扩展点、生命周期管理、插件市场
+> **功能定位**：插件 SDK、声明式扩展点（后端 + **前端 UI**）、生命周期管理、插件市场
 >
 > **架构策略**：V1.0 中插件系统内置于 Core；V2.0 开始，所有非核心功能（工时、CI/CD、WakaTime、IM 集成、会议、发布管理等）全部转为官方插件，详见 [插件架构与功能分层](../core/V2.0/插件架构与功能分层.md)。
+>
+> **⚠️ 前端插件运行时**：后端插件 SDK 负责 API 路由和数据隔离；**前端 UI 插件运行时**（Extension Point + 动态组件渲染）由 [UI 插件化架构设计](../core/V2.0/UI插件化架构设计.md) 定义，两者共同构成完整的前后端插件体系。
+
+> **⚠️ Jira 插件兼容**：LEST 支持直接安装 Atlassian Jira 插件（Forge Apps / Connect Apps / DC Plugins），实现插件生态的零成本迁移。详见 [Jira 插件兼容架构设计](./V2.0/lest-jira-compat.md)。
 
 ## 文档信息
 
@@ -976,10 +980,69 @@ Content-Type: application/json
 | 测试框架 | 无 | 插件单元测试 + 集成测试 |
 | CI/CD | 无 | 插件自动构建+发布流水线 |
 
-## 9. 版本历史
+## 9. Jira 插件兼容（V2.0 新增）
+
+> **核心价值**：LEST 不只支持原生插件，还能直接安装 Atlassian Jira 插件（Forge Apps / Connect Apps / DC Plugins），实现插件生态的零成本迁移。
+>
+> 详见完整设计文档：[Jira 插件兼容架构设计](./V2.0/lest-jira-compat.md)
+
+### 9.1 三层兼容架构
+
+| 兼容层 | 支持类型 | 目标覆盖率 | 兼容策略 |
+|--------|---------|-----------|---------|
+| **Forge Bridge** | Atlassian Forge Apps | 80% API + 80% UI | `@lest/jira-compat` 自动适配 |
+| **Connect Bridge** | Atlassian Connect Apps | 80% AUI + 70% API | AUI → Element Plus 映射 + JWT 认证桥接 |
+| **DC Bridge** | Jira Data Center Java Plugins | 60% 核心 API | 完整类加载器 + Atlassian API 模拟 |
+
+### 9.2 核心兼容机制
+
+**Forge 插件**：通过 `@lest/jira-compat` 包自动替换 `@forge/ui`，插件代码无需修改即可在 LEST 运行：
+
+```typescript
+// Forge 插件代码（无需改动）
+import { Text, Button, Select } from '@forge/ui';
+
+// @lest/jira-compat 在安装时自动映射
+// <Text> → <span>  |  <Button> → <el-button>  |  <Select> → <el-select>
+```
+
+**API 兼容**：Jira REST API → LEST API 自动映射：
+
+| Jira API | LEST API |
+|----------|---------|
+| `GET /rest/api/3/issue/{id}` | `GET /api/v1/issues/{id}` |
+| `GET /rest/api/3/search` (JQL) | `GET /api/v1/issues` (JQL → LEST Query) |
+| `POST /rest/api/3/issue` | `POST /api/v1/issues` |
+
+### 9.3 兼容性检测
+
+安装 Jira 插件时自动进行兼容性评估：
+
+| 级别 | 说明 | 插件表现 |
+|------|------|---------|
+| **L0 完全兼容** | 无需修改直接运行 | 可直接安装 |
+| **L1 基本兼容** | 少量配置即可运行 | 显示警告后安装 |
+| **L2 部分兼容** | 部分功能受限 | 显示兼容性报告后可安装 |
+| **L3 不兼容** | 无法运行 | 禁止安装 |
+
+### 9.4 插件来源标签
+
+所有安装到 LEST 的插件带有来源标签：
+
+| 来源 | 标识 | 说明 |
+|------|------|------|
+| LEST 原生 | `LEST Native` | 使用 LEST SDK 开发的插件 |
+| Jira Forge | `Atlassian Forge` | Forge Apps（绿色标签）|
+| Jira Connect | `Atlassian Connect` | Connect Apps（蓝色标签）|
+| Jira DC | `Atlassian DC` | Data Center Plugins（橙色标签）|
+
+---
+
+## 10. 版本历史
 
 | 版本 | 日期 | 修改内容 | 作者 |
 |------|------|---------|------|
 | V1.0 | 2026-05-25 | 初始版本 | - |
 | V1.1 | 2026-05-25 | 修正文档状态为已完成（与实际完成度一致） | - |
 | V2.0 | 2026-06-01 | 补充完整扩展点设计（24 个前端+后端扩展点）；补充数据隔离完整设计；补充 SDK V2.0 改进清单 | - |
+| V2.1 | 2026-06-02 | 新增第 8 节「前端插件化」，引用 UI插件化架构设计.md；完善扩展点设计 | - |

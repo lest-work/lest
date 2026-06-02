@@ -272,9 +272,10 @@ public enum MeetingStatus {
 
 
 
-## 3.X 会议增强（V2.0/V3.0）
+## 4. 会议增强（V2.0/V3.0）
 
-### 3.X.1 会议计时器（V2.0）
+### 4.X.1 会议计时器（V2.0）
+
 
 会议计时器帮助团队控制每个议题的时间：
 
@@ -285,7 +286,8 @@ public enum MeetingStatus {
 | 站立会计时 | 每人 2 分钟倒计时 |
 | 演讲模式 | 自动切换到下一个议题 |
 
-### 3.X.2 会议模板库（V2.0）
+### 4.X.2 会议模板库（V2.0）
+
 
 预设会议模板，快速创建会议：
 
@@ -298,7 +300,8 @@ public enum MeetingStatus {
 | 需求评审会 | 议程：需求介绍 → 澄清 → 估算 |
 | 故障复盘会 | 议程：时间线 → 根因 → 改进措施 |
 
-### 3.X.3 视频会议集成（V3.0）
+### 4.X.3 视频会议集成（V3.0）
+
 
 与主流视频会议平台集成：
 
@@ -314,20 +317,21 @@ public enum MeetingStatus {
 - 会议结束后自动录制要点摘要
 - 会议视频回放链接关联会议记录
 
-### 3.X.4 会议协作编辑（V3.0）
+### 4.X.4 会议协作编辑（V3.0）
+
 
 会议纪要支持多人实时协作编辑：
 - 基于 CRDT 算法实现无冲突编辑
 - 显示在线编辑者头像
 - 版本历史和回滚
 
-## 4. 接口设计
+## 5. 接口设计
 
-### 4.1 会议接口
+### 5.1 会议接口
 
-#### 4.1.1 创建会议
+#### 5.1.1 创建会议
 ```
-POST /meeting
+POST /api/plugin/lest-meeting/meeting
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -356,9 +360,9 @@ Content-Type: application/json
 }
 ```
 
-#### 4.1.2 获取会议列表
+#### 5.1.2 获取会议列表
 ```
-GET /meeting?projectId=1&date=2026-05-25&type=daily&page=1&size=20
+GET /api/plugin/lest-meeting/meeting?projectId=1&date=2026-05-25&type=daily&page=1&size=20
 Authorization: Bearer {accessToken}
 
 响应:
@@ -385,9 +389,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.3 获取会议详情
+#### 5.1.3 获取会议详情
 ```
-GET /meeting/{id}
+GET /api/plugin/lest-meeting/meeting/{id}
 Authorization: Bearer {accessToken}
 
 响应:
@@ -446,9 +450,9 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.1.4 提交站会发言
+#### 5.1.4 提交站会发言
 ```
-POST /meeting/{id}/report
+POST /api/plugin/lest-meeting/meeting/{id}/report
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 
@@ -469,9 +473,9 @@ Content-Type: application/json
 
 ---
 
-## 5. 数据库设计
+## 6. 数据库设计
 
-### 5.1 表结构
+### 6.1 表结构
 
 #### meet_meeting 会议表
 
@@ -549,7 +553,7 @@ Content-Type: application/json
 
 ---
 
-## 6. 验收标准
+## 7. 验收标准
 
 | 用例 | 验收标准 |
 |------|---------|
@@ -563,9 +567,9 @@ Content-Type: application/json
 
 ---
 
-## 7. 错误码
+## 8. 错误码
 
-### 7.1 会议模块错误码 (13000-13999)
+### 8.1 会议模块错误码 (13000-13999)
 
 | 错误码 | 枚举常量 | HTTP 状态码 | 说明 |
 |---------|----------|-------------|------|
@@ -578,7 +582,7 @@ Content-Type: application/json
 
 ---
 
-## 8. 版本历史
+## 9. 版本历史
 
 | 版本 | 日期 | 修改内容 | 作者 |
 |------|------|---------|------|

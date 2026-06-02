@@ -6,40 +6,40 @@
 
 | 插件 ID | 名称 | 说明 | 状态 |
 |--------|------|------|------|
-| [lest-okr](./lest-okr.md) | OKR 目标管理 | OKR 目标制定、对齐、评分 | 规划中 |
-| [lest-portfolio](./lest-portfolio.md) | Portfolio 多项目治理 | 跨项目视图、资源调度 | 规划中 |
-| [lest-approval](./lest-approval.md) | 审批流引擎 | 自定义审批流程、多级审批 | 规划中 |
-| [lest-ldap](./lest-ldap.md) | LDAP 集成 | Active Directory 同步、企业目录集成 | 规划中 |
-| [lest-sso](./lest-sso.md) | SSO 单点登录 | SAML/OIDC/OAuth2 支持 | 规划中 |
-| [lest-multi-tenant](./lest-multi-tenant.md) | 多租户隔离 | 租户数据隔离、租户管理 | 规划中 |
+| [lest-okr](./lest-okr.md) | OKR 目标管理 | OKR 目标制定、对齐、评分 | ✅ PRD 已完成 |
+| [lest-portfolio](./lest-portfolio.md) | Portfolio 多项目治理 | 跨项目视图、资源调度 | ✅ PRD 已完成 |
+| [lest-approval](./lest-approval.md) | 审批流引擎 | 自定义审批流程、多级审批 | ✅ PRD 已完成 |
+| [lest-ldap](./lest-ldap.md) | LDAP 集成 | Active Directory 同步、企业目录集成 | ✅ PRD 已完成 |
+| [lest-sso](./lest-sso.md) | SSO 单点登录 | SAML/OIDC/OAuth2 支持 | ✅ PRD 已完成 |
+| [lest-multi-tenant](./lest-multi-tenant.md) | 多租户隔离 | 租户数据隔离、租户管理 | ✅ PRD 已完成 |
 
 ## V1.0 ~ V3.0 官方插件总览
 
-| 插件 ID | V1.0 | V2.0 | V3.0 | 说明 |
-|--------|-------|-------|-------|------|
-| lest-worklog | OK | OK | OK | 工时管理 |
-| lest-cicd | OK | OK | OK | CI/CD 集成 |
-| lest-wakatime | OK | OK | OK | WakaTime 集成 |
-| lest-ai | OK | OK | OK | AI 服务 |
-| lest-im-feishu | OK | OK | OK | 飞书集成 |
-| lest-im-dingtalk | OK | OK | OK | 钉钉集成 |
-| lest-im-wecom | OK | OK | OK | 企业微信集成 |
-| lest-meeting | 内置 | OK | OK | 敏捷会议增强 |
-| lest-report | 内置 | OK | OK | 报表中心 |
-| lest-release | 内置 | OK | OK | 发布管理增强 |
-| lest-code | OK | OK | OK | 代码管理 |
-| lest-openapi | OK | OK | OK | 开放平台 |
-| lest-plugin-sdk | OK | OK | OK | 插件系统 |
-| lest-jira-sync | -- | OK | OK | Jira 双向同步 |
-| lest-devops | -- | OK | OK | DevOps 集成 |
-| lest-gitea | -- | OK | OK | Gitea 集成 |
-| lest-gogs | -- | OK | OK | Gogs 集成 |
-| lest-zentao-import | -- | OK | OK | 禅道导入 |
-| lest-okr | -- | -- | OK | OKR 目标管理 |
-| lest-portfolio | -- | -- | OK | Portfolio 管理 |
-| lest-approval | -- | -- | OK | 审批流引擎 |
-| lest-ldap | -- | -- | OK | LDAP 集成 |
-| lest-sso | -- | -- | OK | SSO 单点登录 |
-| lest-multi-tenant | -- | -- | OK | 多租户隔离 |
+| 插件 ID | 核心版本 | 说明 |
+|--------|---------|------|
+| lest-worklog | V1.0 | 工时管理 |
+| lest-cicd | V1.0 | CI/CD 集成 |
+| lest-wakatime | V1.0 | WakaTime 集成 |
+| lest-ai | V1.0 | AI 服务 |
+| lest-im-feishu | V1.0 | 飞书集成 |
+| lest-im-dingtalk | V1.0 | 钉钉集成 |
+| lest-im-wecom | V1.0 | 企业微信集成 |
+| lest-meeting | V1.0/V2.0 | 敏捷会议 |
+| lest-report | V1.0/V2.0 | 报表中心 |
+| lest-release | V1.0/V2.0 | 发布管理 |
+| lest-code | V1.0 | 代码管理 |
+| lest-openapi | V1.0 | 开放平台 |
+| lest-plugin-sdk | V1.0 | 插件系统 |
+| lest-jira-sync | V2.0 | Jira 双向同步 |
+| lest-devops | V2.0 | DevOps 集成 |
+| lest-gitea | V2.0 | Gitea 集成 |
+| lest-gogs | V2.0 | Gogs 集成 |
+| lest-zentao-import | V2.0 | 禅道导入 |
+| lest-okr | V3.0 | OKR 目标管理 |
+| lest-portfolio | V3.0 | Portfolio 多项目治理 |
+| lest-approval | V3.0 | 审批流引擎 |
+| lest-ldap | V3.0 | LDAP 集成 |
+| lest-sso | V3.0 | SSO 单点登录 |
+| lest-multi-tenant | V3.0 | 多租户隔离 |
 
-OK = 独立插件 | 内置 = 随 Core 内置 | -- = 暂无
+✅ = PRD 已完成

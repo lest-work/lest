@@ -2,14 +2,16 @@
 
 ## V3.0 新增插件（6 个）
 
+> **TODO**: 以下 6 个插件 PRD 和开发任务单尚未创建，需补充。
+
 | 插件 ID | PRD 文档 | 状态 |
 |--------|---------|------|
-| lest-okr | [lest-okr.md](./lest-okr.md) | 规划中 |
-| lest-portfolio | [lest-portfolio.md](./lest-portfolio.md) | 规划中 |
-| lest-approval | [lest-approval.md](./lest-approval.md) | 规划中 |
-| lest-ldap | [lest-ldap.md](./lest-ldap.md) | 规划中 |
-| lest-sso | [lest-sso.md](./lest-sso.md) | 规划中 |
-| lest-multi-tenant | [lest-multi-tenant.md](./lest-multi-tenant.md) | 规划中 |
+| lest-okr | [lest-okr.md](./lest-okr.md) | TODO |
+| lest-portfolio | [lest-portfolio.md](./lest-portfolio.md) | TODO |
+| lest-approval | [lest-approval.md](./lest-approval.md) | TODO |
+| lest-ldap | [lest-ldap.md](./lest-ldap.md) | TODO |
+| lest-sso | [lest-sso.md](./lest-sso.md) | TODO |
+| lest-multi-tenant | [lest-multi-tenant.md](./lest-multi-tenant.md) | TODO |
 
 ## 开发优先级
 

@@ -633,9 +633,10 @@ X-RateLimit-Window: 60
 
 
 
-## 3.X 扩展功能（V2.0/V3.0）
+## 4. 扩展功能（V2.0/V3.0）
 
-### 3.X.1 Bulk API 批量操作（V2.0）
+### 4.X.1 Bulk API 批量操作（V2.0）
+
 
 支持大数据量操作，减少 API 调用次数：
 
@@ -648,7 +649,8 @@ X-RateLimit-Window: 60
 
 **批量响应：** 返回每个操作的独立结果（部分成功时不影响其他操作）。
 
-### 3.X.2 数据导入/导出 API（V3.0）
+### 4.X.2 数据导入/导出 API（V3.0）
+
 
 | 接口 | 说明 |
 |------|------|
@@ -663,7 +665,8 @@ X-RateLimit-Window: 60
 - Custom Fields → Custom Fields（按类型匹配）
 - Workflow → Workflow（通过 V2.0 API 创建）
 
-### 3.X.3 App Marketplace API（V4.0）
+### 4.X.3 App Marketplace API（V4.0）
+
 
 为插件市场预留 API：
 
@@ -675,7 +678,8 @@ X-RateLimit-Window: 60
 | DELETE /apps/{id} | 卸载应用 |
 | GET /apps/{id}/config | 获取应用配置 |
 
-### 3.X.4 Audit Event API（V3.0）
+### 4.X.4 Audit Event API（V3.0）
+
 
 | 接口 | 说明 |
 |------|------|
@@ -685,7 +689,8 @@ X-RateLimit-Window: 60
 
 **审计事件类型：** 登录/登出、创建/更新/删除、权限变更、设置变更、API 调用。
 
-### 3.X.5 Webhook 增强（V2.0）
+### 4.X.5 Webhook 增强（V2.0）
+
 
 | 功能 | 说明 |
 |------|------|
@@ -694,11 +699,11 @@ X-RateLimit-Window: 60
 | Webhook 测试 | 发送测试事件验证 Webhook 可达性 |
 | Webhook 日志 | 记录每个 Webhook 的请求和响应历史 |
 
-## 4. 接口设计
+## 5. 接口设计
 
-### 4.1 API Key 接口
+### 5.1 API Key 接口
 
-#### 4.1.1 生成个人访问令牌
+#### 5.1.1 生成个人访问令牌
 ```
 POST /open/tokens
 Authorization: Bearer {accessToken}
@@ -726,7 +731,7 @@ Content-Type: application/json
 }
 ```
 
-#### 4.1.2 撤销访问令牌
+#### 5.1.2 撤销访问令牌
 ```
 DELETE /open/tokens/{tokenId}
 Authorization: Bearer {accessToken}
@@ -738,16 +743,16 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 4.2 OAuth2 接口
+### 5.2 OAuth2 接口
 
-#### 4.2.1 获取授权 URL
+#### 5.2.1 获取授权 URL
 ```
 GET /oauth/authorize?client_id=xxx&redirect_uri=xxx&scope=xxx&state=xxx
 
 响应: 302 重定向到授权页面
 ```
 
-#### 4.2.2 获取 Access Token
+#### 5.2.2 获取 Access Token
 ```
 POST /oauth/token
 Content-Type: application/json
@@ -771,9 +776,9 @@ Content-Type: application/json
 }
 ```
 
-### 4.3 Webhook 接口
+### 5.3 Webhook 接口
 
-#### 4.3.1 创建 Webhook
+#### 5.3.1 创建 Webhook
 ```
 POST /open/webhooks
 Authorization: Bearer {accessToken}
@@ -807,7 +812,7 @@ Content-Type: application/json
 }
 ```
 
-#### 4.3.2 测试 Webhook
+#### 5.3.2 测试 Webhook
 ```
 POST /open/webhooks/{webhookId}/test
 Authorization: Bearer {accessToken}
@@ -831,7 +836,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-#### 4.3.3 获取 Webhook 投递记录
+#### 5.3.3 获取 Webhook 投递记录
 ```
 GET /open/webhooks/{webhookId}/deliveries?page=1&size=20
 
@@ -865,9 +870,9 @@ GET /open/webhooks/{webhookId}/deliveries?page=1&size=20
 
 ---
 
-## 5. 数据库设计
+## 6. 数据库设计
 
-### 5.1 表结构
+### 6.1 表结构
 
 #### open_api_token API 令牌表
 
@@ -994,7 +999,7 @@ GET /open/webhooks/{webhookId}/deliveries?page=1&size=20
 
 ---
 
-## 6. 验收标准
+## 7. 验收标准
 
 | 用例 | 验收标准 |
 |------|---------|
@@ -1010,9 +1015,9 @@ GET /open/webhooks/{webhookId}/deliveries?page=1&size=20
 
 ---
 
-## 7. 错误码
+## 8. 错误码
 
-### 7.1 开放平台模块错误码 (18000-18999)
+### 8.1 开放平台模块错误码 (18000-18999)
 
 | 错误码 | 枚举常量 | HTTP 状态码 | 说明 |
 |---------|----------|-------------|------|
@@ -1036,7 +1041,7 @@ GET /open/webhooks/{webhookId}/deliveries?page=1&size=20
 
 ---
 
-## 8. 版本历史
+## 9. 版本历史
 
 | 版本 | 日期 | 修改内容 | 作者 |
 |------|------|---------|------|
