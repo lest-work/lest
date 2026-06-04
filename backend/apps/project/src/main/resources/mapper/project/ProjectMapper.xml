@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.project.mapper.ProjectMapper">
+
+    <resultMap type="com.lest.project.domain.Project" id="ProjectResult">
+        <id     property="projectId"   column="project_id" />
+        <result property="projectKey"  column="project_key" />
+        <result property="name"        column="name"        />
+        <result property="description" column="description" />
+        <result property="status"      column="status"      />
+        <result property="template"    column="template"    />
+        <result property="ownerId"     column="owner_id"    />
+        <result property="ownerName"   column="owner_name"  />
+        <result property="startDate"   column="start_date"  />
+        <result property="endDate"    column="end_date"    />
+        <result property="createBy"   column="create_by"   />
+        <result property="createTime"  column="create_time" />
+        <result property="updateBy"   column="update_by"   />
+        <result property="updateTime" column="update_time" />
+        <result property="deleted"     column="deleted"     />
+    </resultMap>
+
+    <sql id="selectProjectVo">
+        select p.project_id, p.project_key, p.name, p.description, p.status, p.template, p.owner_id,
+               su.nick_name as owner_name, p.start_date, p.end_date,
+               p.create_by, p.create_time, p.update_by, p.update_time
+        from project p
+        left join sys_user su on su.user_id = p.owner_id
+        where p.deleted = 0
+    </sql>
+
+    <select id="selectById" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/> and project_id = #{projectId}
+    </select>
+
+    <select id="selectByName" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/> and name = #{name} limit 1
+    </select>
+
+    <select id="selectProjectList" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        order by create_time desc
+    </select>
+
+    <insert id="insert" parameterType="com.lest.project.domain.Project" useGeneratedKeys="true" keyProperty="projectId">
+        insert into project (project_key, name, description, status, template, owner_id, start_date, end_date, create_by, create_time, update_by, update_time)
+        values (#{projectKey}, #{name}, #{description}, #{status}, #{template}, #{ownerId}, #{startDate}, #{endDate}, #{createBy}, now(), #{updateBy}, now())
+    </insert>
+
+    <update id="updateById" parameterType="com.lest.project.domain.Project">
+        update project
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="template != null">template = #{template},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            update_by = #{updateBy},
+            update_time = now()
+        </set>
+        where project_id = #{projectId} and deleted = 0
+    </update>
+
+    <update id="deleteById">
+        update project set deleted = 1 where project_id = #{projectId}
+    </update>
+
+</mapper>

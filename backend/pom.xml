@@ -13,12 +13,12 @@
     <description>LEST Platform - 企业级项目管理平台</description>
 
     <modules>
-        <module>lest-common</module>
-        <module>lest-api</module>
-        <module>lest-gateway</module>
-        <module>lest-auth</module>
-        <module>lest-modules</module>
-        <module>lest-visual</module>
+        <module>common</module>
+        <module>apps</module>
+        <module>plugins</module>
+        <module>api</module>
+        <module>gateway</module>
+        <module>auth</module>
     </modules>
 
     <properties>
@@ -173,70 +173,69 @@
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-core</artifactId>
+                <artifactId>core</artifactId>
                 <version>${lest.version}</version>
             </dependency>
 
             <!-- 接口模块 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-swagger</artifactId>
+                <artifactId>swagger</artifactId>
                 <version>${lest.version}</version>
             </dependency>
 
             <!-- 安全模块 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-security</artifactId>
+                <artifactId>security</artifactId>
                 <version>${lest.version}</version>
             </dependency>
-
-            <!-- 数据脱敏 -->
-            <dependency>
-                <groupId>com.lest</groupId>
-                <artifactId>lest-common-sensitive</artifactId>
-                <version>${lest.version}</version>
-            </dependency>
-
-            <!-- 权限范围 -->
-            <dependency>
-                <groupId>com.lest</groupId>
-                <artifactId>lest-common-datascope</artifactId>
-                <version>${lest.version}</version>
-            </dependency>
-
             <!-- 多数据源 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-datasource</artifactId>
+                <artifactId>datasource</artifactId>
                 <version>${lest.version}</version>
             </dependency>
 
             <!-- 日志记录 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-log</artifactId>
+                <artifactId>log</artifactId>
                 <version>${lest.version}</version>
             </dependency>
 
             <!-- 缓存服务 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-common-redis</artifactId>
-                <version>${lest.version}</version>
-            </dependency>
-
-            <!-- 分布式事务 -->
-            <dependency>
-                <groupId>com.lest</groupId>
-                <artifactId>lest-common-seata</artifactId>
+                <artifactId>redis</artifactId>
                 <version>${lest.version}</version>
             </dependency>
 
             <!-- 系统接口 -->
             <dependency>
                 <groupId>com.lest</groupId>
-                <artifactId>lest-api-system</artifactId>
+                <artifactId>api-system</artifactId>
+                <version>${lest.version}</version>
+            </dependency>
+
+            <!-- 任务接口 -->
+            <dependency>
+                <groupId>com.lest</groupId>
+                <artifactId>api-task</artifactId>
+                <version>${lest.version}</version>
+            </dependency>
+
+            <!-- 插件机制 -->
+            <dependency>
+                <groupId>com.lest</groupId>
+                <artifactId>plugin</artifactId>
+                <version>${lest.version}</version>
+            </dependency>
+
+            <!-- 消息队列 -->
+            <dependency>
+                <groupId>com.lest</groupId>
+                <artifactId>mq</artifactId>
                 <version>${lest.version}</version>
             </dependency>
         </dependencies>

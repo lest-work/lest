@@ -1,0 +1,215 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: lest-gateway
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
+
+  # Redis (for rate limiter)
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+  # Nacos service discovery
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${NACOS_ENABLED:false}
+        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_APP_GROUP:DEFAULT_GROUP}
+        register-enabled: ${NACOS_REGISTER_ENABLED:true}
+
+    # Gateway routes - Spring Cloud Gateway 5.x uses server.webflux prefix
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns: |
+                  http://localhost:*,
+                  https://app.lest.work,
+                  https://lest.top,
+                  https://*.lest.work
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                  - PATCH
+                allowedHeaders: "*"
+                allowCredentials: true
+                maxAge: 3600
+          routes:
+            - id: lest-auth
+              uri: http://127.0.0.1:8096
+              predicates:
+                - Path=/auth/**
+              filters:
+                - ValidateCodeFilter
+                - StripPrefix=1
+
+            - id: lest-system
+              uri: http://127.0.0.1:8081
+              predicates:
+                - Path=/system/**
+
+            - id: lest-dashboard
+              uri: http://127.0.0.1:8081
+              predicates:
+                - Path=/dashboard/**
+
+            - id: lest-file
+              uri: http://127.0.0.1:8091
+              predicates:
+                - Path=/upload/**
+
+            - id: lest-job
+              uri: http://127.0.0.1:9203
+              predicates:
+                - Path=/job/**
+
+            - id: lest-project
+              uri: http://127.0.0.1:8082
+              predicates:
+                - Path=/project/**
+
+            - id: lest-task
+              uri: http://127.0.0.1:8083
+              predicates:
+                - Path=/task/**
+
+            - id: lest-release
+              uri: http://127.0.0.1:8087
+              predicates:
+                - Path=/release/**
+
+            # === 已实现模块 ===
+            - id: lest-notification
+              uri: http://127.0.0.1:8084
+              predicates:
+                - Path=/notification/**
+
+            - id: lest-ai
+              uri: http://127.0.0.1:8090
+              predicates:
+                - Path=/ai/**
+
+            - id: lest-meeting
+              uri: http://127.0.0.1:8085
+              predicates:
+                - Path=/meeting/**
+
+            - id: lest-openapi
+              uri: http://127.0.0.1:8086
+              predicates:
+                - Path=/openapi/**
+
+            - id: lest-plugin-manager
+              uri: http://127.0.0.1:8088
+              predicates:
+                - Path=/plugin/**
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+    gateway:
+      enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+# Resilience4j circuit breaker defaults
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      lest-auth-cb:
+        baseConfig: default
+      lest-system-cb:
+        baseConfig: default
+
+# Sentinel flow control
+spring.cloud.sentinel:
+  enabled: true
+  eager:
+    # Register with Sentinel WebFlux adapter immediately on startup
+    enabled: true
+  transport:
+    # Sentinel dashboard address (optional - set when dashboard is available)
+    dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
+    port: 8719
+  filter:
+    # Enable URL cleanup (remove trailing slashes, etc.)
+    urlCleanup: true
+  scg:
+    # Spring Cloud Gateway Sentinel adapter
+    fallback:
+      # Fallback response when flow control is triggered
+      mode: response
+      response-status: 429
+      response-body: '{"code":429,"msg":"请求过于频繁，请稍后再试"}'
+
+# Sentinel Dashboard (local config - configure SENTINEL_DASHBOARD env var for production)
+# Default port for Sentinel dashboard: 8858 (add to docker-compose.yml)
+  level:
+    org.springframework.cloud.gateway: INFO
+    com.lest.gateway: DEBUG
+
+# Security Config
+security:
+  captcha:
+    enabled: false
+    type: char
+  ignore:
+    whites:
+      - /auth/**
+      - /captcha
+      - /doc.html
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /webjars/**
+      - /favicon.ico
+      - /actuator/**
+      - /open/**

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.openapi.mapper.ApiKeyMapper">
+    <resultMap type="com.lest.openapi.domain.ApiKey" id="ApiKeyResult">
+        <result property="keyId" column="key_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="keyName" column="key_name"/>
+        <result property="apiKey" column="api_key"/>
+        <result property="keyPrefix" column="key_prefix"/>
+        <result property="permissions" column="permissions"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="isEnabled" column="is_enabled"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <select id="selectApiKeyList" resultMap="ApiKeyResult">
+        select key_id, user_id, key_name, api_key, key_prefix, permissions, expires_at, is_enabled, create_at, update_at
+        from api_key where user_id = #{userId}
+    </select>
+
+    <select id="selectApiKeyById" resultMap="ApiKeyResult">
+        select key_id, user_id, key_name, api_key, key_prefix, permissions, expires_at, is_enabled, create_at, update_at
+        from api_key where key_id = #{keyId}
+    </select>
+
+    <select id="selectApiKeyByValue" resultMap="ApiKeyResult">
+        select key_id, user_id, key_name, api_key, key_prefix, permissions, expires_at, is_enabled, create_at, update_at
+        from api_key where api_key = #{apiKey} and is_enabled = 1
+    </select>
+
+    <insert id="insertApiKey" useGeneratedKeys="true" keyProperty="keyId">
+        insert into api_key (user_id, key_name, api_key, key_prefix, permissions, expires_at, is_enabled, create_at)
+        values (#{userId}, #{keyName}, #{apiKey}, #{keyPrefix}, #{permissions}, #{expiresAt}, #{isEnabled}, #{createAt})
+    </insert>
+
+    <update id="updateApiKey">
+        update api_key set key_name=#{keyName}, permissions=#{permissions}, expires_at=#{expiresAt}, is_enabled=#{isEnabled}, update_at=#{updateAt}
+        where key_id = #{keyId}
+    </update>
+
+    <delete id="deleteApiKeyById">
+        delete from api_key where key_id = #{keyId}
+    </delete>
+</mapper>

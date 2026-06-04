@@ -41,38 +41,34 @@
 
 ## 📖 Overview
 
-**LEST Platform** is a full-featured, cloud-native project & task management platform targeting software engineering teams. It provides an integrated environment for project lifecycle management, sprint planning, task tracking, work-log recording, release management, and team collaboration.
+LEST Platform 是面向中国及全球企业的 **AI-Native 敏捷管理平台**，对标 Jira 的灵活性，超越 Jira 的完整性。
 
-The backend is inspired by and architecturally aligned with the battle-tested [RuoYi-Cloud](https://ruoyi.vip) microservice framework. The frontend admin UI is built on top of [EleAdmin Pro](https://eleadmin.com), a premium Vue 3 component library.
-
-> **Note on Licensing** — The core frameworks we depend on offer official commercial licenses. If you use RuoYi in a commercial product, consider supporting the authors at [ruoyi.vip](https://ruoyi.vip). If you adopt EleAdmin Pro in production, purchasing an official license at [eleadmin.com](https://eleadmin.com) is the right thing to do and directly funds ongoing development.
-
----
+| 前端 | 迭代详情页（iteration 对接后端完整 CRUD）| P1 | ✅ V1.6 |
+| 前端 | 里程碑详情页（milestone 对接后端完整 CRUD）| P1 | ✅ V1.6 |
+| 前端 | 看板视图完善（ECharts 甘特图渲染）| P1 | ⚠️ 待完成 |
+| 前端 | 任务详情抽屉完善（子任务/评论/工时/依赖/代码关联 Tab）| P1 | ✅ V1.6 |
+| 前端 | 发布计划页面（release.ts 对接后端）| P1 | ✅ V1.6 |
 
 ## ✨ Features
 
 | Module | Highlights |
 |--------|-----------|
-| **Auth Service** | Captcha login, JWT token issuance & refresh, Redis session management |
-| **System Management** | User / Role / Menu / Dept / Post / Dictionary / Config / Notice |
-| **Audit Logs** | Operation logs, login logs, online user management, force logout |
-| **Scheduler** | Quartz-based job scheduler with execution history |
-| **Project Management** | Project CRUD, archive, member management, template support (Agile / Kanban / Waterfall) |
-| **Sprint / Iteration** | Sprint planning, status lifecycle, milestone timeline |
-| **Task Management** | Task CRUD, priority & type labeling, sub-tasks, assignment, due dates |
-| **Kanban Board** | Three-column board (Todo / In Progress / Done), filter by project & iteration |
-| **Work Log** | Per-task time logging with estimated vs actual hours tracking |
-| **File Service** | File upload/download backed by MinIO object storage |
-| **Dashboard** | Real-time activity feed, member online status, project progress cards |
+| **认证服务** | 登录/登出/Token 刷新、用户注册、邮件验证、2FA |
+| **项目管理** | 项目 CRUD/归档、成员管理（Admin/Dev/Viewer/Lead）、迭代（Sprint）、里程碑 |
+| **任务管理** | 任务 CRUD、4 种类型（Epic/Story/Task/Bug）、子任务、依赖关系、标签、关注者 |
+| **敏捷看板** | 看板视图（拖拽排序、WIP 限制）、列表视图、甘特图视图 |
+| **通知系统** | 站内通知、邮件通知、WebSocket 实时推送 |
+| **个人设置** | 头像、昵称、密码修改、通知偏好 |
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ 架构图
+
 
 ```
                 ┌──────────────────────────────────┐
-                │          Nginx / Frontend          │
-                │   Vue 3 + TypeScript + EleAdmin    │
+                │          Nginx / APISIX           │
+                │   Vue 3 + TS + Element Plus (PC/H5)│
                 └────────────────┬─────────────────┘
                                  │ HTTP /api/*
                 ┌────────────────▼─────────────────┐
@@ -107,7 +103,7 @@ The backend is inspired by and architecturally aligned with the battle-tested [R
 | **Object Storage** | MinIO |
 | **Scheduler** | Quartz |
 | **Frontend** | Vue 3 + TypeScript + Element Plus + Vite |
-| **UI Library** | [EleAdmin Pro](https://eleadmin.com) |
+| **UI Library** | [Element Plus](https://element-plus.org) — 纯组件库，无管理后台模板 |
 | **Build** | Maven 3.9+ (multi-module flat layout) |
 | **Container** | Docker + Docker Compose |
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.task.mapper.TaskDependencyMapper">
+
+    <resultMap type="com.lest.task.domain.TaskDependency" id="TaskDependencyResult">
+        <id     property="taskDependencyId"   column="task_dependency_id" />
+        <result property="taskId"             column="task_id"           />
+        <result property="dependencyTaskId"   column="dependency_task_id"/>
+        <result property="type"               column="type"            />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.task.domain.TaskDependency">
+        insert into task_dependency (task_id, dependency_task_id, type) values (#{taskId}, #{dependencyTaskId}, #{type})
+    </insert>
+
+    <delete id="deleteByTaskIdAndDependencyTaskId">
+        delete from task_dependency where task_id = #{taskId} and dependency_task_id = #{dependencyTaskId}
+    </delete>
+
+    <select id="selectDependencyTaskIds" resultType="java.lang.Long">
+        select dependency_task_id from task_dependency where task_id = #{taskId}
+    </select>
+
+    <select id="selectBlockedByTaskIds" resultType="java.lang.Long">
+        select task_id from task_dependency where dependency_task_id = #{taskId}
+    </select>
+
+    <select id="countByTaskId" resultType="int">
+        select count(*) from task_dependency where task_id = #{taskId} or dependency_task_id = #{taskId}
+    </select>
+
+    <delete id="deleteByTaskId">
+        delete from task_dependency where task_id = #{taskId} or dependency_task_id = #{taskId}
+    </delete>
+
+</mapper>

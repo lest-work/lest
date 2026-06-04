@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.release.mapper.ReleaseIssueMapper">
+
+    <resultMap type="com.lest.release.domain.ReleaseIssue" id="ReleaseIssueResult">
+        <id     property="releaseIssueId" column="release_issue_id"/>
+        <result property="releasePlanId"   column="release_plan_id"/>
+        <result property="issueId"         column="issue_id"/>
+        <result property="taskId"          column="task_id"/>
+        <result property="category"        column="category"/>
+        <result property="notes"           column="notes"/>
+        <result property="addedBy"         column="added_by"/>
+        <result property="addedAt"         column="added_at"/>
+        <result property="releaseName"     column="release_name"/>
+        <result property="addedByName"     column="added_by_name"/>
+        <result property="deleted"         column="deleted"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.release.domain.ReleaseIssue" useGeneratedKeys="true" keyProperty="releaseIssueId">
+        insert into release_issue (release_plan_id, issue_id, task_id, category, notes, added_by, added_at)
+        values (#{releasePlanId}, #{issueId}, #{taskId}, #{category}, #{notes}, #{addedBy}, #{addedAt})
+    </insert>
+
+    <update id="deleteById">
+        update release_issue set deleted = 1 where release_issue_id = #{releaseIssueId}
+    </update>
+
+    <select id="selectIssueList" resultMap="ReleaseIssueResult">
+        select ri.release_issue_id, ri.release_plan_id, ri.issue_id, ri.task_id, ri.category, ri.notes,
+               ri.added_by, ri.added_at, ri.deleted,
+               rp.name as release_name, su.user_name as added_by_name
+        from release_issue ri
+        left join release_plan rp on ri.release_plan_id = rp.release_plan_id and rp.deleted = 0
+        left join sys_user su on ri.added_by = su.user_id and su.del_flag = '0'
+        where ri.deleted = 0
+        <if test="releasePlanId != null">and ri.release_plan_id = #{releasePlanId}</if>
+        <if test="issueId != null">and ri.issue_id = #{issueId}</if>
+        <if test="taskId != null">and ri.task_id = #{taskId}</if>
+        <if test="category != null">and ri.category = #{category}</if>
+        order by ri.added_at desc
+    </select>
+
+    <select id="countByReleaseId" resultType="int">
+        select count(*) from release_issue where release_plan_id = #{releasePlanId} and deleted = 0
+    </select>
+
+</mapper>

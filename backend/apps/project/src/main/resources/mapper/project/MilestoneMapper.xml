@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.project.mapper.MilestoneMapper">
+
+    <resultMap type="com.lest.project.domain.Milestone" id="MilestoneResult">
+        <id     property="milestoneId" column="milestone_id" />
+        <result property="projectId"   column="project_id"  />
+        <result property="name"         column="name"        />
+        <result property="description"  column="description" />
+        <result property="targetDate"    column="target_date" />
+        <result property="deleted"       column="deleted"    />
+        <result property="createBy"      column="create_by"   />
+        <result property="createTime"    column="create_time" />
+        <result property="updateBy"      column="update_by"   />
+        <result property="updateTime"    column="update_time" />
+    </resultMap>
+
+    <sql id="selectMilestoneVo">
+        select milestone_id, project_id, name, description, target_date,
+               create_by, create_time, update_by, update_time from milestone where deleted = 0
+    </sql>
+
+    <select id="selectById" resultMap="MilestoneResult">
+        <include refid="selectMilestoneVo"/> and milestone_id = #{milestoneId}
+    </select>
+
+    <select id="selectByProjectId" resultMap="MilestoneResult">
+        <include refid="selectMilestoneVo"/> and project_id = #{projectId} order by target_date asc
+    </select>
+
+    <insert id="insert" parameterType="com.lest.project.domain.Milestone" useGeneratedKeys="true" keyProperty="milestoneId">
+        insert into milestone (project_id, name, description, target_date, create_by, create_time, update_by, update_time)
+        values (#{projectId}, #{name}, #{description}, #{targetDate}, #{createBy}, now(), #{updateBy}, now())
+    </insert>
+
+    <update id="updateById" parameterType="com.lest.project.domain.Milestone">
+        update milestone
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="targetDate != null">target_date = #{targetDate},</if>
+            update_by = #{updateBy},
+            update_time = now()
+        </set>
+        where milestone_id = #{milestoneId} and deleted = 0
+    </update>
+
+    <delete id="deleteById">
+        update milestone set deleted = 1, update_by = #{updateBy}, update_time = now() where milestone_id = #{milestoneId} and deleted = 0
+    </delete>
+
+    <select id="countIterationsByMilestoneId" resultType="int">
+        select count(*) from milestone_iteration where milestone_id = #{milestoneId}
+    </select>
+
+    <delete id="deleteMilestoneIteration">
+        delete from milestone_iteration where milestone_id = #{milestoneId}
+    </delete>
+
+    <select id="countTasksByIterationId" resultType="int">
+        select count(*) from task where iteration_id = #{iterationId} and deleted = 0
+    </select>
+
+    <select id="countCompletedTasksByIterationId" resultType="int">
+        select count(*) from task where iteration_id = #{iterationId} and status = 'completed' and deleted = 0
+    </select>
+
+</mapper>

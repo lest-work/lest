@@ -132,7 +132,7 @@ List query interfaces use a unified pagination format:
 Get a graphic captcha for login brute-force protection.
 
 ```
-GET /auth/captcha
+GET /api/v1/auth/captcha
 ```
 
 Response:
@@ -151,7 +151,7 @@ Response:
 #### 3.1.2 User Login
 
 ```
-POST /auth/login
+POST /api/v1/auth/login
 Content-Type: application/json
 ```
 
@@ -183,7 +183,7 @@ Response:
 #### 3.1.3 Refresh Token
 
 ```
-POST /auth/refresh
+POST /api/v1/auth/refresh
 Content-Type: application/json
 ```
 
@@ -212,7 +212,7 @@ Response:
 #### 3.1.4 Get Current User Info
 
 ```
-GET /auth/user
+GET /api/v1/auth/user
 Authorization: Bearer {accessToken}
 ```
 
@@ -239,7 +239,7 @@ Response:
 #### 3.1.5 Change Password
 
 ```
-PUT /auth/password
+PUT /api/v1/auth/password
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -266,7 +266,7 @@ Response:
 #### 3.1.6 Logout
 
 ```
-POST /auth/logout
+POST /api/v1/auth/logout
 Authorization: Bearer {accessToken}
 ```
 
@@ -285,7 +285,7 @@ Response:
 #### 3.2.1 Paginated Query Users
 
 ```
-GET /auth/user/page?username=zhang&status=1&page=1&size=20
+GET /api/v1/auth/user/page?username=zhang&status=1&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -319,7 +319,7 @@ Response:
 #### 3.2.2 Create User
 
 ```
-POST /auth/user
+POST /api/v1/auth/user
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -354,7 +354,7 @@ Response:
 #### 3.2.3 Update User
 
 ```
-PUT /auth/user/{id}
+PUT /api/v1/auth/user/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -384,7 +384,7 @@ Response:
 #### 3.2.4 Delete User
 
 ```
-DELETE /auth/user/{id}
+DELETE /api/v1/auth/user/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -401,7 +401,7 @@ Response:
 #### 3.2.5 Change User Status
 
 ```
-PUT /auth/user/{id}/status
+PUT /api/v1/auth/user/{id}/status
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -427,7 +427,7 @@ Response:
 #### 3.2.6 Reset Password
 
 ```
-PUT /auth/user/{id}/password
+PUT /api/v1/auth/user/{id}/password
 Authorization: Bearer {accessToken}
 ```
 
@@ -446,14 +446,14 @@ Response:
 #### 3.3.1 Paginated Query Roles
 
 ```
-GET /auth/role/page?roleName=开发&page=1&size=20
+GET /api/v1/auth/role/page?roleName=开发&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
 #### 3.3.2 Create Role
 
 ```
-POST /auth/role
+POST /api/v1/auth/role
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -485,7 +485,7 @@ Response:
 #### 3.3.3 Update Role
 
 ```
-PUT /auth/role/{id}
+PUT /api/v1/auth/role/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -513,7 +513,7 @@ Response:
 #### 3.3.4 Delete Role
 
 ```
-DELETE /auth/role/{id}
+DELETE /api/v1/auth/role/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -532,7 +532,7 @@ Response:
 #### 3.4.1 Get Menu Tree
 
 ```
-GET /auth/menu/tree
+GET /api/v1/auth/menu/tree
 Authorization: Bearer {accessToken}
 ```
 
@@ -560,7 +560,7 @@ Response:
 #### 3.4.2 Get Routes
 
 ```
-GET /auth/menu/routes
+GET /api/v1/auth/menu/routes
 Authorization: Bearer {accessToken}
 ```
 
@@ -590,7 +590,7 @@ Response:
 #### 3.5.1 Get Organization Tree
 
 ```
-GET /organization/tree
+GET /api/v1/organization/tree
 Authorization: Bearer {accessToken}
 ```
 
@@ -622,7 +622,7 @@ Response:
 #### 3.6.1 Get Dictionary List
 
 ```
-GET /dictionary?dictCode=status
+GET /api/v1/dictionary?dictCode=status
 Authorization: Bearer {accessToken}
 ```
 
@@ -650,7 +650,7 @@ Response:
 #### 3.7.1 Paginated Query Logs
 
 ```
-GET /operation-log/page?username=admin&module=用户管理&startTime=2026-05-01&endTime=2026-05-25&page=1&size=20
+GET /api/v1/operation-log/page?username=admin&module=用户管理&startTime=2026-05-01&endTime=2026-05-25&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -696,7 +696,7 @@ Response:
 #### 4.1.1 Create Project
 
 ```
-POST /project
+POST /api/v1/project
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -730,7 +730,7 @@ Response:
 #### 4.1.2 Paginated Query Projects
 
 ```
-GET /project/page?name=lest&status=active&page=1&size=20
+GET /api/v1/project/page?name=lest&status=active&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -769,7 +769,7 @@ Response:
 #### 4.1.3 Get Project Details
 
 ```
-GET /project/{id}
+GET /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -809,7 +809,7 @@ Response:
 #### 4.1.4 Update Project
 
 ```
-PUT /project/{id}
+PUT /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -839,7 +839,7 @@ Response:
 #### 4.1.5 Delete Project
 
 ```
-DELETE /project/{id}
+DELETE /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -856,7 +856,7 @@ Response:
 #### 4.1.6 Archive Project
 
 ```
-PUT /project/{id}/archive
+PUT /api/v1/project/{id}/archive
 Authorization: Bearer {accessToken}
 ```
 
@@ -873,7 +873,7 @@ Response:
 #### 4.1.7 Restore Project
 
 ```
-PUT /project/{id}/unarchive
+PUT /api/v1/project/{id}/unarchive
 Authorization: Bearer {accessToken}
 ```
 
@@ -892,7 +892,7 @@ Response:
 #### 4.2.1 Get Project Member List
 
 ```
-GET /project/{id}/member
+GET /api/v1/project/{id}/member
 Authorization: Bearer {accessToken}
 ```
 
@@ -918,7 +918,7 @@ Response:
 #### 4.2.2 Add Project Member
 
 ```
-POST /project/{id}/member
+POST /api/v1/project/{id}/member
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -948,7 +948,7 @@ Response:
 #### 4.2.3 Remove Project Member
 
 ```
-DELETE /project/{id}/member/{userId}
+DELETE /api/v1/project/{id}/member/{userId}
 Authorization: Bearer {accessToken}
 ```
 
@@ -965,7 +965,7 @@ Response:
 #### 4.2.4 Update Member Role
 
 ```
-PUT /project/{id}/member/{userId}/role
+PUT /api/v1/project/{id}/member/{userId}/role
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -993,7 +993,7 @@ Response:
 #### 4.3.1 Create Iteration
 
 ```
-POST /project/{id}/iteration
+POST /api/v1/project/{id}/iteration
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1025,7 +1025,7 @@ Response:
 #### 4.3.2 Paginated Query Iterations
 
 ```
-GET /project/{id}/iteration/page?status=active&page=1&size=10
+GET /api/v1/project/{id}/iteration/page?status=active&page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
@@ -1059,7 +1059,7 @@ Response:
 #### 4.3.3 Get Iteration Details
 
 ```
-GET /iteration/{id}
+GET /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1088,7 +1088,7 @@ Response:
 #### 4.3.4 Update Iteration
 
 ```
-PUT /iteration/{id}
+PUT /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1117,7 +1117,7 @@ Response:
 #### 4.3.5 Delete Iteration
 
 ```
-DELETE /iteration/{id}
+DELETE /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1134,7 +1134,7 @@ Response:
 #### 4.3.6 Start Iteration
 
 ```
-PUT /iteration/{id}/start
+PUT /api/v1/iteration/{id}/start
 Authorization: Bearer {accessToken}
 ```
 
@@ -1151,7 +1151,7 @@ Response:
 #### 4.3.7 Complete Iteration
 
 ```
-PUT /iteration/{id}/complete
+PUT /api/v1/iteration/{id}/complete
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1178,7 +1178,7 @@ Response:
 #### 4.3.8 Get Iteration Task List
 
 ```
-GET /iteration/{id}/task?page=1&size=20
+GET /api/v1/iteration/{id}/task?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1213,7 +1213,7 @@ Response:
 #### 4.4.1 Create Milestone
 
 ```
-POST /project/{id}/milestone
+POST /api/v1/project/{id}/milestone
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1244,7 +1244,7 @@ Response:
 #### 4.4.2 Paginated Query Milestones
 
 ```
-GET /project/{id}/milestone/page?page=1&size=10
+GET /api/v1/project/{id}/milestone/page?page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
@@ -1278,7 +1278,7 @@ Response:
 #### 4.4.3 Get Milestone Details
 
 ```
-GET /milestone/{id}
+GET /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1308,7 +1308,7 @@ Response:
 #### 4.4.4 Update Milestone
 
 ```
-PUT /milestone/{id}
+PUT /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1336,7 +1336,7 @@ Response:
 #### 4.4.5 Delete Milestone
 
 ```
-DELETE /milestone/{id}
+DELETE /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1353,7 +1353,7 @@ Response:
 #### 4.4.6 Associate Iteration to Milestone
 
 ```
-POST /milestone/{id}/iteration
+POST /api/v1/milestone/{id}/iteration
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1389,7 +1389,7 @@ Response:
 #### 5.1.1 Create Task
 
 ```
-POST /task
+POST /api/v1/task
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1428,7 +1428,7 @@ Response:
 #### 5.1.2 Paginated Query Tasks
 
 ```
-GET /task/page?projectId=1&iterationId=1&assigneeId=1&status=todo&priority=p1&labels=后端&keyword=登录&page=1&size=20
+GET /api/v1/task/page?projectId=1&iterationId=1&assigneeId=1&status=todo&priority=p1&labels=后端&keyword=登录&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1473,7 +1473,7 @@ Response:
 #### 5.1.3 Get Task Details
 
 ```
-GET /task/{id}
+GET /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1520,7 +1520,7 @@ Response:
 #### 5.1.4 Update Task
 
 ```
-PUT /task/{id}
+PUT /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1549,7 +1549,7 @@ Response:
 #### 5.1.5 Delete Task
 
 ```
-DELETE /task/{id}
+DELETE /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1566,7 +1566,7 @@ Response:
 #### 5.1.6 Update Task Status
 
 ```
-PUT /task/{id}/status
+PUT /api/v1/task/{id}/status
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1592,7 +1592,7 @@ Response:
 #### 5.1.7 Assign Task
 
 ```
-PUT /task/{id}/assign
+PUT /api/v1/task/{id}/assign
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1619,7 +1619,7 @@ Response:
 #### 5.1.8 Claim Task
 
 ```
-POST /task/{id}/claim
+POST /api/v1/task/{id}/claim
 Authorization: Bearer {accessToken}
 ```
 
@@ -1638,7 +1638,7 @@ Response:
 #### 5.2.1 Get Kanban View
 
 ```
-GET /task/board?projectId=1&iterationId=1
+GET /api/v1/task/board?projectId=1&iterationId=1
 Authorization: Bearer {accessToken}
 ```
 
@@ -1678,7 +1678,7 @@ Response:
 #### 5.2.2 Drag Task to Update Column
 
 ```
-PUT /task/{id}/move
+PUT /api/v1/task/{id}/move
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1707,7 +1707,7 @@ Response:
 #### 5.3.1 Get Gantt Chart Data
 
 ```
-GET /task/gantt?projectId=1&iterationId=1&startDate=2026-05-01&endDate=2026-05-31
+GET /api/v1/task/gantt?projectId=1&iterationId=1&startDate=2026-05-01&endDate=2026-05-31
 Authorization: Bearer {accessToken}
 ```
 
@@ -1748,7 +1748,7 @@ Response:
 #### 5.4.1 Add Subtask
 
 ```
-POST /task/{id}/subtask
+POST /api/v1/task/{id}/subtask
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1781,7 +1781,7 @@ Response:
 #### 5.4.2 Get Subtask List
 
 ```
-GET /task/{id}/subtask
+GET /api/v1/task/{id}/subtask
 Authorization: Bearer {accessToken}
 ```
 
@@ -1808,7 +1808,7 @@ Response:
 #### 5.5.1 Add Blocker
 
 ```
-POST /task/{id}/dependency
+POST /api/v1/task/{id}/dependency
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1835,7 +1835,7 @@ Response:
 #### 5.5.2 Get Task Dependencies
 
 ```
-GET /task/{id}/dependency
+GET /api/v1/task/{id}/dependency
 Authorization: Bearer {accessToken}
 ```
 
@@ -1863,7 +1863,7 @@ Response:
 #### 5.6.1 Add Worklog
 
 ```
-POST /task/{id}/worklog
+POST /api/v1/task/{id}/worklog
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1894,7 +1894,7 @@ Response:
 #### 5.6.2 Get Worklogs
 
 ```
-GET /task/{id}/worklog?page=1&size=20
+GET /api/v1/task/{id}/worklog?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1929,7 +1929,7 @@ Response:
 #### 5.7.1 Get Project Labels
 
 ```
-GET /project/{projectId}/labels
+GET /api/v1/project/{projectId}/labels
 Authorization: Bearer {accessToken}
 ```
 
@@ -1957,7 +1957,7 @@ Response:
 #### 5.7.2 Create Label
 
 ```
-POST /project/{projectId}/label
+POST /api/v1/project/{projectId}/label
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1990,7 +1990,7 @@ Response:
 #### 5.8.1 Get Commits Associated with Task
 
 ```
-GET /task/{id}/commits
+GET /api/v1/task/{id}/commits
 Authorization: Bearer {accessToken}
 ```
 
@@ -2022,7 +2022,7 @@ Response:
 #### 5.8.2 Get MR/PR Associated with Task
 
 ```
-GET /task/{id}/merge-requests
+GET /api/v1/task/{id}/merge-requests
 Authorization: Bearer {accessToken}
 ```
 
@@ -2055,7 +2055,7 @@ Response:
 #### 5.8.3 Manually Link Commit
 
 ```
-POST /task/{id}/commit
+POST /api/v1/task/{id}/commit
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -2081,7 +2081,7 @@ Response:
 #### 5.8.4 Manually Link MR/PR
 
 ```
-POST /task/{id}/merge-request
+POST /api/v1/task/{id}/merge-request
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -2108,7 +2108,7 @@ Response:
 #### 5.9.1 Get Builds Associated with Task
 
 ```
-GET /task/{id}/pipelines
+GET /api/v1/task/{id}/pipelines
 Authorization: Bearer {accessToken}
 ```
 
@@ -2145,7 +2145,7 @@ Response:
 #### 5.10.1 CI Build Completed Callback
 
 ```
-POST /webhook/ci/build
+POST /api/v1/webhook/ci/build
 Content-Type: application/json
 X-Signature: {signature}
 ```
@@ -2177,7 +2177,7 @@ Response:
 #### 5.10.2 Git Commit Pushed Callback
 
 ```
-POST /webhook/git/commit
+POST /api/v1/webhook/git/commit
 Content-Type: application/json
 X-Signature: {signature}
 ```

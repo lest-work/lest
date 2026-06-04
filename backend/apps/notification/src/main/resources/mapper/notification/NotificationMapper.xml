@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.notification.mapper.NotificationMapper">
+    <resultMap type="com.lest.notification.domain.Notification" id="NotificationResult">
+        <result property="notificationId" column="notification_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="type" column="type"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="relatedType" column="related_type"/>
+        <result property="relatedId" column="related_id"/>
+        <result property="isRead" column="is_read"/>
+        <result property="readAt" column="read_at"/>
+        <result property="createAt" column="create_at"/>
+    </resultMap>
+
+    <select id="selectNotificationList" resultMap="NotificationResult">
+        select notification_id, user_id, type, title, content, related_type, related_id, is_read, read_at, create_at
+        from notification
+        where user_id = #{userId}
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="isRead != null">
+            and is_read = #{isRead}
+        </if>
+        order by create_at desc
+    </select>
+
+    <select id="selectNotificationById" resultMap="NotificationResult">
+        select notification_id, user_id, type, title, content, related_type, related_id, is_read, read_at, create_at
+        from notification where notification_id = #{notificationId}
+    </select>
+
+    <insert id="insertNotification" useGeneratedKeys="true" keyProperty="notificationId">
+        insert into notification (user_id, type, title, content, related_type, related_id, is_read, create_at)
+        values (#{userId}, #{type}, #{title}, #{content}, #{relatedType}, #{relatedId}, #{isRead}, #{createAt})
+    </insert>
+
+    <update id="updateNotification">
+        update notification
+        <set>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="isRead == 1">read_at = now(),</if>
+        </set>
+        where notification_id = #{notificationId}
+    </update>
+
+    <delete id="deleteNotificationById">
+        delete from notification where notification_id = #{notificationId}
+    </delete>
+
+    <select id="countUnreadByUserId" resultType="int">
+        select count(*) from notification where user_id = #{userId} and is_read = 0
+    </select>
+</mapper>

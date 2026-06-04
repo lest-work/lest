@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.lest</groupId>
+        <artifactId>lest</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>common</artifactId>
+    <packaging>pom</packaging>
+
+    <name>lest-common</name>
+    <description>公共组件（MQ、Plugin、Security、Log、Redis、Swagger 等）</description>
+
+    <modules>
+        <module>core</module>
+        <module>log</module>
+        <module>security</module>
+        <module>redis</module>
+        <module>swagger</module>
+        <module>datasource</module>
+        <module>mq</module>
+        <module>plugin</module>
+    </modules>
+</project>

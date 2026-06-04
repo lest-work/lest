@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.task.mapper.TaskChangeHistoryMapper">
+
+    <resultMap type="com.lest.task.domain.TaskChangeHistory" id="TaskChangeHistoryResult">
+        <id     property="id"          column="id"          />
+        <result property="taskId"      column="task_id"     />
+        <result property="userId"       column="user_id"     />
+        <result property="userName"     column="user_name"   />
+        <result property="fieldName"    column="field_name"  />
+        <result property="oldValue"     column="old_value"   />
+        <result property="newValue"     column="new_value"   />
+        <result property="createdAt"    column="created_at"  />
+    </resultMap>
+
+    <select id="selectByTaskId" resultMap="TaskChangeHistoryResult">
+        select id, task_id, user_id, user_name, field_name, old_value, new_value, created_at
+        from task_change_history
+        where task_id = #{taskId}
+        order by created_at desc
+    </select>
+
+    <insert id="insert" parameterType="com.lest.task.domain.TaskChangeHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into task_change_history (task_id, user_id, user_name, field_name, old_value, new_value, created_at)
+        values (#{taskId}, #{userId}, #{userName}, #{fieldName}, #{oldValue}, #{newValue}, #{createdAt})
+    </insert>
+
+</mapper>

@@ -134,7 +134,7 @@ X-Jenkins-Token: {签名}            # Jenkins Webhook
 获取图形验证码，用于登录防暴力破解。
 
 ```
-GET /auth/captcha
+GET /api/v1/auth/captcha
 ```
 
 响应:
@@ -153,7 +153,7 @@ GET /auth/captcha
 #### 3.1.2 用户登录
 
 ```
-POST /auth/login
+POST /api/v1/auth/login
 Content-Type: application/json
 ```
 
@@ -185,7 +185,7 @@ Content-Type: application/json
 #### 3.1.3 刷新 Token
 
 ```
-POST /auth/refresh
+POST /api/v1/auth/refresh
 Content-Type: application/json
 ```
 
@@ -214,7 +214,7 @@ Content-Type: application/json
 #### 3.1.4 获取当前用户信息
 
 ```
-GET /auth/user
+GET /api/v1/auth/user
 Authorization: Bearer {accessToken}
 ```
 
@@ -241,7 +241,7 @@ Authorization: Bearer {accessToken}
 #### 3.1.5 修改密码
 
 ```
-PUT /auth/password
+PUT /api/v1/auth/password
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -268,7 +268,7 @@ Content-Type: application/json
 #### 3.1.6 登出
 
 ```
-POST /auth/logout
+POST /api/v1/auth/logout
 Authorization: Bearer {accessToken}
 ```
 
@@ -287,7 +287,7 @@ Authorization: Bearer {accessToken}
 #### 3.2.1 分页查询用户
 
 ```
-GET /auth/user/page?username=zhang&status=1&page=1&size=20
+GET /api/v1/auth/user/page?username=zhang&status=1&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -321,7 +321,7 @@ Authorization: Bearer {accessToken}
 #### 3.2.2 创建用户
 
 ```
-POST /auth/user
+POST /api/v1/auth/user
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -356,7 +356,7 @@ Content-Type: application/json
 #### 3.2.3 更新用户
 
 ```
-PUT /auth/user/{id}
+PUT /api/v1/auth/user/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -386,7 +386,7 @@ Content-Type: application/json
 #### 3.2.4 删除用户
 
 ```
-DELETE /auth/user/{id}
+DELETE /api/v1/auth/user/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -403,7 +403,7 @@ Authorization: Bearer {accessToken}
 #### 3.2.5 修改用户状态
 
 ```
-PUT /auth/user/{id}/status
+PUT /api/v1/auth/user/{id}/status
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -429,7 +429,7 @@ Content-Type: application/json
 #### 3.2.6 重置密码
 
 ```
-PUT /auth/user/{id}/password
+PUT /api/v1/auth/user/{id}/password
 Authorization: Bearer {accessToken}
 ```
 
@@ -448,14 +448,14 @@ Authorization: Bearer {accessToken}
 #### 3.3.1 分页查询角色
 
 ```
-GET /auth/role/page?roleName=开发&page=1&size=20
+GET /api/v1/auth/role/page?roleName=开发&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
 #### 3.3.2 创建角色
 
 ```
-POST /auth/role
+POST /api/v1/auth/role
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -487,7 +487,7 @@ Content-Type: application/json
 #### 3.3.3 更新角色
 
 ```
-PUT /auth/role/{id}
+PUT /api/v1/auth/role/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -515,7 +515,7 @@ Content-Type: application/json
 #### 3.3.4 删除角色
 
 ```
-DELETE /auth/role/{id}
+DELETE /api/v1/auth/role/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -534,7 +534,7 @@ Authorization: Bearer {accessToken}
 #### 3.4.1 获取菜单树
 
 ```
-GET /auth/menu/tree
+GET /api/v1/auth/menu/tree
 Authorization: Bearer {accessToken}
 ```
 
@@ -562,7 +562,7 @@ Authorization: Bearer {accessToken}
 #### 3.4.2 获取路由
 
 ```
-GET /auth/menu/routes
+GET /api/v1/auth/menu/routes
 Authorization: Bearer {accessToken}
 ```
 
@@ -592,7 +592,7 @@ Authorization: Bearer {accessToken}
 #### 3.5.1 获取机构树
 
 ```
-GET /organization/tree
+GET /api/v1/organization/tree
 Authorization: Bearer {accessToken}
 ```
 
@@ -624,7 +624,7 @@ Authorization: Bearer {accessToken}
 #### 3.6.1 获取字典列表
 
 ```
-GET /dictionary?dictCode=status
+GET /api/v1/dictionary?dictCode=status
 Authorization: Bearer {accessToken}
 ```
 
@@ -652,7 +652,7 @@ Authorization: Bearer {accessToken}
 #### 3.7.1 分页查询日志
 
 ```
-GET /operation-log/page?username=admin&module=用户管理&startTime=2026-05-01&endTime=2026-05-25&page=1&size=20
+GET /api/v1/operation-log/page?username=admin&module=用户管理&startTime=2026-05-01&endTime=2026-05-25&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -698,7 +698,7 @@ Authorization: Bearer {accessToken}
 #### 4.1.1 创建项目
 
 ```
-POST /project
+POST /api/v1/project
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -732,7 +732,7 @@ Content-Type: application/json
 #### 4.1.2 分页查询项目
 
 ```
-GET /project/page?name=lest&status=active&page=1&size=20
+GET /api/v1/project/page?name=lest&status=active&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -771,7 +771,7 @@ Authorization: Bearer {accessToken}
 #### 4.1.3 获取项目详情
 
 ```
-GET /project/{id}
+GET /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -811,7 +811,7 @@ Authorization: Bearer {accessToken}
 #### 4.1.4 更新项目
 
 ```
-PUT /project/{id}
+PUT /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -841,7 +841,7 @@ Content-Type: application/json
 #### 4.1.5 删除项目
 
 ```
-DELETE /project/{id}
+DELETE /api/v1/project/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -858,7 +858,7 @@ Authorization: Bearer {accessToken}
 #### 4.1.6 归档项目
 
 ```
-PUT /project/{id}/archive
+PUT /api/v1/project/{id}/archive
 Authorization: Bearer {accessToken}
 ```
 
@@ -875,7 +875,7 @@ Authorization: Bearer {accessToken}
 #### 4.1.7 恢复项目
 
 ```
-PUT /project/{id}/unarchive
+PUT /api/v1/project/{id}/unarchive
 Authorization: Bearer {accessToken}
 ```
 
@@ -894,7 +894,7 @@ Authorization: Bearer {accessToken}
 #### 4.2.1 获取项目成员列表
 
 ```
-GET /project/{id}/member
+GET /api/v1/project/{id}/member
 Authorization: Bearer {accessToken}
 ```
 
@@ -920,7 +920,7 @@ Authorization: Bearer {accessToken}
 #### 4.2.2 添加项目成员
 
 ```
-POST /project/{id}/member
+POST /api/v1/project/{id}/member
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -950,7 +950,7 @@ Content-Type: application/json
 #### 4.2.3 移除项目成员
 
 ```
-DELETE /project/{id}/member/{userId}
+DELETE /api/v1/project/{id}/member/{userId}
 Authorization: Bearer {accessToken}
 ```
 
@@ -967,7 +967,7 @@ Authorization: Bearer {accessToken}
 #### 4.2.4 修改成员角色
 
 ```
-PUT /project/{id}/member/{userId}/role
+PUT /api/v1/project/{id}/member/{userId}/role
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -995,7 +995,7 @@ Content-Type: application/json
 #### 4.3.1 创建迭代
 
 ```
-POST /project/{id}/iteration
+POST /api/v1/project/{id}/iteration
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1027,7 +1027,7 @@ Content-Type: application/json
 #### 4.3.2 分页查询迭代
 
 ```
-GET /project/{id}/iteration/page?status=active&page=1&size=10
+GET /api/v1/project/{id}/iteration/page?status=active&page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
@@ -1061,7 +1061,7 @@ Authorization: Bearer {accessToken}
 #### 4.3.3 获取迭代详情
 
 ```
-GET /iteration/{id}
+GET /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1090,7 +1090,7 @@ Authorization: Bearer {accessToken}
 #### 4.3.4 更新迭代
 
 ```
-PUT /iteration/{id}
+PUT /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1119,7 +1119,7 @@ Content-Type: application/json
 #### 4.3.5 删除迭代
 
 ```
-DELETE /iteration/{id}
+DELETE /api/v1/iteration/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1136,7 +1136,7 @@ Authorization: Bearer {accessToken}
 #### 4.3.6 启动迭代
 
 ```
-PUT /iteration/{id}/start
+PUT /api/v1/iteration/{id}/start
 Authorization: Bearer {accessToken}
 ```
 
@@ -1153,7 +1153,7 @@ Authorization: Bearer {accessToken}
 #### 4.3.7 结束迭代
 
 ```
-PUT /iteration/{id}/complete
+PUT /api/v1/iteration/{id}/complete
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1180,7 +1180,7 @@ Content-Type: application/json
 #### 4.3.8 获取迭代任务列表
 
 ```
-GET /iteration/{id}/task?page=1&size=20
+GET /api/v1/iteration/{id}/task?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1215,7 +1215,7 @@ Authorization: Bearer {accessToken}
 #### 4.4.1 创建里程碑
 
 ```
-POST /project/{id}/milestone
+POST /api/v1/project/{id}/milestone
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1246,7 +1246,7 @@ Content-Type: application/json
 #### 4.4.2 分页查询里程碑
 
 ```
-GET /project/{id}/milestone/page?page=1&size=10
+GET /api/v1/project/{id}/milestone/page?page=1&size=10
 Authorization: Bearer {accessToken}
 ```
 
@@ -1280,7 +1280,7 @@ Authorization: Bearer {accessToken}
 #### 4.4.3 获取里程碑详情
 
 ```
-GET /milestone/{id}
+GET /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1310,7 +1310,7 @@ Authorization: Bearer {accessToken}
 #### 4.4.4 更新里程碑
 
 ```
-PUT /milestone/{id}
+PUT /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1338,7 +1338,7 @@ Content-Type: application/json
 #### 4.4.5 删除里程碑
 
 ```
-DELETE /milestone/{id}
+DELETE /api/v1/milestone/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1355,7 +1355,7 @@ Authorization: Bearer {accessToken}
 #### 4.4.6 关联迭代到里程碑
 
 ```
-POST /milestone/{id}/iteration
+POST /api/v1/milestone/{id}/iteration
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1391,7 +1391,7 @@ Content-Type: application/json
 #### 5.1.1 创建任务
 
 ```
-POST /task
+POST /api/v1/task
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1430,7 +1430,7 @@ Content-Type: application/json
 #### 5.1.2 分页查询任务
 
 ```
-GET /task/page?projectId=1&iterationId=1&assigneeId=1&status=todo&priority=p1&labels=后端&keyword=登录&page=1&size=20
+GET /api/v1/task/page?projectId=1&iterationId=1&assigneeId=1&status=todo&priority=p1&labels=后端&keyword=登录&page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1475,7 +1475,7 @@ Authorization: Bearer {accessToken}
 #### 5.1.3 获取任务详情
 
 ```
-GET /task/{id}
+GET /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1522,7 +1522,7 @@ Authorization: Bearer {accessToken}
 #### 5.1.4 更新任务
 
 ```
-PUT /task/{id}
+PUT /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1551,7 +1551,7 @@ Content-Type: application/json
 #### 5.1.5 删除任务
 
 ```
-DELETE /task/{id}
+DELETE /api/v1/task/{id}
 Authorization: Bearer {accessToken}
 ```
 
@@ -1568,7 +1568,7 @@ Authorization: Bearer {accessToken}
 #### 5.1.6 更新任务状态
 
 ```
-PUT /task/{id}/status
+PUT /api/v1/task/{id}/status
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1594,7 +1594,7 @@ Content-Type: application/json
 #### 5.1.7 分配任务
 
 ```
-PUT /task/{id}/assign
+PUT /api/v1/task/{id}/assign
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1621,7 +1621,7 @@ Content-Type: application/json
 #### 5.1.8 认领任务
 
 ```
-POST /task/{id}/claim
+POST /api/v1/task/{id}/claim
 Authorization: Bearer {accessToken}
 ```
 
@@ -1640,7 +1640,7 @@ Authorization: Bearer {accessToken}
 #### 5.2.1 获取看板视图
 
 ```
-GET /task/board?projectId=1&iterationId=1
+GET /api/v1/task/board?projectId=1&iterationId=1
 Authorization: Bearer {accessToken}
 ```
 
@@ -1680,7 +1680,7 @@ Authorization: Bearer {accessToken}
 #### 5.2.2 拖拽任务更新列
 
 ```
-PUT /task/{id}/move
+PUT /api/v1/task/{id}/move
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1709,7 +1709,7 @@ Content-Type: application/json
 #### 5.3.1 获取甘特图数据
 
 ```
-GET /task/gantt?projectId=1&iterationId=1&startDate=2026-05-01&endDate=2026-05-31
+GET /api/v1/task/gantt?projectId=1&iterationId=1&startDate=2026-05-01&endDate=2026-05-31
 Authorization: Bearer {accessToken}
 ```
 
@@ -1750,7 +1750,7 @@ Authorization: Bearer {accessToken}
 #### 5.4.1 添加子任务
 
 ```
-POST /task/{id}/subtask
+POST /api/v1/task/{id}/subtask
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1783,7 +1783,7 @@ Content-Type: application/json
 #### 5.4.2 获取子任务列表
 
 ```
-GET /task/{id}/subtask
+GET /api/v1/task/{id}/subtask
 Authorization: Bearer {accessToken}
 ```
 
@@ -1810,7 +1810,7 @@ Authorization: Bearer {accessToken}
 #### 5.5.1 添加前置任务
 
 ```
-POST /task/{id}/dependency
+POST /api/v1/task/{id}/dependency
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1837,7 +1837,7 @@ Content-Type: application/json
 #### 5.5.2 获取任务依赖
 
 ```
-GET /task/{id}/dependency
+GET /api/v1/task/{id}/dependency
 Authorization: Bearer {accessToken}
 ```
 
@@ -1865,7 +1865,7 @@ Authorization: Bearer {accessToken}
 #### 5.6.1 添加工时记录
 
 ```
-POST /task/{id}/worklog
+POST /api/v1/task/{id}/worklog
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1896,7 +1896,7 @@ Content-Type: application/json
 #### 5.6.2 获取工时记录
 
 ```
-GET /task/{id}/worklog?page=1&size=20
+GET /api/v1/task/{id}/worklog?page=1&size=20
 Authorization: Bearer {accessToken}
 ```
 
@@ -1931,7 +1931,7 @@ Authorization: Bearer {accessToken}
 #### 5.7.1 获取项目标签
 
 ```
-GET /project/{projectId}/labels
+GET /api/v1/project/{projectId}/labels
 Authorization: Bearer {accessToken}
 ```
 
@@ -1959,7 +1959,7 @@ Authorization: Bearer {accessToken}
 #### 5.7.2 创建标签
 
 ```
-POST /project/{projectId}/label
+POST /api/v1/project/{projectId}/label
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -1992,7 +1992,7 @@ Content-Type: application/json
 #### 5.8.1 获取任务关联的提交
 
 ```
-GET /task/{id}/commits
+GET /api/v1/task/{id}/commits
 Authorization: Bearer {accessToken}
 ```
 
@@ -2024,7 +2024,7 @@ Authorization: Bearer {accessToken}
 #### 5.8.2 获取任务关联的 MR/PR
 
 ```
-GET /task/{id}/merge-requests
+GET /api/v1/task/{id}/merge-requests
 Authorization: Bearer {accessToken}
 ```
 
@@ -2057,7 +2057,7 @@ Authorization: Bearer {accessToken}
 #### 5.8.3 手动关联提交
 
 ```
-POST /task/{id}/commit
+POST /api/v1/task/{id}/commit
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -2083,7 +2083,7 @@ Content-Type: application/json
 #### 5.8.4 手动关联 MR/PR
 
 ```
-POST /task/{id}/merge-request
+POST /api/v1/task/{id}/merge-request
 Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
@@ -2110,7 +2110,7 @@ Content-Type: application/json
 #### 5.9.1 获取任务关联的构建
 
 ```
-GET /task/{id}/pipelines
+GET /api/v1/task/{id}/pipelines
 Authorization: Bearer {accessToken}
 ```
 
@@ -2147,7 +2147,7 @@ Authorization: Bearer {accessToken}
 #### 5.10.1 CI 构建完成回调
 
 ```
-POST /webhook/ci/build
+POST /api/v1/webhook/ci/build
 Content-Type: application/json
 X-Signature: {签名}
 ```
@@ -2179,7 +2179,7 @@ X-Signature: {签名}
 #### 5.10.2 Git 提交推送回调
 
 ```
-POST /webhook/git/commit
+POST /api/v1/webhook/git/commit
 Content-Type: application/json
 X-Signature: {签名}
 ```

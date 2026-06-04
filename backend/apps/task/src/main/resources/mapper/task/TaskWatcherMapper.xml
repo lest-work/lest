@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.task.mapper.TaskWatcherMapper">
+
+    <insert id="insert" parameterType="com.lest.task.domain.TaskWatcher">
+        insert into task_watcher (task_id, user_id) values (#{taskId}, #{userId})
+    </insert>
+
+    <select id="selectWatcherIdsByTaskId" resultType="java.lang.Long">
+        select user_id from task_watcher where task_id = #{taskId}
+    </select>
+
+    <delete id="deleteByTaskId">
+        delete from task_watcher where task_id = #{taskId}
+    </delete>
+
+    <insert id="insertBatch">
+        insert into task_watcher (task_id, user_id) values
+        <foreach item="userId" collection="userIds" separator=",">
+            (#{taskId}, #{userId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByTaskIdAndUserId">
+        delete from task_watcher where task_id = #{taskId} and user_id = #{userId}
+    </delete>
+
+    <select id="selectTaskIdsByUserId" resultType="java.lang.Long">
+        select task_id from task_watcher where user_id = #{userId}
+    </select>
+
+</mapper>

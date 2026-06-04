@@ -38,8 +38,8 @@
 │   • JWT Token     │     │   • 任务 CRUD            │     │   • 项目 CRUD         │
 │   • 用户管理       │     │   • 任务分配             │     │   • 成员管理          │
 │   • 角色权限       │     │   • 任务评论             │     │   • 迭代管理          │
-│   • 菜单管理       │     │   • 跨项目依赖           │     │   • 里程碑管理        │
-│   • 字典数据       │     │   • Webhook 处理         │     │                       │
+│   • 菜单管理       │  ← V2.0 已删除，改用固定菜单
+│   • 字典数据       │  ← V2.0 已删除，改用 EAV 自定义字段
 │   • 机构管理       │     │   • Kafka 事件消费       │     │                       │
 └──────────┬─────────┘     └───────────┬─────────────┘     └───────────┬─────────────┘
            │                          │                          │
@@ -95,7 +95,7 @@ lest-platform/                         # 项目根目录
 │   │   └── lest-common-security/    # 安全工具（统一 JWT 工具类 JwtUtils）
 │   │
 │   └── lest-modules/                 # 微服务模块（仅已有代码的 4 个）
-│       ├── lest-auth/                # 用户认证服务（含用户/角色/菜单/字典/机构管理）
+│       ├── lest-auth/                # 用户认证服务（含用户/角色/邀请制成员管理）
 │       ├── lest-project/             # 项目管理服务（含项目/迭代/里程碑管理）
 │       ├── lest-task/               # 任务管理服务（含任务/标签/评论/工时管理）
 │       └── lest-release/            # 发布管理服务（含发布计划/审批/部署/回滚管理）
@@ -114,14 +114,18 @@ lest-platform/                         # 项目根目录
 │   └── package.json
 │
 ├── docs/                             # 文档目录
-│   ├── PRD/                         # 产品需求文档
-│   │   ├── V1.0/                   # V1.0 功能集
-│   │   └── V2.0/                   # V2.0 AI-Native 重构
-│   ├── ARCHITECTURE.md              # 本架构文档
-│   ├── DATABASE.md                  # 数据库设计文档
-│   ├── API.md                       # API 接口文档
-│   ├── DEVELOPMENT.md               # 开发指南
-│   └── DEPLOYMENT.md               # 部署指南
+│   ├── README.md                    # 文档中心入口
+│   ├── ROADMAP-CORE-FIRST.zh-CN.md  # Core-first 主路线图
+│   ├── MILESTONES.zh-CN.md          # 版本里程碑总览
+│   ├── MILESTONES/                  # V1.0~V5.0 小版本规划
+│   ├── 1-prd/                       # 产品需求文档
+│   │   ├── core/                    # V1/V2/V3 Core，V4/V5 骨架
+│   │   └── plugins/                 # V4/V5 插件文档
+│   ├── 2-tasks/                     # 开发任务单
+│   │   ├── core/                    # Core 任务单
+│   │   └── plugins/                 # V4/V5 插件任务单
+│   ├── guide/                       # 开发指南
+│   └── reference/                   # 技术参考
 │
 ├── k8s/                              # Kubernetes 部署清单
 │   ├── config/                      # ConfigMap / Secret
@@ -566,8 +570,8 @@ LEST Platform 采用 **每个服务独立数据库** 的强隔离策略，确保
 
 | Schema 名称 | 所属服务 | 表数量 | 核心表 |
 |-------------|----------|--------|--------|
-| `auth_db` | lest-auth | 7 | sys_user, sys_role, sys_menu, sys_org, sys_user_role, sys_role_menu, auth_token |
-| `system_db` | lest-system | 5 | sys_config, sys_dict, sys_dict_data, sys_log, sys_backup |
+| `auth_db` | lest-auth | 7 | user, project_member, auth_token | ← V2.0 重大变更：删除 sys_role/sys_menu/sys_org，改用 project_member 表
+| `system_db` | lest-system | 5 | sys_config, sys_log, sys_backup | ← V2.0 变更：删除 sys_dict/sys_dict_data（字典管理已在 V2.0 删除）
 | `project_db` | lest-project | 2 | project, project_member |
 | `task_db` | lest-task | 6 | task, task_comment, task_worklog, task_commit, task_merge_request, task_pipeline |
 | `code_db` | lest-code | 3 | code_repository, code_commit, code_merge_request |
@@ -658,8 +662,8 @@ m_task
 ├── task_type (ENUM: STORY/TASK/BUG/EPIC)
 ├── priority (ENUM: LOW/MEDIUM/HIGH/CRITICAL)
 ├── status (ENUM: BACKLOG/TODO/IN_PROGRESS/IN_REVIEW/DONE/CLOSED)
-├── assignee_id (FK → auth_db.sys_user.id)
-├── reporter_id (FK → auth_db.sys_user.id)
+├── assignee_id (FK → auth_db.user.id)
+├── reporter_id (FK → auth_db.user.id)
 ├── iteration_id (FK → project_db.m_iteration.id)
 ├── story_points (INT)
 ├── estimated_hours (DECIMAL)
@@ -700,7 +704,7 @@ m_task
 ```
 wakapi_machine
 ├── id (PK)
-├── user_id (FK → auth_db.sys_user.id, UNIQUE)
+├── user_id (FK → auth_db.user.id, UNIQUE)
 ├── api_key (VARCHAR, 加密存储)
 ├── last_sync_at (DATETIME)
 ├── is_active (BOOLEAN)
@@ -708,7 +712,7 @@ wakapi_machine
 
 wakapi_heartbeat
 ├── id (PK)
-├── user_id (FK → auth_db.sys_user.id)
+├── user_id (FK → auth_db.user.id)
 ├── entity (VARCHAR, 文件路径)
 ├── type (ENUM: file/folder/project)
 ├── project (VARCHAR, 项目名)
@@ -729,7 +733,7 @@ wakapi_task_link
 ├── id (PK)
 ├── heartbeat_id (FK → wakapi_heartbeat.id)
 ├── task_id (BIGINT, lest-task 业务ID，非外键)
-├── user_id (FK → auth_db.sys_user.id)
+├── user_id (FK → auth_db.user.id)
 ├── confidence (DECIMAL, 0-1, 关联置信度)
 ├── auto_linked (BOOLEAN, 是否自动关联)
 ├── link_method (ENUM: TIMESTAMP/MANUAL/PATTERN)
@@ -738,7 +742,7 @@ wakapi_task_link
 
 wakapi_daily_summary
 ├── id (PK)
-├── user_id (FK → auth_db.sys_user.id)
+├── user_id (FK → auth_db.user.id)
 ├── summary_date (DATE)
 ├── total_seconds (BIGINT)
 ├── total_editors (JSON)

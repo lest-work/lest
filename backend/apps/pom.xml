@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.lest</groupId>
+        <artifactId>lest</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>apps</artifactId>
+    <packaging>pom</packaging>
+
+    <name>lest-apps</name>
+    <description>Core 核心业务微服务</description>
+
+    <modules>
+        <module>system</module>
+        <module>task</module>
+        <module>project</module>
+        <module>job</module>
+        <module>file</module>
+        <module>notification</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>extensions</id>
+            <activation>
+                <property>
+                    <name>include.extensions</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>ai</module>
+                <module>plugin-manager</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

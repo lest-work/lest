@@ -11,6 +11,7 @@
 node_modules/
 dist/
 target/
+refe/
 *.class
 *.jar
 *.log

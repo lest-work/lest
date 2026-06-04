@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.task.mapper.LabelMapper">
+
+    <resultMap type="com.lest.task.domain.Label" id="LabelResult">
+        <id     property="labelId"     column="label_id"    />
+        <result property="projectId"   column="project_id" />
+        <result property="name"        column="name"       />
+        <result property="color"       column="color"      />
+        <result property="createBy"    column="create_by"  />
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectByProjectId" resultMap="LabelResult">
+        select * from label where project_id = #{projectId} order by label_id
+    </select>
+
+    <select id="selectById" resultMap="LabelResult">
+        select * from label where label_id = #{labelId}
+    </select>
+
+    <select id="selectLabelsByTaskId" resultMap="LabelResult">
+        select l.* from label l
+        inner join task_label tl on l.label_id = tl.label_id
+        where tl.task_id = #{taskId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="label.labelId">
+        insert into label (project_id, name, color, create_by, create_time)
+        values (#{projectId}, #{name}, #{color}, #{createBy}, sysdate())
+    </insert>
+
+    <update id="update">
+        update label set name = #{name}, color = #{color} where label_id = #{labelId}
+    </update>
+
+    <delete id="deleteById">
+        delete from label where label_id = #{labelId}
+    </delete>
+
+</mapper>

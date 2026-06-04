@@ -1,72 +1,35 @@
-# 开发任务单
+# Task 索引
 
-> **目录结构调整**：任务单已按 **Core 核心** vs **Plugin 插件** 分离。
-
-## 快速导航
-
-|| 目录 | 说明 | 状态 |
-||------|------|------|
-|| [core/V1.0/](./core/V1.0/) | Core V1.0 开发任务单 | ✅ 已关联 Milestone |
-|| [core/V2.0/](./core/V2.0/) | Core V2.0 开发任务单 | ✅ 已展开 |
-|| [core/V3.0/](./core/V3.0/) | Core V3.0 开发任务单（Jira 100% 收口：Issue Link/附件/Time Tracking/Automation/看板增强等） | ✅ 已展开 |
-|| [plugins/V1.0/](./plugins/V1.0/) | 插件 V1.0 开发任务单 | ✅ 已展开 |
-|| [plugins/V2.0/](./plugins/V2.0/) | 插件 V2.0 开发任务单 | ✅ 已展开 |
-|| [plugins/V3.0/](./plugins/V3.0/) | 插件 V3.0 开发任务单（OKR/Portfolio/审批流/LDAP/SSO/多租户） | ✅ 骨架完成 |
-
-## 设计原则
-
-- **Core 优先**：优先完成 Core V1.0 → V2.0 → V3.0，插件开发并行推进
-- **可插拔验证**：插件开发完成后再独立发布，不影响 Core
-- **里程碑驱动**：每个 Milestone 对应一个或多个功能模块的完整交付
-- **SDK 先行**：每个版本先完善插件 SDK，再开发官方插件
-
----
-
-## 小版本发布计划
-
-详细的小版本迭代规划（含每周开发任务）请查看 [MILESTONES 目录](../MILESTONES/)：
-
-|| 大版本 | 小版本文件 | 时间线 |
-|--------|-----------|--------|
-|| V1.0 | [MILESTONES/V1.0-小版本规划.md](../MILESTONES/V1.0-小版本规划.md) | 2026-06-08 ~ 2026-08-28 |
-|| V2.0 | [MILESTONES/V2.0-小版本规划.md](../MILESTONES/V2.0-小版本规划.md) | 2026-09-07 ~ 2026-11-28 |
-|| V3.0 | [MILESTONES/V3.0-小版本规划.md](../MILESTONES/V3.0-小版本规划.md) | 2026-12-01 ~ 2027-03-27 |
-|| V4.0 | [MILESTONES/V4.0-小版本规划.md](../MILESTONES/V4.0-小版本规划.md) | 骨架 |
-|| V5.0 | [MILESTONES/V5.0-小版本规划.md](../MILESTONES/V5.0-小版本规划.md) | 骨架 |
-
-> **说明**：每个小版本采用 1 周开发 + 0.5 周测试 = 1.5 周发布的节奏，方便每周独立开发交付。详细的任务 ID、工作量估算和交付物在上述小版本规划文档中。
+> **开发口径**：V1.0/V2.0/V3.0 只做 Core；插件任务从 V4.0 开始；企业商业能力进入 V5.0。
 >
-> **任务 ID 规则**：任务 ID 格式为 `{版本}-{模块}-{序号}`，例如 `V20-DDL-001`（V2.0 数据库设计）、`NF-BE-001`（v1.0 通知框架后端）。
+> **开发执行入口**：[DEVELOPMENT-EXECUTION-PLAN.zh-CN.md](../DEVELOPMENT-EXECUTION-PLAN.zh-CN.md)
 
----
+## Core Task
 
-## 开发任务单索引
+| 版本 | 定位 | TASK 入口 | 小版本 |
+|------|------|-----------|--------|
+| V1.0 | Jira Core 基础版 | [core/V1.0](./core/V1.0/README.md) | [V1.0 小版本](../MILESTONES/V1.0-小版本规划.md) |
+| V2.0 | Scheme 可配置版 | [core/V2.0](./core/V2.0/README.md) | [V2.0 小版本](../MILESTONES/V2.0-小版本规划.md) |
+| V3.0 | Jira Core 完整版 | [core/V3.0](./core/V3.0/README.md) | [V3.0 小版本](../MILESTONES/V3.0-小版本规划.md) |
+| V4.0 | 无新增 Core，转入插件生态 | [core/V4.0](./core/V4.0/README.md) | [V4.0 小版本](../MILESTONES/V4.0-小版本规划.md) |
+| V5.0 | 企业商业版 | [core/V5.0](./core/V5.0/README.md) | [V5.0 小版本](../MILESTONES/V5.0-小版本规划.md) |
 
-### Core 核心
+## V1.0 Core Task
 
-|| 版本 | 模块 | 任务 ID 前缀 | PRD | TASK 文件 | 状态 |
-||------|------|-------------|------|---------|------|
-|| V1.0 | 认证/项目/任务/通知/系统 | — | ✅ | 关联 Milestone | ✅ 已完成 |
-|| V2.0 | EAV 自定义字段 | V20-* | ✅ | [任务管理_tasks.md](./core/V2.0/任务管理_tasks.md) | ✅ 已展开 |
-|| V2.0 | Issue Type 体系 | V21-* | ✅ | [任务管理_tasks.md](./core/V2.0/任务管理_tasks.md) | ✅ 已展开 |
-|| V2.0 | Screen / Scheme | V22-* | ✅ | [任务管理_tasks.md](./core/V2.0/任务管理_tasks.md) | ✅ 已展开 |
-|| V2.0 | Field Config + 工作流 | V23-* | ✅ | [任务管理_tasks.md](./core/V2.0/任务管理_tasks.md) | ✅ 已展开 |
-|| V2.0 | 项目模板 + 看板增强 | V24-* | ✅ | [项目管理_tasks.md](./core/V2.0/项目管理_tasks.md) | ✅ 已展开 |
-|| V2.0 | UI 插件化深化 | V24-UIP-* | ✅ | [UI插件化_tasks.md](./core/V2.0/UI插件化_tasks.md) | ✅ 已展开 |
-|| V3.0 | Issue Link + Attachment | V30-* | ✅ | [任务管理_tasks.md](./core/V3.0/任务管理_tasks.md) | ✅ 骨架 |
-|| V3.0 | Time Tracking + 回收站 | V31-* | ✅ | [任务管理_tasks.md](./core/V3.0/任务管理_tasks.md) | ✅ 骨架 |
-|| V3.0 | Automation 执行引擎 | V32-* | ✅ | [任务管理_tasks.md](./core/V3.0/任务管理_tasks.md) | ✅ 骨架 |
-|| V3.0 | 高级看板 | V33-* | ✅ | [敏捷看板_tasks.md](./core/V3.0/敏捷看板_tasks.md) | ✅ 骨架 |
+| 任务单 | 说明 |
+|--------|------|
+| [V1.0-Core-6-minor-tasks.md](./core/V1.0/V1.0-Core-6-minor-tasks.md) | V1.0 六个小版本总任务单 |
+| [任务管理_tasks.md](./core/V1.0/任务管理_tasks.md) | Issue / Board / Attachment 专项任务 |
 
-### Plugin 插件
+## Plugin Task
 
-|| 版本 | 插件 | 任务 ID 前缀 | PRD | TASK 文件 | 状态 |
-||------|------|-------------|------|---------|------|
-|| V1.0 | lest-meeting | MTG-* | ✅ | [plugins/V1.0/README.md](./plugins/V1.0/) | ✅ 已展开 |
-|| V1.0 | lest-release | REL-* | ✅ | [plugins/V1.0/README.md](./plugins/V1.0/) | ✅ 已展开 |
-|| V1.0 | lest-worklog/cicd/ai/IM/code 等 | WL-/CI-/AI-/IMFS-/CD-* | ✅ | [plugins/V1.0/README.md](./plugins/V1.0/) | ✅ 已展开 |
-|| V2.0 | lest-ai/report/meeting/release/jira-sync/devops 等 | V25-*-* | ✅ | [plugins/V2.0/README.md](./plugins/V2.0/) | ✅ 已展开 |
-|| V3.0 | lest-okr | V36-OKR-* | ✅ | [plugins/V3.0/lest-okr.md](./plugins/V3.0/lest-okr.md) | ✅ 骨架 |
-|| V3.0 | lest-approval | V36-AP-* | ✅ | [plugins/V3.0/lest-approval.md](./plugins/V3.0/lest-approval.md) | ✅ 骨架 |
-|| V3.0 | lest-portfolio | V36-PF-* | ✅ | [plugins/V3.0/lest-portfolio.md](./plugins/V3.0/lest-portfolio.md) | ✅ 骨架 |
-|| V3.0 | lest-ldap/sso/multi-tenant | — | ✅ | 实施在 V5.0 | 📋 PRD 完成 |
+| 版本 | 定位 | TASK |
+|------|------|------|
+| V4.0 | 插件平台、官方插件池、AI 插件 | [plugins/V4.0](./plugins/V4.0/README.md) |
+| V5.0 | 企业商业能力，按 Core 维护 | [core/V5.0](./core/V5.0/README.md) |
+
+## 规则
+
+1. V1.0/V2.0/V3.0 目录下不放插件任务单。
+2. 会议、飞书、钉钉、企业微信、WakaTime、CI/CD、代码仓库、AI 归 V4.0 插件任务。
+3. SSO、LDAP、SCIM、多租户、Portfolio、OKR、SLA 归 V5.0 企业商业 Core 任务。

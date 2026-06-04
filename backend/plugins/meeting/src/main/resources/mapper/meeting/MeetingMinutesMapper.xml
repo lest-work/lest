@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.meeting.mapper.MeetingMinutesMapper">
+    <resultMap type="com.lest.meeting.domain.MeetingMinutes" id="MeetingMinutesResult">
+        <result property="minutesId" column="minutes_id"/>
+        <result property="meetingId" column="meeting_id"/>
+        <result property="content" column="content"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <select id="selectByMeetingId" resultMap="MeetingMinutesResult">
+        select minutes_id, meeting_id, content, created_by, create_at, update_at from meeting_minutes where meeting_id = #{meetingId}
+    </select>
+
+    <insert id="insertMinutes" useGeneratedKeys="true" keyProperty="minutesId">
+        insert into meeting_minutes (meeting_id, content, created_by, create_at) values (#{meetingId}, #{content}, #{createdBy}, #{createAt})
+    </insert>
+
+    <update id="updateMinutes">
+        update meeting_minutes set content=#{content}, update_at=#{updateAt} where minutes_id = #{minutesId}
+    </update>
+</mapper>

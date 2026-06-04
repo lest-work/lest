@@ -1,0 +1,165 @@
+@host = http://localhost:8080
+@adminUser = admin
+@adminPassword = 123456
+@memberUser = lest
+@memberPassword = 123456
+@projectName = Core Smoke {{$timestamp}}
+@taskTitle = Smoke Task {{$timestamp}}
+@adminToken = 
+@memberToken = 
+@projectId = 0
+@taskId = 0
+
+### 1. 登录管理员账户，获取 access_token
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{adminUser}}",
+  "password": "{{adminPassword}}"
+}
+
+> {% 
+  const body = JSON.parse(response.body);
+  if (body.code !== 200) {
+    throw new Error(`Login failed: ${body.msg}`);
+  }
+  client.global.set("adminToken", body.data.access_token);
+%}
+
+### 2. 创建一个新的项目（记录名称用于后续查询）
+POST {{host}}/project
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "{{projectName}}",
+  "description": "Core E2E smoke project",
+  "template": "agile"
+}
+
+### 3. 查询刚创建的项目并保存 projectId
+GET {{host}}/project/list?name={{projectName}}
+Authorization: Bearer {{adminToken}}
+
+> {% 
+  const body = JSON.parse(response.body);
+  const records = (body.records ?? body.data?.records) || [];
+  if (!records.length) {
+    throw new Error('Project query returned empty list');
+  }
+  client.global.set("projectId", String(records[0].projectId));
+%}
+
+### 4. 邀请示例成员（userId=2，角色 developer）
+POST {{host}}/project/{{projectId}}/members
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "role": "member"
+}
+
+### 5. 在项目下创建任务
+POST {{host}}/task
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "{{taskTitle}}",
+  "description": "Smoke scenario task",
+  "projectId": {{projectId}},
+  "taskType": "story",
+  "priority": "p1",
+  "status": "todo",
+  "assigneeId": 2,
+  "reporterId": 1
+}
+
+### 6. 查询任务列表并记录 taskId
+GET {{host}}/task/list?projectId={{projectId}}&title={{taskTitle}}
+Authorization: Bearer {{adminToken}}
+
+> {% 
+  const body = JSON.parse(response.body);
+  const records = body.records || body.data?.records || [];
+  if (!records.length) {
+    throw new Error('Task query returned empty list');
+  }
+  client.global.set("taskId", String(records[0].taskId || records[0].id));
+%}
+
+### 7. 模拟看板拖拽：将任务移动到进行中列
+PUT {{host}}/task/{{taskId}}/move
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "targetColumn": "in_progress",
+  "targetPosition": 0
+}
+
+### 8. 在任务下添加一条评论
+POST {{host}}/task/{{taskId}}/comment
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "content": "Smoke comment from admin @user"
+}
+
+### 9. 登录项目成员账户获取 token
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{memberUser}}",
+  "password": "{{memberPassword}}"
+}
+
+> {% 
+  const body = JSON.parse(response.body);
+  if (body.code !== 200) {
+    throw new Error(`Member login failed: ${body.msg}`);
+  }
+  client.global.set("memberToken", body.data.access_token);
+%}
+
+### 10. 成员查看任务详情，验证可见性
+GET {{host}}/task/{{taskId}}
+Authorization: Bearer {{memberToken}}
+
+> {% 
+  const body = JSON.parse(response.body);
+  if (body.code !== 200) {
+    throw new Error(`Get task failed: ${body.msg}`);
+  }
+  const task = body.data;
+  if (!task) {
+    throw new Error('Task detail missing');
+  }
+  const expectedId = client.global.get('taskId');
+  const actualId = String(task.taskId || task.id);
+  if (actualId !== expectedId) {
+    throw new Error(`Task ID mismatch: expected ${expectedId}, got ${actualId}`);
+  }
+  if (task.status && task.status !== 'in_progress') {
+    throw new Error(`Unexpected task status: ${task.status}`);
+  }
+%}
+
+### 11. 成员查看通知未读数量
+GET {{host}}/notification/unread/count
+Authorization: Bearer {{memberToken}}
+
+> {% 
+  const body = JSON.parse(response.body);
+  if (body.code !== 200) {
+    throw new Error(`Fetch unread notifications failed: ${body.msg}`);
+  }
+  const count = body.data;
+  if (typeof count !== 'number' || count <= 0) {
+    throw new Error(`Expected unread notifications > 0, got ${count}`);
+  }
+%}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.project.mapper.MilestoneIterationMapper">
+
+    <resultMap type="com.lest.project.domain.MilestoneIteration" id="MilestoneIterationResult">
+        <result property="milestoneId"  column="milestone_id"  />
+        <result property="iterationId"  column="iteration_id"  />
+    </resultMap>
+
+    <select id="selectByMilestoneIdAndIterationId" resultMap="MilestoneIterationResult">
+        select milestone_id, iteration_id from milestone_iteration
+        where milestone_id = #{milestoneId} and iteration_id = #{iterationId} limit 1
+    </select>
+
+    <select id="selectIterationIdsByMilestoneId" resultType="java.lang.Long">
+        select iteration_id from milestone_iteration where milestone_id = #{milestoneId}
+    </select>
+
+    <insert id="insert" parameterType="com.lest.project.domain.MilestoneIteration">
+        insert into milestone_iteration (milestone_id, iteration_id) values (#{milestoneId}, #{iterationId})
+    </insert>
+
+    <delete id="deleteByMilestoneId">
+        delete from milestone_iteration where milestone_id = #{milestoneId}
+    </delete>
+
+    <select id="countIterationsByMilestoneId" resultType="int">
+        select count(*) from milestone_iteration where milestone_id = #{milestoneId}
+    </select>
+
+</mapper>

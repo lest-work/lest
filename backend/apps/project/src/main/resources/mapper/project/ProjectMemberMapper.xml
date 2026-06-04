@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.project.mapper.ProjectMemberMapper">
+
+    <resultMap type="com.lest.project.domain.ProjectMember" id="ProjectMemberResult">
+        <result property="projectId" column="project_id" />
+        <result property="userId"   column="user_id"   />
+        <result property="role"     column="role"      />
+        <result property="joinedAt" column="joined_at"  />
+        <result property="userName" column="user_name"  />
+        <result property="nickname" column="nick_name"  />
+        <result property="avatar"   column="avatar"    />
+    </resultMap>
+
+    <select id="selectByProjectIdAndUserId" resultMap="ProjectMemberResult">
+        select pm.project_id, pm.user_id, pm.role, pm.joined_at,
+               su.user_name, su.nick_name, su.avatar
+        from project_member pm
+        left join sys_user su on su.user_id = pm.user_id
+        where pm.project_id = #{projectId} and pm.user_id = #{userId} limit 1
+    </select>
+
+    <select id="selectByProjectId" resultMap="ProjectMemberResult">
+        select pm.project_id, pm.user_id, pm.role, pm.joined_at,
+               su.user_name, su.nick_name, su.avatar
+        from project_member pm
+        left join sys_user su on su.user_id = pm.user_id
+        where pm.project_id = #{projectId}
+    </select>
+
+    <insert id="insert" parameterType="com.lest.project.domain.ProjectMember">
+        insert into project_member (project_id, user_id, role, joined_at)
+        values (#{projectId}, #{userId}, #{role}, now())
+    </insert>
+
+    <update id="updateByProjectIdAndUserId" parameterType="com.lest.project.domain.ProjectMember">
+        update project_member set role = #{role} where project_id = #{projectId} and user_id = #{userId}
+    </update>
+
+    <delete id="deleteByProjectIdAndUserId">
+        delete from project_member where project_id = #{projectId} and user_id = #{userId}
+    </delete>
+
+    <select id="countAdminsByProjectId" resultType="int">
+        select count(*) from project_member where project_id = #{projectId} and role = 'admin'
+    </select>
+
+    <select id="countMembersByProjectId" resultType="int">
+        select count(*) from project_member where project_id = #{projectId}
+    </select>
+
+</mapper>

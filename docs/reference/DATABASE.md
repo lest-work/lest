@@ -58,11 +58,11 @@
 MySQL 8.4 实例
 │
 ├── auth_db           # 认证服务
-│   ├── sys_user
+│   ├── user
 │   ├── sys_role
 │   ├── sys_menu
 │   ├── sys_org
-│   ├── sys_user_role
+│   ├── user_role
 │   ├── sys_role_menu
 │   └── auth_token
 │
@@ -161,10 +161,12 @@ MySQL 8.4 实例
 
 ## 3. 认证服务 (auth_db)
 
-### 3.1 sys_user 用户表
+> ⚠️ **V2.0 变更**：`auth_db` 中以下表已废弃：`sys_role`、`user_role`、`sys_menu`、`sys_role_menu`、`sys_org`。V2.0 改为固定菜单 + `project_member` 表管理项目级角色。
+
+### 3.1 user 用户表
 
 ```sql
-CREATE TABLE sys_user (
+CREATE TABLE user (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '用户ID',
     username        VARCHAR(64)     NOT NULL                  COMMENT '用户名',
     password       VARCHAR(256)    NOT NULL                  COMMENT '密码（加密）',
@@ -191,6 +193,11 @@ CREATE TABLE sys_user (
 
 ### 3.2 sys_role 角色表
 
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了系统级角色管理，角色改为项目级。
+-- Migration: 使用 `project_member` 表的 `role_type` 字段管理项目级角色（owner/lead/member/viewer）。
+-- =============================================
+
 ```sql
 CREATE TABLE sys_role (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '角色ID',
@@ -208,10 +215,15 @@ CREATE TABLE sys_role (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
 ```
 
-### 3.3 sys_user_role 用户角色关联表
+### 3.3 user_role 用户角色关联表
+
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了用户-角色关联表，角色改为项目级管理。
+-- Migration: 使用 `project_member` 表管理用户在项目中的角色。
+-- =============================================
 
 ```sql
-CREATE TABLE sys_user_role (
+CREATE TABLE user_role (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '主键ID',
     user_id         BIGINT          NOT NULL                  COMMENT '用户ID',
     role_id         BIGINT          NOT NULL                  COMMENT '角色ID',
@@ -222,6 +234,11 @@ CREATE TABLE sys_user_role (
 ```
 
 ### 3.4 sys_menu 菜单表
+
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了动态菜单管理，改为固定菜单。
+-- Migration: V2.0 使用固定菜单，不再支持动态配置菜单结构。
+-- =============================================
 
 ```sql
 CREATE TABLE sys_menu (
@@ -249,6 +266,11 @@ CREATE TABLE sys_menu (
 
 ### 3.5 sys_role_menu 角色菜单关联表
 
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了角色-菜单关联表，改为固定菜单 + 项目级权限。
+-- Migration: V2.0 固定菜单 + `project_member` 表管理项目级权限。
+-- =============================================
+
 ```sql
 CREATE TABLE sys_role_menu (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '主键ID',
@@ -261,6 +283,11 @@ CREATE TABLE sys_role_menu (
 ```
 
 ### 3.6 sys_org 机构表
+
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了机构/部门管理功能。
+-- Migration: LEST Platform V2.0 专注于项目管理，不再需要组织架构层级。
+-- =============================================
 
 ```sql
 CREATE TABLE sys_org (
@@ -308,6 +335,8 @@ CREATE TABLE auth_token (
 
 ## 4. 系统管理服务 (system_db)
 
+> ⚠️ **V2.0 变更**：`system_db` 中 `sys_dict` 和 `sys_dict_data` 已废弃。V2.0 改用 EAV 自定义字段体系。
+
 ### 4.1 sys_config 系统配置表
 
 ```sql
@@ -331,6 +360,11 @@ CREATE TABLE sys_config (
 
 ### 4.2 sys_dict 字典表
 
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了字典表，改用 EAV 自定义字段体系。
+-- Migration: 使用 `task.custom_fields` JSON 字段或独立的自定义字段表实现动态字段。
+-- =============================================
+
 ```sql
 CREATE TABLE sys_dict (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT  COMMENT '字典ID',
@@ -347,6 +381,11 @@ CREATE TABLE sys_dict (
 ```
 
 ### 4.3 sys_dict_data 字典数据表
+
+-- =============================================
+-- ⚠️ DEPRECATED (V2.0): V2.0 删除了字典数据表，随 `sys_dict` 一起废弃。
+-- Migration: 使用 EAV 自定义字段体系替代。
+-- =============================================
 
 ```sql
 CREATE TABLE sys_dict_data (
@@ -424,7 +463,7 @@ CREATE TABLE project (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='项目表';
 
 -- 外键约束（建议）
-ALTER TABLE project ADD CONSTRAINT fk_project_owner FOREIGN KEY (owner_id) REFERENCES sys_user(id);
+ALTER TABLE project ADD CONSTRAINT fk_project_owner FOREIGN KEY (owner_id) REFERENCES user(id);
 ```
 
 ### 5.2 project_member 项目成员表
@@ -443,7 +482,7 @@ CREATE TABLE project_member (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='项目成员表';
 
 ALTER TABLE project_member ADD CONSTRAINT fk_project_member_project FOREIGN KEY (project_id) REFERENCES project(id);
-ALTER TABLE project_member ADD CONSTRAINT fk_project_member_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE project_member ADD CONSTRAINT fk_project_member_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 5.3 iteration 迭代表
@@ -520,8 +559,8 @@ CREATE TABLE task (
 
 ALTER TABLE task ADD CONSTRAINT fk_task_project FOREIGN KEY (project_id) REFERENCES project(id);
 ALTER TABLE task ADD CONSTRAINT fk_task_iteration FOREIGN KEY (iteration_id) REFERENCES iteration(id);
-ALTER TABLE task ADD CONSTRAINT fk_task_assignee FOREIGN KEY (assignee_id) REFERENCES sys_user(id);
-ALTER TABLE task ADD CONSTRAINT fk_task_creator FOREIGN KEY (creator_id) REFERENCES sys_user(id);
+ALTER TABLE task ADD CONSTRAINT fk_task_assignee FOREIGN KEY (assignee_id) REFERENCES user(id);
+ALTER TABLE task ADD CONSTRAINT fk_task_creator FOREIGN KEY (creator_id) REFERENCES user(id);
 ```
 
 ### 6.2 task_comment 任务评论表
@@ -546,7 +585,7 @@ CREATE TABLE task_comment (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='任务评论表';
 
 ALTER TABLE task_comment ADD CONSTRAINT fk_comment_task FOREIGN KEY (task_id) REFERENCES task(id);
-ALTER TABLE task_comment ADD CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE task_comment ADD CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 6.3 task_worklog 任务工时表
@@ -569,7 +608,7 @@ CREATE TABLE task_worklog (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='任务工时表';
 
 ALTER TABLE task_worklog ADD CONSTRAINT fk_worklog_task FOREIGN KEY (task_id) REFERENCES task(id);
-ALTER TABLE task_worklog ADD CONSTRAINT fk_worklog_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE task_worklog ADD CONSTRAINT fk_worklog_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 6.4 task_commit 任务-提交关联表
@@ -689,7 +728,7 @@ CREATE TABLE code_commit (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='代码提交表';
 
 ALTER TABLE code_commit ADD CONSTRAINT fk_commit_repository FOREIGN KEY (repository_id) REFERENCES code_repository(id);
-ALTER TABLE code_commit ADD CONSTRAINT fk_commit_author FOREIGN KEY (author_id) REFERENCES sys_user(id);
+ALTER TABLE code_commit ADD CONSTRAINT fk_commit_author FOREIGN KEY (author_id) REFERENCES user(id);
 ```
 
 ### 7.3 code_merge_request MR/PR 表
@@ -723,7 +762,7 @@ CREATE TABLE code_merge_request (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='代码MR表';
 
 ALTER TABLE code_merge_request ADD CONSTRAINT fk_mr_repository FOREIGN KEY (repository_id) REFERENCES code_repository(id);
-ALTER TABLE code_merge_request ADD CONSTRAINT fk_mr_author FOREIGN KEY (author_id) REFERENCES sys_user(id);
+ALTER TABLE code_merge_request ADD CONSTRAINT fk_mr_author FOREIGN KEY (author_id) REFERENCES user(id);
 ```
 
 ---
@@ -841,7 +880,7 @@ CREATE TABLE meet_meeting (
     KEY idx_deleted (deleted)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会议表';
 
-ALTER TABLE meet_meeting ADD CONSTRAINT fk_meeting_organizer FOREIGN KEY (organizer_id) REFERENCES sys_user(id);
+ALTER TABLE meet_meeting ADD CONSTRAINT fk_meeting_organizer FOREIGN KEY (organizer_id) REFERENCES user(id);
 ```
 
 ### 9.2 meet_participant 会议参与者表
@@ -864,7 +903,7 @@ CREATE TABLE meet_participant (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会议参与者表';
 
 ALTER TABLE meet_participant ADD CONSTRAINT fk_participant_meeting FOREIGN KEY (meeting_id) REFERENCES meet_meeting(id);
-ALTER TABLE meet_participant ADD CONSTRAINT fk_participant_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE meet_participant ADD CONSTRAINT fk_participant_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 9.3 meet_minutes 会议纪要表
@@ -883,7 +922,7 @@ CREATE TABLE meet_minutes (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会议纪要表';
 
 ALTER TABLE meet_minutes ADD CONSTRAINT fk_minutes_meeting FOREIGN KEY (meeting_id) REFERENCES meet_meeting(id);
-ALTER TABLE meet_minutes ADD CONSTRAINT fk_minutes_recorder FOREIGN KEY (recorder_id) REFERENCES sys_user(id);
+ALTER TABLE meet_minutes ADD CONSTRAINT fk_minutes_recorder FOREIGN KEY (recorder_id) REFERENCES user(id);
 ```
 
 ### 9.4 meet_action_item 会议行动项表
@@ -913,7 +952,7 @@ CREATE TABLE meet_action_item (
 
 ALTER TABLE meet_action_item ADD CONSTRAINT fk_action_meeting FOREIGN KEY (meeting_id) REFERENCES meet_meeting(id);
 ALTER TABLE meet_action_item ADD CONSTRAINT fk_action_task FOREIGN KEY (task_id) REFERENCES task(id);
-ALTER TABLE meet_action_item ADD CONSTRAINT fk_action_assignee FOREIGN KEY (assignee_id) REFERENCES sys_user(id);
+ALTER TABLE meet_action_item ADD CONSTRAINT fk_action_assignee FOREIGN KEY (assignee_id) REFERENCES user(id);
 ```
 
 ---
@@ -945,7 +984,7 @@ CREATE TABLE notification (
     KEY idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='通知表';
 
-ALTER TABLE notification ADD CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE notification ADD CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 10.2 notification_setting 通知设置表
@@ -1063,7 +1102,7 @@ CREATE TABLE release_version (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='发布版本表';
 
 ALTER TABLE release_version ADD CONSTRAINT fk_release_project FOREIGN KEY (project_id) REFERENCES project(id);
-ALTER TABLE release_version ADD CONSTRAINT fk_release_released_by FOREIGN KEY (released_by) REFERENCES sys_user(id);
+ALTER TABLE release_version ADD CONSTRAINT fk_release_released_by FOREIGN KEY (released_by) REFERENCES user(id);
 ```
 
 ### 11.2 release_approval 发布审批表
@@ -1084,7 +1123,7 @@ CREATE TABLE release_approval (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='发布审批表';
 
 ALTER TABLE release_approval ADD CONSTRAINT fk_approval_version FOREIGN KEY (version_id) REFERENCES release_version(id);
-ALTER TABLE release_approval ADD CONSTRAINT fk_approval_approver FOREIGN KEY (approver_id) REFERENCES sys_user(id);
+ALTER TABLE release_approval ADD CONSTRAINT fk_approval_approver FOREIGN KEY (approver_id) REFERENCES user(id);
 ```
 
 ### 11.3 release_change 发布变更表
@@ -1132,7 +1171,7 @@ CREATE TABLE release_deployment (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='发布部署记录表';
 
 ALTER TABLE release_deployment ADD CONSTRAINT fk_deployment_version FOREIGN KEY (version_id) REFERENCES release_version(id);
-ALTER TABLE release_deployment ADD CONSTRAINT fk_deployment_deployer FOREIGN KEY (deployer_id) REFERENCES sys_user(id);
+ALTER TABLE release_deployment ADD CONSTRAINT fk_deployment_deployer FOREIGN KEY (deployer_id) REFERENCES user(id);
 ```
 
 ---
@@ -1441,7 +1480,7 @@ CREATE TABLE wakapi_heartbeat (
     KEY idx_machine_id (machine_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='心跳记录表';
 
-ALTER TABLE wakapi_heartbeat ADD CONSTRAINT fk_heartbeat_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE wakapi_heartbeat ADD CONSTRAINT fk_heartbeat_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 14.2 wakapi_daily_summary 每日编码汇总表
@@ -1507,7 +1546,7 @@ CREATE TABLE wakapi_machine (
     KEY idx_is_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='机器注册表';
 
-ALTER TABLE wakapi_machine ADD CONSTRAINT fk_machine_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE wakapi_machine ADD CONSTRAINT fk_machine_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ---
@@ -1597,7 +1636,7 @@ CREATE TABLE perf_goal (
     KEY idx_cycle (cycle_type, cycle_value)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='绩效目标表';
 
-ALTER TABLE perf_goal ADD CONSTRAINT fk_goal_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE perf_goal ADD CONSTRAINT fk_goal_user FOREIGN KEY (user_id) REFERENCES user(id);
 ALTER TABLE perf_goal ADD CONSTRAINT fk_goal_metric FOREIGN KEY (metric_id) REFERENCES perf_metric(id);
 ```
 
@@ -1626,8 +1665,8 @@ CREATE TABLE perf_report (
     KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='绩效报告表';
 
-ALTER TABLE perf_report ADD CONSTRAINT fk_report_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
-ALTER TABLE perf_report ADD CONSTRAINT fk_report_reviewer FOREIGN KEY (reviewer_id) REFERENCES sys_user(id);
+ALTER TABLE perf_report ADD CONSTRAINT fk_report_user FOREIGN KEY (user_id) REFERENCES user(id);
+ALTER TABLE perf_report ADD CONSTRAINT fk_report_reviewer FOREIGN KEY (reviewer_id) REFERENCES user(id);
 ```
 
 ### 15.6 perf_metric_data 绩效指标数据快照表
@@ -1680,7 +1719,7 @@ CREATE TABLE file_record (
     KEY idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文件记录表';
 
-ALTER TABLE file_record ADD CONSTRAINT fk_file_uploader FOREIGN KEY (uploader_id) REFERENCES sys_user(id);
+ALTER TABLE file_record ADD CONSTRAINT fk_file_uploader FOREIGN KEY (uploader_id) REFERENCES user(id);
 ```
 
 ---
@@ -1704,7 +1743,7 @@ CREATE TABLE open_api_token (
     KEY idx_expires_at (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API令牌表';
 
-ALTER TABLE open_api_token ADD CONSTRAINT fk_api_token_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE open_api_token ADD CONSTRAINT fk_api_token_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 17.2 open_oauth_application OAuth应用表
@@ -1729,7 +1768,7 @@ CREATE TABLE open_oauth_application (
     KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='OAuth应用表';
 
-ALTER TABLE open_oauth_application ADD CONSTRAINT fk_oauth_app_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE open_oauth_application ADD CONSTRAINT fk_oauth_app_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 17.3 open_oauth_token OAuth访问令牌表
@@ -1754,7 +1793,7 @@ CREATE TABLE open_oauth_token (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='OAuth访问令牌表';
 
 ALTER TABLE open_oauth_token ADD CONSTRAINT fk_oauth_token_app FOREIGN KEY (application_id) REFERENCES open_oauth_application(id);
-ALTER TABLE open_oauth_token ADD CONSTRAINT fk_oauth_token_user FOREIGN KEY (user_id) REFERENCES sys_user(id);
+ALTER TABLE open_oauth_token ADD CONSTRAINT fk_oauth_token_user FOREIGN KEY (user_id) REFERENCES user(id);
 ```
 
 ### 17.4 open_webhook Webhook表

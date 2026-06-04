@@ -1,25 +1,29 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
+const router = useRouter();
+</script>
+
 <template>
-  <ele-page>
-    <el-result title="404">
-      <template #icon>
-        <div style="width: 250px; height: 295px; margin: 20px 0 10px 0">
-          <icon-svg />
-        </div>
-      </template>
-      <template #sub-title>
-        <ele-text type="placeholder">抱歉, 你访问的页面不存在.</ele-text>
-      </template>
+  <div class="not-found-page">
+    <el-result
+      icon="warning"
+      title="404"
+      sub-title="抱歉，您访问的页面不存在"
+    >
       <template #extra>
-        <router-link to="/" style="display: inline-flex; text-decoration: none">
-          <el-button type="primary">返回首页</el-button>
-        </router-link>
+        <el-button type="primary" @click="router.push('/dashboard')">
+          返回首页
+        </el-button>
       </template>
     </el-result>
-  </ele-page>
+  </div>
 </template>
 
-<script setup>
-  import IconSvg from './components/icon-svg.vue';
-
-  defineOptions({ name: 'Exception404' });
-</script>
+<style scoped lang="scss">
+.not-found-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

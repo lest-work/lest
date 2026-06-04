@@ -1,99 +1,119 @@
 import type { RouteRecordRaw } from 'vue-router';
-import { menuToRoutes, eachTree } from 'ele-admin-plus';
-import type { MenuItem } from 'ele-admin-plus/es/ele-pro-layout/types';
-import {
-  HOME_PATH,
-  LAYOUT_PATH,
-  REDIRECT_PATH,
-  WHITE_LIST
-} from '@/config/setting';
-import Layout from '@/layout/index.vue';
-import RedirectLayout from '@/components/RedirectLayout/index.vue';
-const modules = import.meta.glob('/src/views/**/index.vue');
 
 /**
- * 静态路由
+ * 静态路由配置
+ * 不再依赖后端菜单驱动，前端直接定义所有路由
  */
 export const routes: RouteRecordRaw[] = [
   {
     path: '/login',
+    name: 'Login',
     component: () => import('@/views/login/index.vue'),
-    meta: { title: '登录' }
+    meta: { title: '登录', requiresAuth: false },
   },
-  // 404
   {
-    path: '/:path(.*)*',
-    component: () => import('@/views/exception/404/index.vue')
-  }
+    path: '/',
+    component: () => import('@/components/layout/AppLayout.vue'),
+    redirect: '/dashboard',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: '首页仪表盘' },
+      },
+      {
+        path: 'inbox',
+        name: 'Inbox',
+        component: () => import('@/views/inbox/index.vue'),
+        meta: { title: '收件箱' },
+      },
+      {
+        path: 'my-tasks',
+        name: 'MyTasks',
+        component: () => import('@/views/task/TaskList.vue'),
+        meta: { title: '我的任务' },
+      },
+      {
+        path: 'projects',
+        name: 'ProjectList',
+        component: () => import('@/views/project/ProjectList.vue'),
+        meta: { title: '项目列表' },
+      },
+      {
+        path: 'project/:id',
+        name: 'ProjectDetail',
+        component: () => import('@/views/project/ProjectDetail.vue'),
+        redirect: (to) => `/project/${to.params.id}/tasks`,
+        children: [
+          {
+            path: 'tasks',
+            name: 'TaskList',
+            component: () => import('@/views/task/TaskList.vue'),
+          },
+          {
+            path: 'board',
+            name: 'Kanban',
+            component: () => import('@/views/task/Kanban.vue'),
+          },
+          {
+            path: 'gantt',
+            name: 'Gantt',
+            component: () => import('@/views/task/Gantt.vue'),
+          },
+          {
+            path: 'iteration/:iterationId',
+            name: 'IterationDetail',
+            component: () => import('@/views/project/IterationDetail.vue'),
+          },
+          {
+            path: 'milestone/:milestoneId',
+            name: 'MilestoneDetail',
+            component: () => import('@/views/project/MilestoneDetail.vue'),
+          },
+          {
+            path: 'release',
+            name: 'ReleasePlan',
+            component: () => import('@/views/project/ReleasePlan.vue'),
+          },
+        ],
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        redirect: '/settings/profile',
+        children: [
+          {
+            path: 'profile',
+            name: 'Profile',
+            component: () => import('@/views/settings/Profile.vue'),
+            meta: { title: '个人设置' },
+          },
+          {
+            path: 'openapi',
+            name: 'OpenApiSettings',
+            component: () => import('@/views/settings/OpenApiSettings.vue'),
+            meta: { title: '开放平台' },
+          },
+        ],
+      },
+      {
+        path: 'meetings',
+        name: 'MeetingList',
+        component: () => import('@/views/meeting/MeetingList.vue'),
+        meta: { title: '会议' },
+      },
+    ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+        component: () => import('@/views/exception/404/index.vue'),
+  },
 ];
 
 /**
- * 根据菜单生成动态路由
- * @param menus 菜单数据
- * @param homePath 主页地址
+ * 白名单路由（无需登录即可访问）
  */
-export function getMenuRoutes(menus?: MenuItem[], homePath?: string) {
-  const childRoutes: RouteRecordRaw[] = [
-    // 用于刷新的路由
-    {
-      path: REDIRECT_PATH + '/:path(.*)',
-      component: RedirectLayout,
-      meta: { hideFooter: true }
-    }
-  ];
-  const layoutRoutes: RouteRecordRaw[] = [
-    {
-      path: LAYOUT_PATH,
-      component: Layout,
-      redirect: HOME_PATH ?? homePath,
-      children: childRoutes
-    }
-  ];
-  // 路由铺平处理
-  eachTree(menuToRoutes(menus, getComponent, routes), (route: any) => {
-    const temp = Object.assign({}, route, { children: void 0 });
-    // 重设redirect以兼容若依菜单数据
-    if (route.children?.length && !route.component) {
-      temp.redirect = route.children[0].path;
-    }
-    if (temp.meta?.layout === false) {
-      layoutRoutes.push(temp); // 不需要外层布局的路由
-    } else {
-      childRoutes.push(temp); // 需要外层布局的路由
-    }
-  });
-  return layoutRoutes;
-}
-
-/**
- * 判断是否是白名单路由
- * @param path 路由地址
- */
-export function isWhiteList(path: string) {
-  if (!path) {
-    return false;
-  }
-  return WHITE_LIST.some((whitePath) => {
-    if (whitePath === path) {
-      return true;
-    }
-    if (whitePath.endsWith('*') && path.startsWith(whitePath.slice(0, -1))) {
-      return true;
-    }
-    return false;
-  });
-}
-
-/**
- * 解析路由组件
- * @param component 组件名称
- */
-function getComponent(component?: string) {
-  if (component) {
-    const module = modules[`/src/views${component}.vue`];
-    if (!module) {
-      return modules[`/src/views${component}/index.vue`];
-    }
-    return module;
-  }
-}
+export const WHITE_LIST = ['/login'];

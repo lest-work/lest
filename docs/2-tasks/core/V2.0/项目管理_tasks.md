@@ -99,3 +99,19 @@
 1. **领单启动** — `🔴 待启动` → `🟡 进行中`，备注追加承接人和日期
 2. **提测完成** — 测试通过后，备注补充测试结果
 3. **完成合并** — `🟡 进行中` → `✅ 已完成`，备注补充 commit hash 和 PR 编号
+
+---
+
+## 补充：以下 PRD 功能待补充到任务单
+
+> 以下功能在 PRD `项目管理.md` 中有完整设计，但尚未体现在本任务单中。
+
+- [ ] **Permission Scheme（权限方案）** — PRD Section 7，完整实现 Jira 风格的权限体系，包括 `permission`/`permission_scheme`/`permission_scheme_grant` 表、经典/精简默认方案、`hasPermission` 检查逻辑、Scheme CRUD API
+- [ ] **Notification Scheme（通知方案）** — PRD Section 8，`notification_scheme`/`notification_scheme_event` 表、10+ 种事件类型（issue_created/issue_assigned/issue_transitioned/sprint_started 等）、默认通知方案
+- [ ] **Priority Scheme 完整实现** — PRD Section 9，已部分覆盖 DDL + CRUD，但缺少 Priority Scheme → Project 关联 API 和 Issue Type 优先级覆写逻辑
+- [ ] **Project Category（项目分类）** — PRD Section 10，`project_category` 表、ALTER TABLE project ADD category_id、分类 CRUD API、分类分组展示
+- [ ] **Issue Security Level（安全级别）** — PRD Section 11，`security_level`/`security_level_grant` 表、安全级别列表/创建/更新/删除、授权管理（用户/组/角色 → 安全级别）、Issue 安全级别读写 API
+- [ ] **Project Settings 增强** — PRD Section 12，项目设置 Tab UI（Jira 对齐：概览/详情/成员/角色/Issue Types/Workflows/Screens/Fields/Notifications/Versions/Components/Sprints/Labels/自动化/项目安全），功能开关 API，默认负责人/Issue Type/优先级/Security Level 配置
+- [ ] **Project Insights（项目统计）** — PRD Section 13，`project_insight_snapshot` 表、创建趋势/完成率/平均周期时间/吞吐量 API，项目统计展示页面
+- [ ] **Issue Batch Operations（批量操作）** — PRD Section 8（任务管理.md），批量移动/编辑/删除/分配，批量操作进度反馈与取消
+- [ ] **Issue Link（任务关联）** — PRD Section 9（任务管理.md），任务间双向链接（blocks/blocked by/relates to/clones/is cloned by），Issue Link Type 管理，关联列表与导航

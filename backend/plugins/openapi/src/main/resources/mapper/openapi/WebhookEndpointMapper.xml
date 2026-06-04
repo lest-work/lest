@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.openapi.mapper.WebhookEndpointMapper">
+    <resultMap type="com.lest.openapi.domain.WebhookEndpoint" id="WebhookEndpointResult">
+        <result property="webhookId" column="webhook_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="secret" column="secret"/>
+        <result property="events" column="events"/>
+        <result property="isEnabled" column="is_enabled"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <select id="selectWebhookList" resultMap="WebhookEndpointResult">
+        select webhook_id, user_id, name, url, secret, events, is_enabled, create_at, update_at from webhook_endpoint where user_id = #{userId}
+    </select>
+
+    <select id="selectWebhookById" resultMap="WebhookEndpointResult">
+        select webhook_id, user_id, name, url, secret, events, is_enabled, create_at, update_at from webhook_endpoint where webhook_id = #{webhookId}
+    </select>
+
+    <select id="selectByEvent" resultMap="WebhookEndpointResult">
+        select webhook_id, user_id, name, url, secret, events, is_enabled, create_at, update_at
+        from webhook_endpoint where is_enabled = 1 and find_in_set(#{event}, events) > 0
+    </select>
+
+    <insert id="insertWebhook" useGeneratedKeys="true" keyProperty="webhookId">
+        insert into webhook_endpoint (user_id, name, url, secret, events, is_enabled, create_at)
+        values (#{userId}, #{name}, #{url}, #{secret}, #{events}, #{isEnabled}, #{createAt})
+    </insert>
+
+    <update id="updateWebhook">
+        update webhook_endpoint set name=#{name}, url=#{url}, secret=#{secret}, events=#{events}, is_enabled=#{isEnabled}, update_at=#{updateAt}
+        where webhook_id = #{webhookId}
+    </update>
+
+    <delete id="deleteWebhookById">
+        delete from webhook_endpoint where webhook_id = #{webhookId}
+    </delete>
+</mapper>

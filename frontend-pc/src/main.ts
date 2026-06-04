@@ -1,25 +1,36 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import ElementPlus from 'element-plus';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+
+import 'element-plus/dist/index.css';
+import './styles/variables.css';
+
 import App from './App.vue';
-import store from './store';
 import router from './router';
-import permission from './utils/permission';
-import DictData from '@/components/DictData/index.vue';
-import installer from './as-needed';
-import { iconsInstaller } from '@/components/IconSelect/util';
-import 'element-plus/theme-chalk/display.css';
-import 'ele-admin-plus/es/style/nprogress.scss';
-import './styles/themes/rounded.scss';
-import './styles/themes/dark.scss';
-import './styles/themes/transparent.scss';
-import './styles/index.scss';
+import { useThemeStore } from '@/stores/theme';
+import * as CommonComponents from '@/components/common';
 
 const app = createApp(App);
 
-app.use(store);
+app.use(createPinia());
+
+const themeStore = useThemeStore();
+themeStore.init();
+
 app.use(router);
-app.use(permission);
-app.use(installer);
-app.use(iconsInstaller);
-app.component('DictData', DictData);
+
+app.use(ElementPlus, {
+  locale: zhCn,
+});
+
+for (const [name, component] of Object.entries(CommonComponents)) {
+  app.component(name, component);
+}
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
 
 app.mount('#app');

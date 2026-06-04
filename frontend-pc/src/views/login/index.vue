@@ -1,580 +1,377 @@
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+
+const router = useRouter();
+const route = useRoute();
+const userStore = useUserStore();
+
+const loading = ref(false);
+const errorMsg = ref('');
+
+const form = reactive({
+  username: '',
+  password: '',
+});
+
+async function handleLogin() {
+  if (!form.username || !form.password) return;
+  loading.value = true;
+  errorMsg.value = '';
+  try {
+    await userStore.login({ username: form.username, password: form.password });
+    const redirect = (route.query.redirect as string) || '/dashboard';
+    router.push(redirect);
+  } catch (err: any) {
+    errorMsg.value = err?.message || '登录失败，请重试';
+  } finally {
+    loading.value = false;
+  }
+}
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter' && !loading.value) {
+    handleLogin();
+  }
+}
+</script>
+
 <template>
-  <div class="login-wrapper">
-    <div class="login-main">
-      <ele-card shadow="always" class="login-card">
-        <div class="login-cover">
-          <div class="login-cover-brand">
-            <img src="@/assets/logo.svg" class="login-logo" alt="Lest" />
-            <div>
-              <h1 class="login-title">Lest</h1>
-              <p class="login-tagline">企业级项目协作平台</p>
-            </div>
-          </div>
-          <div class="login-features">
-            <div class="login-feature-item">
-              <div class="login-feature-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 7C3 5.9 3.9 5 5 5H10L12 7H19C20.1 7 21 7.9 21 9V17C21 18.1 20.1 19 19 19H5C3.9 19 3 18.1 3 17V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M9 13L11 15L15 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <div class="login-feature-text">
-                <div class="login-feature-title">项目全生命周期管理</div>
-                <div class="login-feature-desc">从立项到交付，迭代与里程碑全程可追溯</div>
-              </div>
-            </div>
-            <div class="login-feature-item">
-              <div class="login-feature-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.8"/>
-                  <rect x="10" y="5" width="4" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/>
-                  <rect x="17" y="5" width="4" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/>
-                </svg>
-              </div>
-              <div class="login-feature-text">
-                <div class="login-feature-title">敏捷看板与任务追踪</div>
-                <div class="login-feature-desc">可视化工作流，实时掌握团队每日进度</div>
-              </div>
-            </div>
-            <div class="login-feature-item">
-              <div class="login-feature-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-                  <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M8 3.5C9.2 3 10.6 2.8 12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="login-feature-text">
-                <div class="login-feature-title">工时统计与数据洞察</div>
-                <div class="login-feature-desc">燃尽图、工时报告，多角色权限精细管控</div>
-              </div>
-            </div>
-          </div>
-          <div class="login-stats">
-            <div class="login-stat-item">
-              <div class="login-stat-num">多项目</div>
-              <div class="login-stat-label">并行管理</div>
-            </div>
-            <div class="login-stat-divider"></div>
-            <div class="login-stat-item">
-              <div class="login-stat-num">实时</div>
-              <div class="login-stat-label">协作同步</div>
-            </div>
-            <div class="login-stat-divider"></div>
-            <div class="login-stat-item">
-              <div class="login-stat-num">看板</div>
-              <div class="login-stat-label">敏捷开发</div>
-            </div>
-          </div>
-        </div>
-        <div class="login-body">
-          <ele-text type="heading" style="font-size: 24px; margin-bottom: 18px">
-            用户登录
-          </ele-text>
-          <ele-segmented
-            v-model="tabActive"
-            :items="[
-              { label: '密码登录', value: 1 },
-              { label: '扫码登录', value: 2 }
-            ]"
-            style="margin-bottom: 18px"
-            @change="handleTabChange"
-          />
-          <el-form
-            v-if="tabActive == 1"
-            ref="formRef"
-            size="large"
-            :model="form"
-            :rules="rules"
-            @keyup.enter="submit"
-            @submit.prevent=""
-          >
-            <el-form-item prop="username">
-              <el-input
-                clearable
-                v-model="form.username"
-                placeholder="请输入登录账号"
-                :prefix-icon="UserOutlined"
-              />
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                show-password
-                v-model="form.password"
-                placeholder="请输入登录密码"
-                :prefix-icon="LockOutlined"
-              />
-            </el-form-item>
-            <el-form-item v-if="captchaEnabled" prop="code">
-              <div class="login-captcha-group">
-                <el-input
-                  clearable
-                  v-model="form.code"
-                  placeholder="请输入验证码"
-                  :prefix-icon="ProtectOutlined"
-                />
-                <div class="login-captcha" @click="changeCaptcha">
-                  <img v-if="captcha" :src="captcha" :style="captchaStyle" />
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item>
-              <el-checkbox v-model="form.remember">记住密码</el-checkbox>
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                size="large"
-                type="primary"
-                :loading="loading"
-                style="width: 100%"
-                @click="submit"
-              >
-                登录
-              </el-button>
-            </el-form-item>
-          </el-form>
-          <div v-else class="login-qrcode-group">
-            <el-empty description="扫码登录功能开发中" :image-size="80" style="padding: 32px 0" />
-          </div>
-        </div>
-      </ele-card>
+  <div class="login-page">
+    <!-- Background -->
+    <div class="login-bg">
+      <div class="bg-glow" />
+      <div class="bg-grid" />
     </div>
-    <PageFooter style="padding-top: 0" />
+
+    <div class="login-container">
+      <!-- Brand -->
+      <div class="login-brand">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="#6366F1"/>
+          <path d="M11 28V12l9 9 9-9v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">LEST</span>
+        <span class="brand-tagline">敏捷团队工作台</span>
+      </div>
+
+      <!-- Login Card -->
+      <div class="login-card">
+        <h1 class="login-title">欢迎回来</h1>
+        <p class="login-desc">登录到你的敏捷工作台</p>
+
+        <!-- Error message -->
+        <div v-if="errorMsg" class="login-error">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ errorMsg }}
+        </div>
+
+        <form class="login-form" @submit.prevent="handleLogin" @keydown="handleKeydown">
+          <!-- Username -->
+          <div class="form-group">
+            <label class="form-label">用户名</label>
+            <input
+              v-model="form.username"
+              type="text"
+              class="form-input"
+              placeholder="请输入用户名"
+              autocomplete="username"
+              autofocus
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">密码</label>
+            <input
+              v-model="form.password"
+              type="password"
+              class="form-input"
+              placeholder="请输入密码"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="login-btn" :disabled="loading || !form.username || !form.password">
+            <span v-if="!loading">登录</span>
+            <span v-else class="loading-dots">
+              <span/><span/><span/>
+            </span>
+          </button>
+        </form>
+
+        <div class="login-divider">
+          <span>或</span>
+        </div>
+
+        <div class="login-sso">
+          <button class="sso-btn" disabled title="即将支持">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            企业微信登录
+          </button>
+          <button class="sso-btn" disabled title="即将支持">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            飞书登录
+          </button>
+        </div>
+
+        <p class="login-help">没有账号？<a href="javascript:void(0)" class="login-link">联系管理员</a></p>
+      </div>
+
+      <p class="login-copyright">AI-Native 敏捷工作台 · Agile Workspace</p>
+    </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, reactive, unref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { EleMessage } from 'ele-admin-plus';
-  import { UserOutlined, LockOutlined, ProtectOutlined } from '@/components/icons';
-  import { getToken } from '@/utils/token-util';
-  import { usePageTab } from '@/utils/use-page-tab';
-  import { login, getCaptcha } from '@/api/login';
-  import PageFooter from '@/layout/components/page-footer.vue';
+<style scoped lang="scss">
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0D0E11;
+  position: relative;
+  overflow: hidden;
+}
 
-  const { currentRoute } = useRouter();
-  const { goHomeRoute, cleanPageTabs } = usePageTab();
+.login-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 
-  /** 页签选中 */
-  const tabActive = ref(1);
-
-  /** 表单 */
-  const formRef = ref(null);
-
-  /** 加载状态 */
-  const loading = ref(false);
-
-  /** 表单数据 */
-  const form = reactive({
-    username: 'admin',
-    password: 'admin123',
-    code: '',
-    uuid: '',
-    remember: true
-  });
-
-  /** 表单验证规则 */
-  const rules = reactive({
-    username: [
-      {
-        required: true,
-        message: '请输入登录账号',
-        type: 'string',
-        trigger: 'blur'
-      }
-    ],
-    password: [
-      {
-        required: true,
-        message: '请输入登录密码',
-        type: 'string',
-        trigger: 'blur'
-      }
-    ],
-    code: [
-      {
-        required: true,
-        message: '请输入验证码',
-        type: 'string',
-        trigger: 'blur'
-      }
-    ]
-  });
-
-  /** 图形验证码 */
-  const captcha = ref('');
-
-  /** 图形验证码样式 */
-  const captchaStyle = ref({});
-
-  /** 验证码是否启用 */
-  const captchaEnabled = ref(false);
-
-
-  /** 提交 */
-  const submit = () => {
-    formRef.value?.validate?.((valid) => {
-      if (!valid) {
-        return;
-      }
-      loading.value = true;
-      login(form)
-        .then((msg) => {
-          EleMessage.success({ message: msg, plain: true });
-          cleanPageTabs();
-          goHome();
-        })
-        .catch((e) => {
-          loading.value = false;
-          EleMessage.error({ message: e.message, plain: true });
-          if (captchaEnabled.value) {
-            changeCaptcha();
-          }
-        });
-    });
-  };
-
-  /** 获取图形验证码 */
-  const changeCaptcha = () => {
-    getCaptcha()
-      .then((data) => {
-        captchaEnabled.value = data.captchaEnabled ?? false;
-        if (captchaEnabled.value) {
-          captcha.value = `data:image/png;base64,${data.img}`;
-          captchaStyle.value = {};
-          form.uuid = data.uuid;
-        } else {
-          captcha.value = '';
-          form.uuid = '';
-          form.code = '';
-        }
-        formRef.value?.clearValidate?.();
-      })
-      .catch((e) => {
-        EleMessage.error({ message: e.message, plain: true });
-      });
-  };
-
-  /** 选项卡切换事件 */
-  const handleTabChange = (_active) => {};
-
-  /** 跳转到首页 */
-  const goHome = () => {
-    const { query } = unref(currentRoute);
-    goHomeRoute(query.from);
-  };
-
-  // 如果已登录直接进入首页
-  if (getToken()) {
-    goHome();
-  } else {
-    changeCaptcha();
-  }
-</script>
-
-<style lang="scss" scoped>
-  .login-wrapper {
-    min-height: 100vh;
-    min-height: 100dvh;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    background-image: url('@/assets/login-bg.png');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-
-    .login-main {
-      flex: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      padding: 20px;
-    }
-
-    .login-card {
-      width: 920px;
-      max-width: 100%;
-      overflow: hidden;
-
-      :deep(.ele-card-body) {
-        display: flex;
-        padding: 0;
-        height: 520px;
-      }
-    }
+  .bg-glow {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
   }
 
-  .login-cover {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 36px 40px 28px 40px;
-    box-sizing: border-box;
-    background: linear-gradient(150deg, #0f1e45 0%, #1a3a7a 50%, #1d5fc8 100%);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.04);
-      top: -80px;
-      right: -80px;
-      pointer-events: none;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.04);
-      bottom: 60px;
-      left: -60px;
-      pointer-events: none;
-    }
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
   }
+}
 
-  .login-cover-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 36px;
-  }
+.login-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
 
-  .login-features {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 
-  .login-feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 16px 18px;
-    background: rgba(255, 255, 255, 0.07);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    transition: background 0.2s;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.11);
-    }
-  }
-
-  .login-feature-icon {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.90);
-
-    svg {
-      width: 22px;
-      height: 22px;
-    }
-  }
-
-  .login-feature-text {
-    padding-top: 2px;
-  }
-
-  .login-feature-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    margin-bottom: 4px;
-    letter-spacing: 0.3px;
-  }
-
-  .login-feature-desc {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.60);
-    line-height: 1.6;
-  }
-
-  .login-stats {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-top: 24px;
-    padding: 16px 0 0 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .login-stat-item {
-    flex: 1;
-    text-align: center;
-  }
-
-  .login-stat-num {
-    font-size: 15px;
+  .brand-name {
+    font-size: 20px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
+    color: #fff;
+    letter-spacing: 4px;
+    margin-top: 8px;
+  }
+
+  .brand-tagline {
+    font-size: 13px;
+    color: #52525B;
     letter-spacing: 0.5px;
   }
+}
 
-  .login-stat-label {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.50);
-    margin-top: 2px;
+.login-card {
+  width: 360px;
+  background: #18181B;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 36px 32px;
+  box-shadow: var(--shadow-modal);
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #FAFAFA;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.login-desc {
+  font-size: 14px;
+  color: #71717A;
+  margin: 0 0 28px;
+}
+
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #FCA5A5;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group { }
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  color: #71717A;
+  margin-bottom: 6px;
+  font-family: var(--font-primary);
+}
+
+.form-input {
+  width: 100%;
+  height: 42px;
+  background: #27272A;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #FAFAFA;
+  font-family: var(--font-primary);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+
+  &::placeholder { color: #52525B; }
+
+  &:focus {
+    border-color: #6366F1;
+    background: #1F1F23;
   }
+}
 
-  .login-stat-divider {
-    width: 1px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.15);
+.login-btn {
+  width: 100%;
+  height: 42px;
+  background: #6366F1;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: background 0.15s, opacity 0.15s;
+  margin-top: 4px;
+
+  &:hover:not(:disabled) { background: #4F46E5; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.loading-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    animation: dot-bounce 1.4s infinite ease-in-out both;
+    &:nth-child(1) { animation-delay: -0.32s; }
+    &:nth-child(2) { animation-delay: -0.16s; }
   }
+}
 
-  .login-body {
-    width: 400px;
-    flex-shrink: 0;
-    padding: 32px 48px 0 48px;
-    box-sizing: border-box;
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
 
-    :deep(.el-checkbox) {
-      height: auto;
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #3F3F46;
+  font-size: 13px;
 
-      .el-checkbox__label {
-        color: inherit;
-      }
-    }
-
-    :deep(.el-input__prefix-inner > .el-icon) {
-      margin-right: 12px;
-      transform: scale(1.16);
-    }
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
   }
+}
 
-  /* 验证码 */
-  .login-captcha-group {
-    width: 100%;
-    display: flex;
-    align-items: center;
+.login-sso {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    :deep(.el-input) {
-      flex: 1;
-    }
+.sso-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 40px;
+  background: #27272A;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #52525B;
+  cursor: not-allowed;
+  font-family: var(--font-primary);
+  opacity: 0.5;
+  transition: opacity 0.15s;
 
-    .login-captcha {
-      flex-shrink: 0;
-      width: 120px;
-      height: 40px;
-      margin-left: 8px;
-      border-radius: var(--el-border-radius-base);
-      border: 1px solid var(--el-border-color);
-      transition: border 0.2s;
-      box-sizing: border-box;
-      background: #fff;
-      overflow: hidden;
-      cursor: pointer;
+  &:hover { opacity: 0.7; }
+}
 
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: block;
-      }
+.login-help {
+  text-align: center;
+  font-size: 13px;
+  color: #71717A;
+  margin: 20px 0 0;
 
-      &:hover {
-        border-color: var(--el-color-primary);
-      }
-    }
+  .login-link {
+    color: #A5B4FC;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
   }
+}
 
-  /* Logo */
-  .login-logo {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-  }
-
-  /* 标题 */
-  .login-title {
-    color: rgba(255, 255, 255, 0.98);
-    font-size: 26px;
-    margin: 0 0 4px 0;
-    font-weight: 700;
-    letter-spacing: 3px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-  }
-
-  .login-tagline {
-    color: rgba(255, 255, 255, 0.60);
-    font-size: 12px;
-    margin: 0;
-    font-weight: normal;
-    letter-spacing: 1px;
-  }
-
-  /* 二维码 */
-  .login-qrcode-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 0;
-  }
-
-  .login-qrcode {
-    font-size: 0;
-    display: inline-block;
-    border: 1px solid #ddd;
-    border-radius: var(--el-border-radius-base);
-    overflow: hidden;
-  }
-
-  /* 小屏幕适应 */
-  @media screen and (max-width: 680px) {
-    .login-wrapper {
-      background: #fff;
-
-      .login-main {
-        padding: 0;
-        display: block;
-      }
-
-      .login-card {
-        width: 100%;
-        background: none;
-        box-shadow: none;
-        border-radius: 0;
-
-        :deep(.ele-card-body) {
-          display: block;
-          height: auto;
-        }
-      }
-    }
-
-    .login-cover {
-      display: none;
-    }
-
-    .login-body {
-      width: 100%;
-      padding: 32px 24px;
-    }
-  }
-</style>
-
-<style lang="scss">
-  html.dark .login-wrapper {
-    background: #000;
-  }
+.login-copyright {
+  font-size: 12px;
+  color: #3F3F46;
+  margin: 0;
+}
 </style>

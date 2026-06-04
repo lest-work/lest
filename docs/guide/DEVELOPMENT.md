@@ -196,12 +196,12 @@ lest-platform/
 │       ├── lest-meeting/            # 会议管理服务
 │       ├── lest-notification/       # 消息通知服务
 │       ├── lest-release/            # 发布管理服务
-│       ├── lest-performance/        # 团队绩效服务
+│       ├── lest-report/              # 团队绩效服务
 │       ├── lest-wakapi/             # WakaTime 集成服务
 │       ├── lest-ai/                 # AI 服务
 │       ├── lest-file/               # 文件服务
 │       ├── lest-plugin/             # 插件系统服务
-│       ├── lest-open/               # 开放平台服务
+│       ├── lest-openapi/             # 开放平台服务
 │
 ├── frontend-pc/                     # PC管理端前端（Vue 3 + TS + Vite + Element Plus）
 │   ├── src/
@@ -215,20 +215,32 @@ lest-platform/
 │   └── package.json
 │
 ├── docs/                            # 文档中心
-│   ├── PRD/                         # 产品需求文档
+│   ├── 1-prd/                       # 产品需求文档
+│   │   ├── core/                    # 核心模块需求文档
+│   │   │   ├── V1.0/               # V1.0 基础模块（7个模块）
+│   │   │   ├── V2.0/               # V2.0 看板增强（5个模块）
+│   │   │   ├── V3.0/               # V3.0 Jira Core 完整版（5个模块）
+│   │   │   ├── V4.0/               # V4.0 无新增 Core，转入插件生态
+│   │   │   └── V5.0/               # V5.0 企业商业版（骨架）
+│   │   └── plugins/                 # V4/V5 实际插件
+│   │       ├── V4.0/               # V4 插件生态与 AI
+│   │       └── V5.0/               # V5 企业插件与商业能力
+│   ├── 2-tasks/                      # 敏捷开发任务看板
+│   │   ├── core/                    # 核心模块任务
+│   │   └── plugins/                 # 插件任务
+│   ├── MILESTONES/                   # 版本里程碑
 │   ├── guide/                       # 开发指南
 │   │   ├── DEVELOPMENT.md           # 本开发指南
-│   │   ├── DEPLOYMENT.md          # 部署指南
-│   │   ├── BRANCHING.md           # 分支管理规范
-│   │   └── DOMAIN_PLAN.md         # 域名规划
+│   │   ├── DEPLOYMENT.md            # 部署指南
+│   │   ├── BRANCHING.md             # 分支管理规范
+│   │   └── DOMAIN_PLAN.md           # 域名规划
 │   ├── reference/                   # 技术参考
-│   │   ├── ARCHITECTURE.md        # 架构设计文档
-│   │   ├── DATABASE.md            # 数据库设计文档
-│   │   └── api/                   # API 接口文档
+│   │   ├── ARCHITECTURE.md          # 架构设计文档
+│   │   ├── DATABASE.md              # 数据库设计文档
+│   │   └── api/                     # API 接口文档
 │   │       ├── API.md
 │   │       ├── API.en.md
 │   │       └── API.zh-CN.md
-│   ├── 2-tasks/                      # 敏捷开发任务看板
 │   └── README.md                    # 文档中心索引
 │
 ├── sql/                             # 数据库初始化脚本
@@ -345,7 +357,7 @@ src/
 | 对象 | 规范 | 示例 |
 |------|------|------|
 | 数据库 | `{service}_db` | `auth_db`, `task_db` |
-| 表名 | `snake_case` | `sys_user`, `task_worklog` |
+| 表名 | `snake_case` | `user`, `task_worklog` |
 | 字段名 | `snake_case` | `user_id`, `created_at` |
 | 索引名 | `idx_{table}_{column}` | `idx_user_id` |
 

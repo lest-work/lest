@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lest.release.mapper.ReleaseArtifactMapper">
+
+    <resultMap type="com.lest.release.domain.ReleaseArtifact" id="ReleaseArtifactResult">
+        <id     property="releaseArtifactId" column="release_artifact_id"/>
+        <result property="releasePlanId"     column="release_plan_id"/>
+        <result property="artifactName"     column="artifact_name"/>
+        <result property="version"          column="version"/>
+        <result property="artifactType"     column="artifact_type"/>
+        <result property="fileName"        column="file_name"/>
+        <result property="filePath"        column="file_path"/>
+        <result property="fileSize"        column="file_size"/>
+        <result property="fileHash"        column="file_hash"/>
+        <result property="fileUrl"         column="file_url"/>
+        <result property="downloadUrl"     column="download_url"/>
+        <result property="downloadCount"   column="download_count"/>
+        <result property="uploadedBy"      column="uploaded_by"/>
+        <result property="uploadedAt"      column="uploaded_at"/>
+        <result property="metadata"        column="metadata"/>
+        <result property="releaseName"     column="release_name"/>
+        <result property="uploadedByName"   column="uploaded_by_name"/>
+        <result property="deleted"         column="deleted"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lest.release.domain.ReleaseArtifact" useGeneratedKeys="true" keyProperty="releaseArtifactId">
+        insert into release_artifact (release_plan_id, artifact_name, version, artifact_type, file_name, file_path,
+                                      file_size, file_hash, file_url, download_url, download_count, uploaded_by,
+                                      uploaded_at, metadata)
+        values (#{releasePlanId}, #{artifactName}, #{version}, #{artifactType}, #{fileName}, #{filePath},
+                #{fileSize}, #{fileHash}, #{fileUrl}, #{downloadUrl}, #{downloadCount}, #{uploadedBy},
+                now(), #{metadata})
+    </insert>
+
+    <update id="deleteById">
+        update release_artifact set deleted = 1 where release_artifact_id = #{releaseArtifactId}
+    </update>
+
+    <select id="selectByReleaseId" resultMap="ReleaseArtifactResult">
+        select ra.release_artifact_id, ra.release_plan_id, ra.artifact_name, ra.version, ra.artifact_type,
+               ra.file_name, ra.file_path, ra.file_size, ra.file_hash, ra.file_url, ra.download_url,
+               ra.download_count, ra.uploaded_by, ra.uploaded_at, ra.metadata, ra.deleted,
+               rp.name as release_name, su.user_name as uploaded_by_name
+        from release_artifact ra
+        left join release_plan rp on ra.release_plan_id = rp.release_plan_id and rp.deleted = 0
+        left join sys_user su on ra.uploaded_by = su.user_id and su.del_flag = '0'
+        where ra.deleted = 0
+        <if test="releasePlanId != null">and ra.release_plan_id = #{releasePlanId}</if>
+        order by ra.uploaded_at desc
+    </select>
+
+    <select id="countByReleaseId" resultType="int">
+        select count(*) from release_artifact where release_plan_id = #{releasePlanId} and deleted = 0
+    </select>
+
+</mapper>
