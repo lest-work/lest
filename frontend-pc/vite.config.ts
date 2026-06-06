@@ -1,112 +1,83 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import react from "@vitejs/plugin-react";
+import path from "node:path";
+import { defineConfig } from "vite";
 
-export default defineConfig(() => {
-  return {
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, 'src'),
-      },
-    },
-    plugins: [
-      vue(),
-      AutoImport({
-        resolvers: [ElementPlusResolver()],
-        imports: ['vue', 'vue-router', 'pinia'],
-        dts: 'src/auto-imports.d.ts',
-        eslintrc: {
-          enabled: true,
-        },
-      }),
-      Components({
-        resolvers: [ElementPlusResolver()],
-        dts: 'src/components.d.ts',
-      }),
-    ],
-    server: {
-      port: 5173,
-      proxy: {
-        '/auth': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/project': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/task': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/release': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/user': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/dashboard': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/label': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/upload': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/notification': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/plugin': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/ai': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/meeting': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/openapi': {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-        '/ws': {
-          target: 'ws://localhost:8080',
-          ws: true,
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const normalizedId = id.split(path.sep).join("/");
+
+          if (normalizedId.includes("/src/pages/dashboard/")) {
+            return "page-dashboard";
+          }
+
+          if (normalizedId.includes("/src/pages/roadmap/")) {
+            return "page-roadmap";
+          }
+
+          if (normalizedId.includes("/src/pages/backlog/")) {
+            return "page-backlog";
+          }
+
+          if (normalizedId.includes("/src/pages/kanban/")) {
+            return "page-kanban";
+          }
+
+          if (normalizedId.includes("/src/pages/reports/")) {
+            return "page-reports";
+          }
+
+          if (normalizedId.includes("/src/pages/issues/")) {
+            return "page-issues";
+          }
+
+          if (normalizedId.includes("/src/pages/project-settings/")) {
+            return "page-project-settings";
+          }
+
+          if (normalizedId.includes("/src/pages/component-gallery/")) {
+            return "page-component-gallery";
+          }
+
+          if (normalizedId.includes("/src/widgets/project-shell/")) {
+            return "workspace-shell";
+          }
+
+          if (!normalizedId.includes("node_modules")) {
+            return undefined;
+          }
+
+          if (normalizedId.includes("/@ant-design/") || normalizedId.includes("/@rc-component/") || normalizedId.includes("/rc-")) {
+            return "vendor-antd-support";
+          }
+
+          if (normalizedId.includes("/antd/")) {
+            return "vendor-antd";
+          }
+
+          if (normalizedId.includes("/react/") || normalizedId.includes("/react-dom/") || normalizedId.includes("/scheduler/")) {
+            return "vendor-react";
+          }
+
+          if (normalizedId.includes("/@dnd-kit/")) {
+            return "vendor-dnd";
+          }
+
+          if (normalizedId.includes("/@tanstack/")) {
+            return "vendor-tanstack";
+          }
+
+          return "vendor";
         },
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@use "@/styles/variables" as *;`,
-          silenceDeprecations: ['legacy-js-api'],
-        },
-      },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
-    build: {
-      target: 'es2022',
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'element-plus': ['element-plus'],
-            'echarts': ['echarts'],
-            'vendor': ['vue', 'vue-router', 'pinia', 'axios'],
-          },
-        },
-      },
-    },
-  };
+  },
 });

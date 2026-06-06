@@ -1,0 +1,12 @@
+{
+  "roles": [
+    { "id": "owner", "name": "项目管理员", "description": "拥有全部管理权限" },
+    { "id": "member", "name": "项目成员", "description": "参与日常协作与更新" },
+    { "id": "guest", "name": "访客", "description": "只读查看项目内容" }
+  ],
+  "items": [
+    { "id": "perm-1", "module": "问题管理", "action": "创建与编辑问题", "roles": { "owner": true, "member": true, "guest": false } },
+    { "id": "perm-2", "module": "待办事项", "action": "调整排序", "roles": { "owner": true, "member": false, "guest": false } },
+    { "id": "perm-3", "module": "项目设置", "action": "修改权限方案", "roles": { "owner": true, "member": false, "guest": false } }
+  ]
+}

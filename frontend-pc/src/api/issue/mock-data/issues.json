@@ -1,0 +1,783 @@
+{
+  "items": [
+    {
+      "id": "issue-1",
+      "key": "LST-101",
+      "title": "支持待办事项拖拽排序与撤销反馈",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "highest",
+      "status": "todo",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "待办事项",
+        "拖拽排序"
+      ],
+      "estimate": 8,
+      "dueDate": "2026-06-12",
+      "updatedAt": "刚刚",
+      "updatedTimestamp": "2026-06-06T16:58:00+08:00",
+      "description": "支持拖拽入口、位置预览、排序成功提示和撤销操作。",
+      "rank": 1
+    },
+    {
+      "id": "issue-2",
+      "key": "LST-102",
+      "title": "统一问题卡片组件的列表与看板表现",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "high",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "组件库",
+        "问题卡片"
+      ],
+      "estimate": 5,
+      "updatedAt": "12 分钟前",
+      "updatedTimestamp": "2026-06-06T16:46:00+08:00",
+      "description": "统一类型标识、状态、优先级、负责人头像和更多操作入口。",
+      "sprintId": "sprint-1",
+      "rank": 2
+    },
+    {
+      "id": "issue-3",
+      "key": "LST-103",
+      "title": "补齐迭代面板的容量、目标与启动入口",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "medium",
+      "status": "review",
+      "assignee": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "迭代规划"
+      ],
+      "estimate": 3,
+      "updatedAt": "1 小时前",
+      "updatedTimestamp": "2026-06-06T16:00:00+08:00",
+      "description": "展示迭代目标、容量、日期和未完成事项统计。",
+      "sprintId": "sprint-1",
+      "rank": 3
+    },
+    {
+      "id": "issue-4",
+      "key": "LST-104",
+      "title": "设计权限矩阵的角色勾选与禁用态",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "medium",
+      "status": "todo",
+      "assignee": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "reporter": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "labels": [
+        "权限管理",
+        "设置"
+      ],
+      "estimate": 6,
+      "updatedAt": "昨天",
+      "updatedTimestamp": "2026-06-05T10:00:00+08:00",
+      "description": "用于项目设置页权限管理，覆盖无权限状态和危险操作提示。",
+      "rank": 4,
+      "blocked": true
+    },
+    {
+      "id": "issue-5",
+      "key": "LST-105",
+      "title": "补全问题详情抽屉中的评论、附件和字段区",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "low",
+      "status": "done",
+      "assignee": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "reporter": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "labels": [
+        "问题详情",
+        "抽屉"
+      ],
+      "estimate": 4,
+      "updatedAt": "2 天前",
+      "updatedTimestamp": "2026-06-04T09:00:00+08:00",
+      "description": "从列表或看板卡片打开，右侧展示完整问题信息。",
+      "sprintId": "sprint-1",
+      "rank": 5
+    },
+    {
+      "id": "issue-6",
+      "key": "LST-128",
+      "title": "修复页面刷新后丢失筛选状态",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "highest",
+      "status": "todo",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "登录模块"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-20",
+      "updatedAt": "今天 16:20",
+      "updatedTimestamp": "2026-06-06T16:20:00+08:00",
+      "description": "刷新页面后保留当前筛选条件、分页和列表选中状态。",
+      "rank": 6
+    },
+    {
+      "id": "issue-7",
+      "key": "LST-135",
+      "title": "增加成员批量导入能力",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "high",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "成员管理"
+      ],
+      "estimate": 5,
+      "dueDate": "2026-06-19",
+      "updatedAt": "今天 15:40",
+      "updatedTimestamp": "2026-06-06T15:40:00+08:00",
+      "description": "支持 Excel 导入、字段映射、校验错误和导入进度反馈。",
+      "rank": 7
+    },
+    {
+      "id": "issue-8",
+      "key": "LST-142",
+      "title": "重构项目权限系统的数据结构",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "high",
+      "status": "todo",
+      "assignee": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "reporter": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "labels": [
+        "权限管理"
+      ],
+      "estimate": 8,
+      "dueDate": "2026-06-18",
+      "updatedAt": "今天 09:10",
+      "updatedTimestamp": "2026-06-06T09:10:00+08:00",
+      "description": "重构角色、成员、动作和项目范围的权限矩阵。",
+      "rank": 8
+    },
+    {
+      "id": "issue-9",
+      "key": "LST-150",
+      "title": "优化移动端下的筛选器与底部操作栏",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "medium",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "reporter": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "labels": [
+        "移动端"
+      ],
+      "estimate": 4,
+      "dueDate": "2026-06-17",
+      "updatedAt": "昨天 20:15",
+      "updatedTimestamp": "2026-06-05T20:15:00+08:00",
+      "description": "优化平板和手机端列表、筛选器、抽屉和底部操作栏。",
+      "rank": 9
+    },
+    {
+      "id": "issue-10",
+      "key": "LST-158",
+      "title": "支持导出当前待办事项为表格文件",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "medium",
+      "status": "review",
+      "assignee": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "数据报表"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-16",
+      "updatedAt": "昨天 18:00",
+      "updatedTimestamp": "2026-06-05T18:00:00+08:00",
+      "description": "支持导出当前筛选后的待办事项数据，并展示导出状态。",
+      "rank": 10
+    },
+    {
+      "id": "issue-11",
+      "key": "LST-162",
+      "title": "补齐接口单元测试与边界用例",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "low",
+      "status": "todo",
+      "assignee": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "reporter": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "labels": [
+        "测试"
+      ],
+      "estimate": 2,
+      "dueDate": "2026-06-15",
+      "updatedAt": "前天 14:12",
+      "updatedTimestamp": "2026-06-04T14:12:00+08:00",
+      "description": "为核心接口补齐单元测试和边界用例。",
+      "rank": 11
+    },
+    {
+      "id": "issue-12",
+      "key": "LST-171",
+      "title": "修复报表统计口径不一致问题",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "high",
+      "status": "done",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "报表"
+      ],
+      "estimate": 2,
+      "dueDate": "2026-06-14",
+      "updatedAt": "前天 09:45",
+      "updatedTimestamp": "2026-06-04T09:45:00+08:00",
+      "description": "修复状态分布和优先级分布统计口径不一致问题。",
+      "rank": 12
+    },
+    {
+      "id": "issue-13",
+      "key": "LST-172",
+      "title": "测试高并发登录场景下的数据库连接池阻塞问题",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "high",
+      "status": "review",
+      "assignee": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "登录模块",
+        "性能优化"
+      ],
+      "estimate": 5,
+      "dueDate": "2026-06-25",
+      "updatedAt": "刚刚",
+      "updatedTimestamp": "2026-06-06T17:00:00+08:00",
+      "description": "高并发压测时发现锁表隐患，需优化索引与连接回收策略。",
+      "rank": 13
+    },
+    {
+      "id": "issue-14",
+      "key": "LST-173",
+      "title": "性能优化: 开启静态资源首屏 Gzip 压缩与图片 CDN 托管",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "medium",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "性能优化"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-28",
+      "updatedAt": "30 分钟前",
+      "updatedTimestamp": "2026-06-06T16:30:00+08:00",
+      "description": "降低 LCP 渲染时长，优化打包体积，将大体积静态图片分发至 CDN 节点。",
+      "rank": 14
+    },
+    {
+      "id": "issue-15",
+      "key": "LST-174",
+      "title": "支持跨项目史诗管理看板与故事地图设计",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "highest",
+      "status": "todo",
+      "assignee": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "reporter": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "labels": [
+        "史诗看板",
+        "迭代规划"
+      ],
+      "estimate": 13,
+      "dueDate": "2026-07-01",
+      "updatedAt": "1 小时前",
+      "updatedTimestamp": "2026-06-06T16:00:00+08:00",
+      "description": "支持跨项目、多史诗进度的多维卡片看板展示，对齐故事脉络地图。",
+      "rank": 15
+    },
+    {
+      "id": "issue-16",
+      "key": "LST-175",
+      "title": "组件库封装: 统一 Toast 提示与消息订阅推送机制",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "medium",
+      "status": "done",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "组件库"
+      ],
+      "estimate": 4,
+      "dueDate": "2026-06-15",
+      "updatedAt": "昨天",
+      "updatedTimestamp": "2026-06-05T15:00:00+08:00",
+      "description": "基于 shadcn/ui 深度定制的 Toast 及全局全局 Message 提示规范。",
+      "rank": 16
+    },
+    {
+      "id": "issue-17",
+      "key": "LST-176",
+      "title": "添加全局加载进度条与骨架占位态(Skeleton)",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "low",
+      "status": "todo",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "labels": [
+        "性能优化",
+        "组件库"
+      ],
+      "estimate": 2,
+      "dueDate": "2026-06-30",
+      "updatedAt": "2 天前",
+      "updatedTimestamp": "2026-06-04T12:00:00+08:00",
+      "description": "优化弱网环境或大列表加载时的视觉白屏抖动，增加 Skeleton 骨架屏。",
+      "rank": 17
+    },
+    {
+      "id": "issue-18",
+      "key": "LST-177",
+      "title": "修复低版本部分安卓设备由于本地缓存堆积导致滚动卡顿",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "high",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "labels": [
+        "性能优化",
+        "移动端"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-18",
+      "updatedAt": "3 天前",
+      "updatedTimestamp": "2026-06-03T10:00:00+08:00",
+      "description": "降低 LocalStorage 滥用，引入虚拟滚动和局部防抖渲染。",
+      "rank": 18
+    },
+    {
+      "id": "issue-19",
+      "key": "LST-178",
+      "title": "增加项目一键归档与历史版本彻底删除机制",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "lowest",
+      "status": "todo",
+      "assignee": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "reporter": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "labels": [
+        "项目管理"
+      ],
+      "estimate": 8,
+      "dueDate": "2026-07-05",
+      "updatedAt": "4 天前",
+      "updatedTimestamp": "2026-06-02T15:00:00+08:00",
+      "description": "确保归档后非超级管理员不可修改，提供误删防抖的彻底清除能力。",
+      "rank": 19
+    },
+    {
+      "id": "issue-20",
+      "key": "LST-179",
+      "title": "重写组织架构树的大数据懒加载与检索树渲染",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "high",
+      "status": "in-progress",
+      "assignee": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "成员管理",
+        "权限管理"
+      ],
+      "estimate": 5,
+      "dueDate": "2026-06-29",
+      "updatedAt": "5 天前",
+      "updatedTimestamp": "2026-06-01T14:30:00+08:00",
+      "description": "树节点超过 5000 个时前端虚拟列表优化，减少渲染卡顿。",
+      "rank": 20
+    },
+    {
+      "id": "issue-21",
+      "key": "LST-180",
+      "title": "修复由于本地角色缓存引起的权限判断延迟失效问题",
+      "projectKey": "lest-platform",
+      "type": "bug",
+      "priority": "highest",
+      "status": "review",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "权限管理"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-15",
+      "updatedAt": "6 天前",
+      "updatedTimestamp": "2026-05-31T09:00:00+08:00",
+      "description": "当角色在后台变更后，前台缓存需立即失效并重新拉取最新的策略规则。",
+      "rank": 21
+    },
+    {
+      "id": "issue-22",
+      "key": "LST-181",
+      "title": "在导出 Excel 表格中追加工作估算值(Story Points)及优先级字段",
+      "projectKey": "lest-platform",
+      "type": "story",
+      "priority": "medium",
+      "status": "done",
+      "assignee": {
+        "id": "u4",
+        "name": "周宁",
+        "role": "测试工程师",
+        "avatarColor": "bg-amber-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%91%A8%E5%AE%81"
+      },
+      "reporter": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "labels": [
+        "数据报表"
+      ],
+      "estimate": 2,
+      "dueDate": "2026-06-12",
+      "updatedAt": "1 周前",
+      "updatedTimestamp": "2026-05-30T17:00:00+08:00",
+      "description": "补齐导出的 Excel 列字段，使数据完全可追溯、可审计。",
+      "rank": 22
+    },
+    {
+      "id": "issue-23",
+      "key": "LST-182",
+      "title": "开发基于 RBAC 体系的角色细粒度拦截中间件",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "high",
+      "status": "todo",
+      "assignee": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "reporter": {
+        "id": "u1",
+        "name": "刘月",
+        "role": "产品负责人",
+        "avatarColor": "bg-blue-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E5%88%98%E6%9C%88"
+      },
+      "labels": [
+        "权限管理"
+      ],
+      "estimate": 8,
+      "dueDate": "2026-06-25",
+      "updatedAt": "1 周前",
+      "updatedTimestamp": "2026-05-29T10:00:00+08:00",
+      "description": "统一后端的路由与方法级别权限拦截，确保鉴权失败返回 403 规范报文。",
+      "rank": 23
+    },
+    {
+      "id": "issue-24",
+      "key": "LST-183",
+      "title": "数据报表: 燃尽图与开发吞吐速率图的 Canvas 精细重构",
+      "projectKey": "lest-platform",
+      "type": "task",
+      "priority": "low",
+      "status": "review",
+      "assignee": {
+        "id": "u2",
+        "name": "陈晓",
+        "role": "前端工程师",
+        "avatarColor": "bg-violet-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E9%99%88%E6%99%98"
+      },
+      "reporter": {
+        "id": "u3",
+        "name": "林泽",
+        "role": "后端工程师",
+        "avatarColor": "bg-emerald-600",
+        "avatarUrl": "https://api.dicebear.com/9.x/lorelei/svg?seed=%E6%9E%97%E6%B3%BD"
+      },
+      "labels": [
+        "数据报表",
+        "性能优化"
+      ],
+      "estimate": 3,
+      "dueDate": "2026-06-20",
+      "updatedAt": "1 周前",
+      "updatedTimestamp": "2026-05-28T14:00:00+08:00",
+      "description": "避免渲染大数据量耗时引起的界面卡顿，进行 canvas 动画降帧及内存释放优化。",
+      "rank": 24
+    }
+  ],
+  "total": 24
+}

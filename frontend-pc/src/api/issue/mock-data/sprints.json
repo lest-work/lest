@@ -1,0 +1,5 @@
+{
+  "items": [
+    { "id": "sprint-1", "name": "Sprint 12", "goal": "交付待办事项排序、问题详情抽屉和权限设置基础能力。", "status": "active", "startDate": "2026-06-03", "endDate": "2026-06-14", "capacity": 34, "issueIds": ["issue-2", "issue-3", "issue-5"] }
+  ]
+}

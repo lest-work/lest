@@ -1,0 +1,1 @@
+export { ComponentGalleryPage } from "./ui";

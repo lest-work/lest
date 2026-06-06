@@ -1,25 +1,61 @@
-.DS_Store
-node_modules
-/dist
-/dist-ssr
+# LEST Platform Pre-commit Hook Configuration
+#
+# Install:
+#   npm install --save-dev husky @commitlint/cli @commitlint/config-conventional
+#   npx husky install
+#   npx husky add .husky/commit-msg 'npx --no -- commitlint --edit ${1}'
+#   npx husky add .husky/pre-commit 'npx lint-staged'
+#
+# Note: This requires Node.js >= 18 and npm >= 9
 
-# local env files
+node_modules/
+dist/
+target/
+refe/
+*.class
+*.jar
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+.windsurf/
+.cursor/
+.cursor/rules/
+
+# Build artifacts
+backend/docker/lest/*/jar/*.jar
+frontend-pc/dist/
+frontend-h5/dist/
+
+# Runtime data
+backend/logs/
+backend/docker/minio/data/
+backend/docker/nacos/logs/
+
+# Environment
+.env
 .env.local
 .env.*.local
 
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-debug.log
-.eslintcache
+# Editor
+.vscode/
+.idea/
 
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Build
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite pre-bundle cache
+.vite/
